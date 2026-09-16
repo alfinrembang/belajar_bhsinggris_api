@@ -14,6 +14,7 @@ class KosakataController extends Controller
     public function index()
     {
         $data = Kosakata::orderBy('id', 'asc')->get();
+
         return response()->json($data);
     }
 
@@ -23,16 +24,16 @@ class KosakataController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'english'   => 'required|string|max:100',
+            'english' => 'required|string|max:100',
             'indonesia' => 'required|string|max:100',
-            'contoh'    => 'nullable|string|max:255',
+            'contoh' => 'nullable|string|max:255',
         ]);
 
         $kosakata = Kosakata::create($validated);
 
         return response()->json([
             'message' => 'Kosakata berhasil ditambahkan',
-            'data'    => $kosakata
+            'data' => $kosakata,
         ], 201);
     }
 
@@ -43,7 +44,7 @@ class KosakataController extends Controller
     {
         $kosakata = Kosakata::find($id);
 
-        if (!$kosakata) {
+        if (! $kosakata) {
             return response()->json(['message' => 'Kosakata tidak ditemukan'], 404);
         }
 
@@ -57,21 +58,21 @@ class KosakataController extends Controller
     {
         $kosakata = Kosakata::find($id);
 
-        if (!$kosakata) {
+        if (! $kosakata) {
             return response()->json(['message' => 'Kosakata tidak ditemukan'], 404);
         }
 
         $validated = $request->validate([
-            'english'   => 'sometimes|required|string|max:100',
+            'english' => 'sometimes|required|string|max:100',
             'indonesia' => 'sometimes|required|string|max:100',
-            'contoh'    => 'nullable|string|max:255',
+            'contoh' => 'nullable|string|max:255',
         ]);
 
         $kosakata->update($validated);
 
         return response()->json([
             'message' => 'Kosakata berhasil diperbarui',
-            'data'    => $kosakata
+            'data' => $kosakata,
         ]);
     }
 
@@ -82,14 +83,14 @@ class KosakataController extends Controller
     {
         $kosakata = Kosakata::find($id);
 
-        if (!$kosakata) {
+        if (! $kosakata) {
             return response()->json(['message' => 'Kosakata tidak ditemukan'], 404);
         }
 
         $kosakata->delete();
 
         return response()->json([
-            'message' => 'Kosakata berhasil dihapus'
+            'message' => 'Kosakata berhasil dihapus',
         ]);
     }
 }

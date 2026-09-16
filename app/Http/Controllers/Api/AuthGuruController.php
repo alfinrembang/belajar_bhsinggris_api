@@ -16,17 +16,17 @@ class AuthGuruController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email'    => 'required|email',
+            'email' => 'required|email',
             'password' => 'required|string',
         ]);
 
         $user = User::where('email', $request->email)
-                    ->where('role', 'guru')
-                    ->first();
+            ->where('role', 'guru')
+            ->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($request->password, $user->password)) {
             return response()->json([
-                'status'  => 'error',
+                'status' => 'error',
                 'message' => 'Email atau kata sandi salah!',
             ], 401);
         }
@@ -37,15 +37,15 @@ class AuthGuruController extends Controller
         $user->save();
 
         return response()->json([
-            'status'  => 'success',
-            'role'    => 'guru',
+            'status' => 'success',
+            'role' => 'guru',
             'message' => 'Login guru berhasil!',
-            'token'   => $token,
-            'data'    => [
-                'id'    => $user->id,
-                'name'  => $user->name,
+            'token' => $token,
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
                 'email' => $user->email,
-                'role'  => $user->role,
+                'role' => $user->role,
             ],
         ], 200);
     }
@@ -67,7 +67,7 @@ class AuthGuruController extends Controller
         }
 
         return response()->json([
-            'status'  => 'success',
+            'status' => 'success',
             'message' => 'Logout berhasil!',
         ], 200);
     }
@@ -79,25 +79,25 @@ class AuthGuruController extends Controller
     {
         $token = $request->bearerToken() ?? $request->header('Authorization');
 
-        if (!$token) {
+        if (! $token) {
             return response()->json(['status' => 'error', 'message' => 'Token tidak disertakan'], 401);
         }
 
         $token = str_replace('Bearer ', '', $token);
         $user = User::where('api_token', $token)->first();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json(['status' => 'error', 'message' => 'Sesi tidak valid'], 401);
         }
 
         return response()->json([
             'status' => 'success',
-            'role'   => 'guru',
-            'data'   => [
-                'id'    => $user->id,
-                'name'  => $user->name,
+            'role' => 'guru',
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
                 'email' => $user->email,
-                'role'  => $user->role,
+                'role' => $user->role,
             ],
         ]);
     }

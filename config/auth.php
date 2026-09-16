@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Siswa;
 use App\Models\User;
 
 return [
@@ -33,7 +34,7 @@ return [
     | users are actually retrieved out of your database or other storage
     | system used by the application. Typically, Eloquent is utilized.
     |
-    | Supported: "session"
+    | Supported: "session", "token"
     |
     */
 
@@ -41,6 +42,13 @@ return [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
+        ],
+
+        'siswa' => [
+            'driver' => 'token',
+            'provider' => 'siswas',
+            'hash' => false,
+            'storage_key' => 'api_token',
         ],
     ],
 
@@ -65,6 +73,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', User::class),
+        ],
+
+        'siswas' => [
+            'driver' => 'eloquent',
+            'model' => Siswa::class,
         ],
 
         // 'users' => [
@@ -95,6 +108,13 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'siswas' => [
+            'provider' => 'siswas',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
             'expire' => 60,
             'throttle' => 60,

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\CheckGuruToken;
+use App\Http\Middleware\CheckSiswaToken;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -14,7 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'auth.guru' => \App\Http\Middleware\CheckGuruToken::class,
+            'auth.guru' => CheckGuruToken::class,
+            'auth.siswa' => CheckSiswaToken::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

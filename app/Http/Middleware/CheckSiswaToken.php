@@ -2,12 +2,12 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\User;
+use App\Models\Siswa;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class CheckGuruToken
+class CheckSiswaToken
 {
     /**
      * Handle an incoming request.
@@ -19,24 +19,23 @@ class CheckGuruToken
         if (! $token) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Akses ditolak! Token autentikasi Guru tidak disertakan.',
+                'message' => 'Akses ditolak! Token autentikasi Siswa tidak disertakan.',
             ], 401);
         }
 
         $token = trim(str_replace('Bearer ', '', $token));
-        $user = User::where('api_token', $token)
-            ->where('role', 'guru')
-            ->first();
+        $siswa = Siswa::where('api_token', $token)->first();
 
-        if (! $user) {
+        if (! $siswa) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Akses ditolak! Sesi Guru tidak valid atau telah kedaluwarsa.',
-            ], 403);
+                'message' => 'Akses ditolak! Sesi Siswa tidak valid atau telah kedaluwarsa.',
+            ], 401);
         }
 
-        // Lampirkan data user ke request
-        $request->merge(['authenticated_guru' => $user]);
+        // Simpan instance siswa ke request dan auth guard
+        $request->merge(['authenticated_siswa' => $siswa]);
+        auth('siswa')->setUser($siswa);
 
         return $next($request);
     }

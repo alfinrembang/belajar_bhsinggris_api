@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\KosakataController;
 use App\Http\Controllers\Api\AuthGuruController;
 use App\Http\Controllers\Api\AuthSiswaController;
+use App\Http\Controllers\Api\KosakataController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,9 +18,23 @@ use App\Http\Controllers\Api\AuthSiswaController;
 // Autentikasi Guru (Login)
 Route::post('/guru/login', [AuthGuruController::class, 'login']);
 
-// Masuk Siswa & Cek Profil Siswa Sendiri
+// Autentikasi Siswa
+Route::post('/siswa/register', [AuthSiswaController::class, 'register']);
+Route::post('/siswa/login', [AuthSiswaController::class, 'login']);
+Route::post('/siswa/lupa-sandi', [AuthSiswaController::class, 'lupaSandi']);
+Route::post('/siswa/reset-sandi', [AuthSiswaController::class, 'resetSandi']);
+
+// Masuk Siswa & Cek Profil Siswa Sendiri (Kompatibilitas)
 Route::post('/siswa/masuk', [AuthSiswaController::class, 'masuk']);
 Route::get('/siswa/profil/{nis}', [AuthSiswaController::class, 'profil']);
+
+// =========================================================================
+// 2. RUTE TERPROTEKSI SISWA (Wajib Token Siswa)
+// =========================================================================
+Route::middleware('auth.siswa')->group(function () {
+    Route::get('/siswa/me', [AuthSiswaController::class, 'me']);
+    Route::post('/siswa/logout', [AuthSiswaController::class, 'logout']);
+});
 
 // Data Kosakata (Hanya Baca: Siswa & Guru bisa melihat)
 Route::get('/kosakata', [KosakataController::class, 'index']);
@@ -29,13 +43,12 @@ Route::get('/kosakata/{id}', [KosakataController::class, 'show']);
 // Helper: Data Master Dropdown Kelas untuk Flutter (Tingkat, Jurusan, Nomor)
 Route::get('/kelas', function () {
     return response()->json([
-        'status'  => 'success',
+        'status' => 'success',
         'tingkat' => ['10', '11', '12'],
         'jurusan' => ['TSM', 'RPL', 'BD', 'DKV', 'SA', 'MPLB', 'TKKR'],
-        'nomor'   => ['1', '2', '3'],
+        'nomor' => ['1', '2', '3'],
     ]);
 });
-
 
 // =========================================================================
 // 2. RUTE TERPROTEKSI (Wajib Token Guru / Khusus Guru)
