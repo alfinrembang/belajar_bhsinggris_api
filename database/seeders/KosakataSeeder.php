@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Kosakata;
+use Illuminate\Database\Seeder;
 
 class KosakataSeeder extends Seeder
 {
@@ -16,44 +16,44 @@ class KosakataSeeder extends Seeder
 
         $data = [
             [
-                'english'   => 'Book',
+                'english' => 'Book',
                 'indonesia' => 'Buku',
-                'contoh'    => 'I am reading an interesting book.',
+                'contoh' => 'I am reading an interesting book.',
             ],
             [
-                'english'   => 'Apple',
+                'english' => 'Apple',
                 'indonesia' => 'Apel',
-                'contoh'    => 'She eats a sweet red apple.',
+                'contoh' => 'She eats a sweet red apple.',
             ],
             [
-                'english'   => 'Learn',
+                'english' => 'Learn',
                 'indonesia' => 'Belajar',
-                'contoh'    => 'We learn English vocabulary together every day.',
+                'contoh' => 'We learn English vocabulary together every day.',
             ],
             [
-                'english'   => 'School',
+                'english' => 'School',
                 'indonesia' => 'Sekolah',
-                'contoh'    => 'They go to school together by bus.',
+                'contoh' => 'They go to school together by bus.',
             ],
             [
-                'english'   => 'Teacher',
+                'english' => 'Teacher',
                 'indonesia' => 'Guru',
-                'contoh'    => 'The teacher explains the lesson clearly.',
+                'contoh' => 'The teacher explains the lesson clearly.',
             ],
             [
-                'english'   => 'Student',
+                'english' => 'Student',
                 'indonesia' => 'Murid',
-                'contoh'    => 'The student is doing English homework.',
+                'contoh' => 'The student is doing English homework.',
             ],
             [
-                'english'   => 'Friend',
+                'english' => 'Friend',
                 'indonesia' => 'Teman',
-                'contoh'    => 'A good friend always supports you.',
+                'contoh' => 'A good friend always supports you.',
             ],
             [
-                'english'   => 'Water',
+                'english' => 'Water',
                 'indonesia' => 'Air',
-                'contoh'    => 'Make sure to drink enough water every day.',
+                'contoh' => 'Make sure to drink enough water every day.',
             ],
         ];
 

@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Siswa;
+use Illuminate\Database\Seeder;
 
 class SiswaSeeder extends Seeder
 {
@@ -14,39 +14,39 @@ class SiswaSeeder extends Seeder
     {
         $siswas = [
             [
-                'nis'          => '202401',
+                'nis' => '202401',
                 'nama_lengkap' => 'Budi Santoso',
-                'email'        => 'budi@gmail.com',
-                'kelas'        => '10 TSM 1',
-                'no_absen'     => '05',
+                'email' => 'budi@gmail.com',
+                'kelas' => '10 TSM 1',
+                'no_absen' => '05',
             ],
             [
-                'nis'          => '202402',
+                'nis' => '202402',
                 'nama_lengkap' => 'Siti Rahmawati',
-                'email'        => 'siti@gmail.com',
-                'kelas'        => '10 RPL 1',
-                'no_absen'     => '12',
+                'email' => 'siti@gmail.com',
+                'kelas' => '10 RPL 1',
+                'no_absen' => '12',
             ],
             [
-                'nis'          => '202403',
+                'nis' => '202403',
                 'nama_lengkap' => 'Rizky Pratama',
-                'email'        => 'rizky@gmail.com',
-                'kelas'        => '10 BD 1',
-                'no_absen'     => '08',
+                'email' => 'rizky@gmail.com',
+                'kelas' => '10 BD 1',
+                'no_absen' => '08',
             ],
             [
-                'nis'          => '202404',
+                'nis' => '202404',
                 'nama_lengkap' => 'Dwi Saputra',
-                'email'        => 'dwi@gmail.com',
-                'kelas'        => '11 TSM 2',
-                'no_absen'     => '03',
+                'email' => 'dwi@gmail.com',
+                'kelas' => '11 TSM 2',
+                'no_absen' => '03',
             ],
             [
-                'nis'          => '202405',
+                'nis' => '202405',
                 'nama_lengkap' => 'Amanda Putri',
-                'email'        => 'amanda@gmail.com',
-                'kelas'        => '10 DKV 1',
-                'no_absen'     => '15',
+                'email' => 'amanda@gmail.com',
+                'kelas' => '10 DKV 1',
+                'no_absen' => '15',
             ],
         ];
 
