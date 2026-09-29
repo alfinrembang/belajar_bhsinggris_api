@@ -13,12 +13,33 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        // 1. Akun Guru (Untuk Tenaga Pengajar)
         User::updateOrCreate(
-            ['email' => 'adminguru@mail.com'],
+            ['email' => 'guru@mail.com'],
             [
-                'name' => 'Admin Guru',
+                'name' => 'Guru Bahasa Inggris',
                 'role' => 'guru',
-                'password' => Hash::make('adminguru123'),
+                'password' => Hash::make('guru123'),
+            ]
+        );
+
+        // 2. Akun Admin (Untuk Manajemen Guru & Sistem)
+        User::updateOrCreate(
+            ['email' => 'admin@mail.com'],
+            [
+                'name' => 'Administrator',
+                'role' => 'admin',
+                'password' => Hash::make('admin123'),
+            ]
+        );
+
+        // 3. Akun Admin Placeholder (Sesuai Desain Figma: admin@gmail.com / 123456)
+        User::updateOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'Admin Utama',
+                'role' => 'admin',
+                'password' => Hash::make('123456'),
             ]
         );
     }
