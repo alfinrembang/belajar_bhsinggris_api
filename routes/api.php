@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthGuruController;
 use App\Http\Controllers\Api\AuthSiswaController;
 use App\Http\Controllers\Api\KosakataController;
+use App\Http\Controllers\Api\LoginSiswaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,20 +21,20 @@ Route::post('/guru/login', [AuthGuruController::class, 'login']);
 
 // Autentikasi Siswa
 Route::post('/siswa/register', [AuthSiswaController::class, 'register']);
-Route::post('/siswa/login', [AuthSiswaController::class, 'login']);
-Route::post('/siswa/lupa-sandi', [AuthSiswaController::class, 'lupaSandi']);
-Route::post('/siswa/reset-sandi', [AuthSiswaController::class, 'resetSandi']);
+Route::post('/siswa/login', [LoginSiswaController::class, 'login']);
+Route::post('/siswa/lupa-sandi', [LoginSiswaController::class, 'lupaSandi']);
+Route::post('/siswa/reset-sandi', [LoginSiswaController::class, 'resetSandi']);
 
 // Masuk Siswa & Cek Profil Siswa Sendiri (Kompatibilitas)
-Route::post('/siswa/masuk', [AuthSiswaController::class, 'masuk']);
+Route::post('/siswa/masuk', [LoginSiswaController::class, 'masuk']);
 Route::get('/siswa/profil/{nis}', [AuthSiswaController::class, 'profil']);
 
 // =========================================================================
 // 2. RUTE TERPROTEKSI SISWA (Wajib Token Siswa)
 // =========================================================================
 Route::middleware('auth.siswa')->group(function () {
-    Route::get('/siswa/me', [AuthSiswaController::class, 'me']);
-    Route::post('/siswa/logout', [AuthSiswaController::class, 'logout']);
+    Route::get('/siswa/me', [LoginSiswaController::class, 'me']);
+    Route::post('/siswa/logout', [LoginSiswaController::class, 'logout']);
 });
 
 // Data Kosakata (Hanya Baca: Siswa & Guru bisa melihat)
