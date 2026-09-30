@@ -1,28 +1,27 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginGuruController;
+use App\Http\Controllers\Guru\KategoriMateriController;
+use App\Http\Controllers\Guru\MateriController;
 use App\Models\Kosakata;
 use App\Models\Siswa;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes - Portal Guru & Admin Belajar Bahasa Inggris
-|--------------------------------------------------------------------------
-*/
+// Web Routes - Portal Guru & Admin Belajar Bahasa Inggris
 
 // Redirect root ke halaman login guru
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// Autentikasi Web Guru / Admin
+// AUTENTIKASI WEB GURU & ADMINISTRATOR
 Route::get('/login', [LoginGuruController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginGuruController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginGuruController::class, 'logout'])->name('logout');
 
-// Area Terproteksi Web Guru / Admin
+// AREA TERPROTEKSI WEB GURU / ADMIN (WAJIB LOGIN)
 Route::middleware(['auth'])->group(function () {
+    // 0. Dashboard Utama
     Route::get('/dashboard', function () {
         $totalSiswa = Siswa::count();
         $totalKosakata = Kosakata::count();
@@ -30,10 +29,23 @@ Route::middleware(['auth'])->group(function () {
         return view('guru.dashboard', compact('totalSiswa', 'totalKosakata'));
     })->name('guru.dashboard');
 
-    // Manajemen Materi Guru
-    Route::get('/materi', function () {
-        return view('guru.manajemen_materi.index');
-    })->name('guru.materi.index');
+    // MODUL 1: MANAJEMEN MATERI PEMBELAJARAN (EKSPLISIT GET & POST)
+    Route::get('/materi', [MateriController::class, 'index'])->name('guru.materi.index');
+    Route::get('/materi/create', [MateriController::class, 'create'])->name('guru.materi.create');
+    Route::post('/materi/store', [MateriController::class, 'store'])->name('guru.materi.store');
+    Route::get('/materi/{materi}', [MateriController::class, 'show'])->name('guru.materi.show');
+    Route::get('/materi/{materi}/edit', [MateriController::class, 'edit'])->name('guru.materi.edit');
+    Route::post('/materi/{materi}/update', [MateriController::class, 'update'])->name('guru.materi.update');
+    Route::post('/materi/{materi}/destroy', [MateriController::class, 'destroy'])->name('guru.materi.destroy');
+
+    // MODUL 1B: MANAJEMEN KATEGORI MATERI (EKSPLISIT GET & POST)
+    Route::get('/kategori', [KategoriMateriController::class, 'index'])->name('guru.kategori.index');
+    Route::get('/kategori/create', [KategoriMateriController::class, 'create'])->name('guru.kategori.create');
+    Route::post('/kategori/store', [KategoriMateriController::class, 'store'])->name('guru.kategori.store');
+    Route::get('/kategori/{kategori}', [KategoriMateriController::class, 'show'])->name('guru.kategori.show');
+    Route::get('/kategori/{kategori}/edit', [KategoriMateriController::class, 'edit'])->name('guru.kategori.edit');
+    Route::post('/kategori/{kategori}/update', [KategoriMateriController::class, 'update'])->name('guru.kategori.update');
+    Route::post('/kategori/{kategori}/destroy', [KategoriMateriController::class, 'destroy'])->name('guru.kategori.destroy');
 
     // Modul Listening Guru
     Route::get('/listening', function () {

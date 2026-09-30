@@ -56,6 +56,16 @@
                 <span>Manajemen Materi</span>
             </a>
 
+            <!-- 2b. Kategori Materi -->
+            <a href="{{ route('guru.kategori.index') }}" 
+               class="flex items-center gap-3.5 px-4 py-3.5 rounded-2xl text-[14px] transition-all duration-150 {{ $active === 'kategori' ? 'bg-[#1E6BFF] text-white shadow-[0_6px_16px_rgba(30,107,255,0.28)] font-semibold' : 'text-slate-700 hover:bg-slate-100/80 hover:text-slate-900 font-medium' }}">
+                <svg class="w-5 h-5 shrink-0 {{ $active === 'kategori' ? 'text-white' : 'text-slate-600' }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                    <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                </svg>
+                <span>Kategori Materi</span>
+            </a>
+
             <!-- 3. Modul Listening -->
             <a href="{{ route('guru.listening.index') }}" 
                class="flex items-center gap-3.5 px-4 py-3.5 rounded-2xl text-[14px] transition-all duration-150 {{ $active === 'listening' ? 'bg-[#1E6BFF] text-white shadow-[0_6px_16px_rgba(30,107,255,0.28)] font-semibold' : 'text-slate-700 hover:bg-slate-100/80 hover:text-slate-900 font-medium' }}">
