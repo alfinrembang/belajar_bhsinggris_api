@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\AuthGuruController;
 use App\Http\Controllers\Api\AuthSiswaController;
 use App\Http\Controllers\Api\KosakataController;
 use App\Http\Controllers\Api\LoginSiswaController;
@@ -8,16 +7,13 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes - Belajar Bahasa Inggris
+| API Routes - Belajar Bahasa Inggris (Khusus Aplikasi Siswa / Flutter)
 |--------------------------------------------------------------------------
 */
 
 // =========================================================================
-// 1. RUTE PUBLIK (Bisa Diakses Siapa Saja / Siswa)
+// 1. RUTE PUBLIK SISWA
 // =========================================================================
-
-// Autentikasi Guru (Login)
-Route::post('/guru/login', [AuthGuruController::class, 'login']);
 
 // Autentikasi Siswa
 Route::post('/siswa/register', [AuthSiswaController::class, 'register']);
@@ -55,10 +51,6 @@ Route::get('/kelas', function () {
 // 2. RUTE TERPROTEKSI (Wajib Token Guru / Khusus Guru)
 // =========================================================================
 Route::middleware('auth.guru')->group(function () {
-    // Sesi Guru
-    Route::post('/guru/logout', [AuthGuruController::class, 'logout']);
-    Route::get('/guru/me', [AuthGuruController::class, 'me']);
-
     // Kelola Data Siswa (Hanya Guru yang boleh melihat rekap semua siswa)
     Route::get('/siswa', [AuthSiswaController::class, 'index']);
 
