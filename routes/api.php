@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\KategoriMateriApiController;
 use App\Http\Controllers\Api\KosakataController;
 use App\Http\Controllers\Api\LoginSiswaController;
 use App\Http\Controllers\Api\MateriApiController;
+use App\Http\Controllers\Api\ModulListeningApiController;
 use Illuminate\Support\Facades\Route;
 
 // API Routes - Belajar Bahasa Inggris (Khusus Aplikasi Siswa / Flutter)
@@ -31,6 +32,16 @@ Route::get('/materi', [MateriApiController::class, 'index']);
 Route::get('/materi/{id}', [MateriApiController::class, 'show']);
 // Menyimpan penyelesaian materi siswa (+ XP reward)
 Route::post('/materi/{id}/selesai', [MateriApiController::class, 'selesaikan']);
+
+// 2B. MODUL LISTENING PEMBELAJARAN (FLUTTER SISWA)
+// Mengambil ringkasan progres listening siswa (?siswa_id=...)
+Route::get('/listening/progres', [ModulListeningApiController::class, 'progres']);
+// Mengambil daftar paket audio listening (support filter: ?tingkat=Beginner&kelas=10&siswa_id=...)
+Route::get('/listening', [ModulListeningApiController::class, 'index']);
+// Mengambil detail paket listening beserta audio & latihan soal interaktif
+Route::get('/listening/{id}', [ModulListeningApiController::class, 'show']);
+// Menyimpan penyelesaian modul listening siswa (+ XP reward)
+Route::post('/listening/{id}/selesai', [ModulListeningApiController::class, 'selesaikan']);
 
 // 3. RUTE TERPROTEKSI SISWA (Wajib Token Siswa)
 Route::middleware('auth.siswa')->group(function () {

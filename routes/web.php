@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginGuruController;
 use App\Http\Controllers\Guru\KategoriMateriController;
 use App\Http\Controllers\Guru\MateriController;
+use App\Http\Controllers\Guru\ModulListeningController;
 use App\Models\Kosakata;
 use App\Models\Siswa;
 use Illuminate\Support\Facades\Route;
@@ -47,10 +48,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/kategori/{kategori}/update', [KategoriMateriController::class, 'update'])->name('guru.kategori.update');
     Route::post('/kategori/{kategori}/destroy', [KategoriMateriController::class, 'destroy'])->name('guru.kategori.destroy');
 
-    // Modul Listening Guru
-    Route::get('/listening', function () {
-        return view('guru.modul_listening.index');
-    })->name('guru.listening.index');
+    // MODUL 2: MODUL LISTENING GURU (EKSPLISIT GET & POST)
+    Route::get('/listening', [ModulListeningController::class, 'index'])->name('guru.listening.index');
+    Route::get('/listening/create', [ModulListeningController::class, 'create'])->name('guru.listening.create');
+    Route::post('/listening/store', [ModulListeningController::class, 'store'])->name('guru.listening.store');
+    Route::get('/listening/{listening}', [ModulListeningController::class, 'show'])->name('guru.listening.show');
+    Route::get('/listening/{listening}/edit', [ModulListeningController::class, 'edit'])->name('guru.listening.edit');
+    Route::post('/listening/{listening}/update', [ModulListeningController::class, 'update'])->name('guru.listening.update');
+    Route::post('/listening/{listening}/destroy', [ModulListeningController::class, 'destroy'])->name('guru.listening.destroy');
 
     // Bank Soal & Kuis Guru
     Route::get('/quiz', function () {
