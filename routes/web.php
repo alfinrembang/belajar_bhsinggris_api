@@ -48,14 +48,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/kategori/{kategori}/update', [KategoriMateriController::class, 'update'])->name('guru.kategori.update');
     Route::post('/kategori/{kategori}/destroy', [KategoriMateriController::class, 'destroy'])->name('guru.kategori.destroy');
 
-    // MODUL 2: MODUL LISTENING GURU (EKSPLISIT GET & POST)
+    // MODUL 2: MODUL LISTENING GURU (EKSPLISIT GET & POST/PUT)
     Route::get('/listening', [ModulListeningController::class, 'index'])->name('guru.listening.index');
     Route::get('/listening/create', [ModulListeningController::class, 'create'])->name('guru.listening.create');
     Route::post('/listening/store', [ModulListeningController::class, 'store'])->name('guru.listening.store');
     Route::get('/listening/{listening}', [ModulListeningController::class, 'show'])->name('guru.listening.show');
     Route::get('/listening/{listening}/edit', [ModulListeningController::class, 'edit'])->name('guru.listening.edit');
-    Route::post('/listening/{listening}/update', [ModulListeningController::class, 'update'])->name('guru.listening.update');
-    Route::post('/listening/{listening}/destroy', [ModulListeningController::class, 'destroy'])->name('guru.listening.destroy');
+    Route::match(['post', 'put'], '/listening/{listening}/update', [ModulListeningController::class, 'update'])->name('guru.listening.update');
+    Route::match(['post', 'delete'], '/listening/{listening}/destroy', [ModulListeningController::class, 'destroy'])->name('guru.listening.destroy');
 
     // Bank Soal & Kuis Guru
     Route::get('/quiz', function () {

@@ -81,11 +81,11 @@ class ModulListeningApiController extends Controller
     }
 
     /**
-     * Mengambil detail satu paket listening beserta transkrip, sasaran belajar, dan butir latihan soal.
+     * Mengambil detail satu paket listening beserta daftar audio track dan butir latihan soal.
      */
     public function show(int $id): JsonResponse
     {
-        $listening = ModulListening::with('soals')->where('status', 'aktif')->find($id);
+        $listening = ModulListening::with(['audios', 'soals.listeningAudio'])->where('status', 'aktif')->find($id);
 
         if (! $listening) {
             return response()->json([
@@ -94,17 +94,73 @@ class ModulListeningApiController extends Controller
             ], 404);
         }
 
-        $soals = $listening->soals->map(function ($s) {
+        // Hitung kelompok soal untuk setiap audio track secara akurat (tahan jika nomor loncat)
+        $audioQuestionsMap = [];
+        foreach ($listening->soals as $s) {
+            $audioKey = $s->listening_audio_id ?: 0;
+            $audioQuestionsMap[$audioKey][] = $s->nomor_soal;
+        }
+
+        $rentangMap = [];
+        foreach ($audioQuestionsMap as $audioKey => $nomors) {
+            sort($nomors);
+            $nomors = array_values(array_unique($nomors));
+            $ranges = [];
+            $start = $nomors[0];
+            $prev = $start;
+
+            for ($i = 1; $i < count($nomors); $i++) {
+                $curr = $nomors[$i];
+                if ($curr === $prev + 1) {
+                    $prev = $curr;
+                } else {
+                    $ranges[] = ($start === $prev) ? "{$start}" : "{$start}-{$prev}";
+                    $start = $curr;
+                    $prev = $curr;
+                }
+            }
+            $ranges[] = ($start === $prev) ? "{$start}" : "{$start}-{$prev}";
+
+            $rentangMap[$audioKey] = 'Soal No. '.implode(', ', $ranges);
+        }
+
+        $prevAudioUrl = null;
+        $soals = $listening->soals->map(function ($s, $idx) use ($listening, $rentangMap, &$prevAudioUrl) {
+            $audioUrl = $s->audio_url ?: $listening->audio_url;
+            $audioNomor = $s->listeningAudio?->nomor_track ?? 1;
+            $audioKey = $s->listening_audio_id ?: 0;
+            $rentang = $rentangMap[$audioKey] ?? "Soal No. {$s->nomor_soal}";
+            $isNewAudio = ($idx > 0 && $audioUrl !== $prevAudioUrl);
+            $prevAudioUrl = $audioUrl;
+
             return [
                 'id' => $s->id,
                 'nomor_soal' => $s->nomor_soal,
                 'pertanyaan' => $s->pertanyaan,
+                'listening_audio_id' => $s->listening_audio_id,
+                'audio_nomor' => $audioNomor,
+                'audio_url' => $audioUrl,
+                'audio_title' => $s->listeningAudio?->judul_audio ?: ($listening->audio_title ?? "Audio Percakapan Track #{$audioNomor}"),
+                'durasi' => $s->listeningAudio?->durasi ?: ($s->durasi ?: ($listening->durasi ?? '01:30')),
+                'rentang_soal' => $rentang,
+                'is_new_audio' => $isNewAudio,
                 'pilihan_a' => $s->pilihan_a,
                 'pilihan_b' => $s->pilihan_b,
                 'pilihan_c' => $s->pilihan_c,
                 'pilihan_d' => $s->pilihan_d,
                 'jawaban_benar' => $s->jawaban_benar,
                 'pembahasan' => $s->pembahasan,
+            ];
+        });
+
+        $audios = $listening->audios->map(function ($a) use ($rentangMap) {
+            return [
+                'id' => $a->id,
+                'nomor_track' => $a->nomor_track,
+                'judul_audio' => $a->judul_audio ?: "Audio Track #{$a->nomor_track}",
+                'durasi' => $a->durasi,
+                'audio_url' => $a->audio_url,
+                'rentang_soal' => $rentangMap[$a->id] ?? null,
             ];
         });
 
@@ -120,7 +176,7 @@ class ModulListeningApiController extends Controller
                 'audio_title' => $listening->audio_title ?? "Audio #{$listening->id}",
                 'durasi' => $listening->durasi ?? '02:00',
                 'audio_url' => $listening->audio_url,
-                'transkrip' => $listening->transkrip,
+                'audios' => $audios,
                 'tujuan_belajar' => $listening->tujuan_belajar ?? [],
                 'xp_reward' => $listening->xp_reward,
                 'soals' => $soals,
