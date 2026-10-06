@@ -41,6 +41,14 @@ class ModulListening extends Model
     }
 
     /**
+     * Relasi ke seluruh track audio dalam modul listening.
+     */
+    public function audios(): HasMany
+    {
+        return $this->hasMany(ListeningAudio::class, 'modul_listening_id')->orderBy('nomor_track', 'asc');
+    }
+
+    /**
      * Relasi ke riwayat pengerjaan modul listening oleh siswa.
      */
     public function progresSiswa(): HasMany
