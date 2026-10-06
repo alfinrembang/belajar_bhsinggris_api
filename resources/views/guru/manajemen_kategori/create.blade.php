@@ -6,13 +6,9 @@
 >
     <!-- Navigasi Kembali -->
     <div class="mb-6 flex items-center justify-between">
-        <a href="{{ route('guru.kategori.index') }}" class="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-[#1E6BFF] transition-colors">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
+        <x-button variant="back" href="{{ route('guru.kategori.index') }}">
             Kembali ke Daftar Kategori
-        </a>
+        </x-button>
     </div>
 
     <!-- Tampilan Error Validasi -->
@@ -207,10 +203,9 @@
                     </div>
 
                     <div class="pt-4 border-t border-slate-100">
-                        <button type="submit" 
-                                class="w-full py-3 rounded-2xl bg-[#1E6BFF] hover:bg-blue-600 text-white font-bold text-xs transition-all shadow-[0_6px_20px_rgba(30,107,255,0.28)] cursor-pointer">
+                        <x-button variant="submit" class="w-full py-3">
                             Simpan Kategori Baru
-                        </button>
+                        </x-button>
                     </div>
                 </div>
             </div>

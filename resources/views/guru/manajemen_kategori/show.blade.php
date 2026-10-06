@@ -6,34 +6,21 @@
 >
     <!-- Navigasi Atas & Aksi -->
     <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <a href="{{ route('guru.kategori.index') }}" class="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-[#1E6BFF] transition-colors">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
+        <x-button variant="back" href="{{ route('guru.kategori.index') }}">
             Kembali ke Daftar Kategori
-        </a>
+        </x-button>
 
         <div class="flex items-center gap-2.5">
-            <a href="{{ route('guru.kategori.edit', $kategori->id) }}" 
-               class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-semibold text-xs transition-all shadow-xs">
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                </svg>
+            <x-button variant="edit" href="{{ route('guru.kategori.edit', $kategori->id) }}">
                 Edit Kategori
-            </a>
+            </x-button>
 
             <!-- Form Hapus (Eksplisit POST) -->
             <form action="{{ route('guru.kategori.destroy', $kategori->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori ini?');" class="inline">
                 @csrf
-                <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold text-xs transition-all cursor-pointer">
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    </svg>
+                <x-button variant="delete" type="submit">
                     Hapus
-                </button>
+                </x-button>
             </form>
         </div>
     </div>
@@ -121,9 +108,9 @@
                 </div>
                 <h4 class="text-sm font-bold text-slate-800">Belum Ada Materi</h4>
                 <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">Kategori ini belum memiliki modul materi pembelajaran. Mulai buat modul pertama sekarang.</p>
-                <a href="{{ route('guru.materi.create') }}" class="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-2xl bg-[#1E6BFF] text-white text-xs font-bold hover:bg-blue-600 transition-all">
+                <x-button variant="create" href="{{ route('guru.materi.create') }}" class="mt-4">
                     Buat Materi Baru
-                </a>
+                </x-button>
             </div>
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">

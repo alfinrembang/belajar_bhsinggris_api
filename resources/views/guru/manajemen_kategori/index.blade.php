@@ -52,14 +52,9 @@
         </form>
 
         <!-- Tombol Tambah Kategori Baru -->
-        <a href="{{ route('guru.kategori.create') }}" 
-           class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-[#1E6BFF] hover:bg-blue-600 text-white font-semibold text-xs transition-all shadow-[0_4px_12px_rgba(30,107,255,0.25)] shrink-0">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            <span>Tambah Kategori Baru</span>
-        </a>
+        <x-button variant="create" href="{{ route('guru.kategori.create') }}">
+            Tambah Kategori Baru
+        </x-button>
     </div>
 
     <!-- Tabel Daftar Kategori Materi -->
@@ -133,29 +128,14 @@
                             </td>
                             <td class="py-4 px-6 text-right">
                                 <div class="flex items-center justify-end gap-2">
-                                    <a href="{{ route('guru.kategori.show', $kategori->id) }}" class="p-2 rounded-xl text-slate-400 hover:text-[#1E6BFF] hover:bg-blue-50 transition-colors" title="Lihat Detail & Materi">
-                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                            <circle cx="12" cy="12" r="3"></circle>
-                                        </svg>
-                                    </a>
+                                    <x-button variant="show" href="{{ route('guru.kategori.show', $kategori->id) }}" title="Lihat Detail & Materi" />
 
-                                    <a href="{{ route('guru.kategori.edit', $kategori->id) }}" class="p-2 rounded-xl text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-colors" title="Edit Kategori">
-                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                        </svg>
-                                    </a>
+                                    <x-button variant="edit" href="{{ route('guru.kategori.edit', $kategori->id) }}" title="Edit Kategori" />
 
                                     <!-- Form Hapus (Eksplisit POST ke route destroy) -->
                                     <form action="{{ route('guru.kategori.destroy', $kategori->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori ini?');" class="inline">
                                         @csrf
-                                        <button type="submit" class="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer" title="Hapus Kategori">
-                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <polyline points="3 6 5 6 21 6"></polyline>
-                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                            </svg>
-                                        </button>
+                                        <x-button variant="delete" type="submit" title="Hapus Kategori" />
                                     </form>
                                 </div>
                             </td>

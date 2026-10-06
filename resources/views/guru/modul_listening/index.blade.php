@@ -70,14 +70,9 @@
         </form>
 
         <!-- Tombol Tambah Audio Listening Baru -->
-        <a href="{{ route('guru.listening.create') }}" 
-           class="px-5 py-2.5 rounded-2xl bg-[#1E6BFF] hover:bg-[#155BE5] text-white font-semibold text-xs shadow-[0_6px_16px_rgba(30,107,255,0.28)] transition-all flex items-center justify-center gap-2 shrink-0">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
+        <x-button variant="create" href="{{ route('guru.listening.create') }}">
             Unggah Audio Baru
-        </a>
+        </x-button>
     </div>
 
     <!-- Ringkasan Statistik Listening -->
@@ -115,21 +110,24 @@
 
     <!-- Tabel Daftar Track Listening -->
     <div class="bg-white rounded-3xl border border-slate-100 shadow-xs overflow-hidden">
-        <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
-            <h3 class="font-bold text-slate-800 text-sm">Daftar Modul Rekaman Audio</h3>
-            <span class="text-xs text-slate-400">Sinkron otomatis dengan menu listening aplikasi siswa</span>
+        <div class="px-5 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+                <h3 class="font-bold text-slate-800 text-sm">Daftar Modul Rekaman Audio</h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">Sinkron otomatis dengan menu listening aplikasi siswa</p>
+            </div>
+            <span class="text-xs text-slate-400 font-medium">Total: {{ $listenings->total() }} Paket</span>
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
+        <div class="w-full">
+            <table class="w-full text-left border-collapse table-auto">
                 <thead>
                     <tr class="bg-slate-50/75 border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                        <th class="py-3.5 px-6">Judul Percakapan & Audio</th>
-                        <th class="py-3.5 px-6">Tingkat Kesulitan</th>
-                        <th class="py-3.5 px-6">Durasi</th>
-                        <th class="py-3.5 px-6">Latihan Soal</th>
-                        <th class="py-3.5 px-6">Status</th>
-                        <th class="py-3.5 px-6 text-center">Aksi</th>
+                        <th class="py-3 px-4">Judul Percakapan & Audio</th>
+                        <th class="py-3 px-3 w-28">Tingkat</th>
+                        <th class="py-3 px-3 w-20">Durasi</th>
+                        <th class="py-3 px-3 w-24">Latihan Soal</th>
+                        <th class="py-3 px-3 w-20">Status</th>
+                        <th class="py-3 px-4 w-24 text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-xs font-medium text-slate-700">
@@ -147,69 +145,57 @@
                             };
                         @endphp
                         <tr class="hover:bg-slate-50/50 transition-colors">
-                            <td class="py-4 px-6">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-2xl {{ $iconBg }} flex items-center justify-center font-bold text-sm shrink-0">
+                            <td class="py-3 px-4">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-xl {{ $iconBg }} flex items-center justify-center font-bold text-xs shrink-0">
                                         🎧
                                     </div>
-                                    <div class="min-w-0">
-                                        <a href="{{ route('guru.listening.show', $item->id) }}" class="font-bold text-slate-800 hover:text-[#1E6BFF] transition-colors line-clamp-1">
+                                    <div class="min-w-0 max-w-xs lg:max-w-md">
+                                        <a href="{{ route('guru.listening.show', $item->id) }}" class="font-bold text-slate-800 hover:text-[#1E6BFF] transition-colors truncate block text-xs">
                                             {{ $item->judul }}
                                         </a>
-                                        <p class="text-[11px] text-slate-400 truncate max-w-sm">
+                                        <p class="text-[11px] text-slate-400 truncate mt-0.5">
                                             {{ $item->deskripsi ?? 'Tidak ada ringkasan deskripsi' }}
                                         </p>
                                     </div>
                                 </div>
                             </td>
-                            <td class="py-4 px-6">
-                                <span class="px-3 py-1 rounded-full text-[11px] font-semibold {{ $levelColor }}">
+                            <td class="py-3 px-3 whitespace-nowrap">
+                                <span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold {{ $levelColor }}">
                                     {{ $item->tingkat_kesulitan }}
                                 </span>
                             </td>
-                            <td class="py-4 px-6 text-slate-600 font-mono">
-                                {{ $item->durasi ?? '00:00' }}
+                            <td class="py-3 px-3 text-slate-600 font-mono text-[11.5px] whitespace-nowrap">
+                                <div>{{ $item->durasi ?? '00:00' }}</div>
+                                @if(isset($item->audios_count) && $item->audios_count > 1)
+                                    <span class="text-[10px] text-purple-600 font-bold bg-purple-50 px-1.5 py-0.5 rounded-md">{{ $item->audios_count }} Track</span>
+                                @endif
                             </td>
-                            <td class="py-4 px-6">
-                                <span class="inline-flex items-center gap-1.5 text-slate-700 font-semibold">
-                                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <td class="py-3 px-3 whitespace-nowrap">
+                                <span class="inline-flex items-center gap-1.5 text-slate-700 font-semibold text-[11.5px]">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                     {{ $item->soals_count }} Soal
                                 </span>
                             </td>
-                            <td class="py-4 px-6">
+                            <td class="py-3 px-3 whitespace-nowrap">
                                 @if($item->status === 'aktif')
-                                    <span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-semibold border border-emerald-200">
+                                    <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[10.5px] font-semibold border border-emerald-200">
                                         Aktif
                                     </span>
                                 @else
-                                    <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 text-[11px] font-semibold">
+                                    <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-[10.5px] font-semibold">
                                         Draft
                                     </span>
                                 @endif
                             </td>
-                            <td class="py-4 px-6 text-center">
-                                <div class="flex items-center justify-center gap-2">
-                                    <a href="{{ route('guru.listening.show', $item->id) }}" class="p-2 rounded-xl text-slate-400 hover:text-[#1E6BFF] hover:bg-blue-50 transition-colors" title="Lihat Detail Audio & Soal">
-                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                            <circle cx="12" cy="12" r="3"></circle>
-                                        </svg>
-                                    </a>
-                                    <a href="{{ route('guru.listening.edit', $item->id) }}" class="p-2 rounded-xl text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-colors" title="Edit Modul">
-                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                        </svg>
-                                    </a>
+                            <td class="py-3 px-4 text-center whitespace-nowrap">
+                                <div class="flex items-center justify-center gap-1">
+                                    <x-button variant="show" href="{{ route('guru.listening.show', $item->id) }}" title="Lihat Detail Audio & Soal" />
+                                    <x-button variant="edit" href="{{ route('guru.listening.edit', $item->id) }}" title="Edit Modul" />
                                     <!-- Form Hapus Eksplisit POST -->
                                     <form action="{{ route('guru.listening.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus paket modul listening ini?');" class="inline">
                                         @csrf
-                                        <button type="submit" class="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer" title="Hapus Modul">
-                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <polyline points="3 6 5 6 21 6"></polyline>
-                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                            </svg>
-                                        </button>
+                                        <x-button variant="delete" type="submit" title="Hapus Modul" />
                                     </form>
                                 </div>
                             </td>
@@ -222,9 +208,9 @@
                                 </div>
                                 <p class="text-sm font-semibold text-slate-700">Belum Ada Modul Listening</p>
                                 <p class="text-xs text-slate-400 mt-1">Unggah audio rekaman percakapan pertama untuk pembelajaran listening siswa.</p>
-                                <a href="{{ route('guru.listening.create') }}" class="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-2xl bg-[#1E6BFF] text-white text-xs font-bold hover:bg-[#155BE5] transition-all shadow-xs">
-                                    + Unggah Audio Baru
-                                </a>
+                                <x-button variant="create" href="{{ route('guru.listening.create') }}" class="mt-4">
+                                    Unggah Audio Baru
+                                </x-button>
                             </td>
                         </tr>
                     @endforelse
