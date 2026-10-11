@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\KosakataController;
 use App\Http\Controllers\Api\LoginSiswaController;
 use App\Http\Controllers\Api\MateriApiController;
 use App\Http\Controllers\Api\ModulListeningApiController;
+use App\Http\Controllers\Api\QuizApiController;
 use Illuminate\Support\Facades\Route;
 
 // API Routes - Belajar Bahasa Inggris (Khusus Aplikasi Siswa / Flutter)
@@ -42,6 +43,18 @@ Route::get('/listening', [ModulListeningApiController::class, 'index']);
 Route::get('/listening/{id}', [ModulListeningApiController::class, 'show']);
 // Menyimpan penyelesaian modul listening siswa (+ XP reward)
 Route::post('/listening/{id}/selesai', [ModulListeningApiController::class, 'selesaikan']);
+
+// 2C. MODUL BANK SOAL & KUIS (FLUTTER SISWA)
+// Mengambil ringkasan progres kuis siswa (?siswa_id=...)
+Route::get('/quiz/progres', [QuizApiController::class, 'progres']);
+// Bergabung room kuis via kode room 6 digit
+Route::post('/quiz/join-room', [QuizApiController::class, 'joinRoom']);
+// Mengambil daftar paket kuis aktif (support filter: ?kategori=Grammar&kelas=10&siswa_id=...)
+Route::get('/quiz', [QuizApiController::class, 'index']);
+// Mengambil detail paket kuis beserta butir soal (tanpa kunci saat ujian)
+Route::get('/quiz/{id}', [QuizApiController::class, 'show']);
+// Mengirim lembar jawaban kuis siswa (+ evaluasi nilai & XP reward server-side)
+Route::post('/quiz/{id}/submit', [QuizApiController::class, 'submit']);
 
 // 3. RUTE TERPROTEKSI SISWA (Wajib Token Siswa)
 Route::middleware('auth.siswa')->group(function () {

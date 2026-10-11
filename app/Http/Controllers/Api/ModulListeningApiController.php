@@ -8,6 +8,7 @@ use App\Models\Siswa;
 use App\Models\SiswaListeningProgres;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ModulListeningApiController extends Controller
 {
@@ -189,7 +190,7 @@ class ModulListeningApiController extends Controller
      */
     public function selesaikan(Request $request, int $id): JsonResponse
     {
-        $listening = ModulListening::find($id);
+        $listening = ModulListening::with('soals')->find($id);
 
         if (! $listening) {
             return response()->json([
@@ -198,31 +199,64 @@ class ModulListeningApiController extends Controller
             ], 404);
         }
 
+        $request->validate([
+            'siswa_id' => 'nullable|integer',
+            'skor' => 'nullable|numeric|min:0|max:100',
+            'jawaban' => 'nullable|array',
+            'jawaban.*' => 'nullable|string|max:10',
+        ]);
+
+        $totalSoal = $listening->soals->count();
+
+        // Anti-Cheat: Jika modul listening memiliki latihan soal, seluruh butir soal wajib dikerjakan
+        if ($totalSoal > 0) {
+            $userAnswers = $request->input('jawaban');
+            $answeredCount = is_array($userAnswers)
+                ? count(array_filter($userAnswers, fn ($v) => $v !== null && trim((string) $v) !== ''))
+                : 0;
+
+            if ($answeredCount < $totalSoal) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => "Seluruh {$totalSoal} butir latihan soal listening wajib diselesaikan sebelum menuntaskan modul!",
+                ], 422);
+            }
+
+            // Hitung skor di sisi server
+            $benar = 0;
+            foreach ($listening->soals as $soal) {
+                $userAns = strtoupper(trim((string) ($userAnswers[$soal->id] ?? $userAnswers[(string) $soal->id] ?? '')));
+                $kunci = strtoupper(trim((string) $soal->jawaban_benar));
+                if ($userAns !== '' && $userAns === $kunci) {
+                    $benar++;
+                }
+            }
+            $skor = (int) round(($benar / $totalSoal) * 100);
+        } else {
+            $skor = 100;
+        }
+
+        // Anti-Cheat: XP Reward selalu dari database
+        $baseXp = (int) ($listening->xp_reward ?? 50);
+        $xpDidapat = $totalSoal > 0 ? (int) round($baseXp * max(0.2, $skor / 100)) : $baseXp;
+        $xpDidapat = max(5, $xpDidapat);
+
         $siswaId = $request->input('siswa_id');
-        $skor = $request->input('skor', 100);
-        $xpReward = $request->input('xp_reward', $listening->xp_reward);
-
-        $validSiswa = null;
-        if ($siswaId) {
-            $validSiswa = Siswa::find($siswaId);
-        }
-
-        if (! $validSiswa) {
-            $validSiswa = Siswa::first();
-        }
-
+        $validSiswa = $siswaId ? Siswa::find($siswaId) : null;
         $effectiveSiswaId = $validSiswa?->id;
 
         if ($effectiveSiswaId) {
-            SiswaListeningProgres::updateOrCreate(
-                ['siswa_id' => $effectiveSiswaId, 'modul_listening_id' => $listening->id],
-                [
-                    'status' => 'selesai',
-                    'skor' => $skor,
-                    'xp_didapat' => $xpReward,
-                    'completed_at' => now(),
-                ]
-            );
+            DB::transaction(function () use ($effectiveSiswaId, $listening, $skor, $xpDidapat) {
+                SiswaListeningProgres::updateOrCreate(
+                    ['siswa_id' => $effectiveSiswaId, 'modul_listening_id' => $listening->id],
+                    [
+                        'status' => 'selesai',
+                        'skor' => $skor,
+                        'xp_didapat' => $xpDidapat,
+                        'completed_at' => now(),
+                    ]
+                );
+            });
         }
 
         $totalAudio = ModulListening::where('status', 'aktif')->count();
@@ -238,7 +272,8 @@ class ModulListeningApiController extends Controller
             'data' => [
                 'modul_listening_id' => $listening->id,
                 'judul' => $listening->judul,
-                'xp_didapat' => $xpReward,
+                'skor' => $skor,
+                'xp_didapat' => $xpDidapat,
                 'total_audio' => $totalAudio,
                 'audio_selesai' => $audioSelesai,
                 'persentase' => min($persentase, 100),

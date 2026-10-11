@@ -8,6 +8,7 @@ use App\Models\Siswa;
 use App\Models\SiswaMateriProgres;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MateriApiController extends Controller
 {
@@ -129,11 +130,11 @@ class MateriApiController extends Controller
     }
 
     /**
-     * Menyimpan status penyelesaian modul materi oleh siswa.
+     * Menyimpan status penyelesaian modul materi oleh siswa dengan kalkulasi skor & anti-cheat XP di sisi server.
      */
     public function selesaikan(Request $request, int $id): JsonResponse
     {
-        $materi = Materi::where('status', 'aktif')->find($id);
+        $materi = Materi::with('soals')->where('status', 'aktif')->find($id);
 
         if (! $materi) {
             return response()->json([
@@ -142,23 +143,62 @@ class MateriApiController extends Controller
             ], 404);
         }
 
-        $siswaId = $request->input('siswa_id');
-        $skor = (int) $request->input('skor', 100);
-        $xpReward = (int) $request->input('xp_reward', $materi->xp_reward ?? 50);
+        $request->validate([
+            'siswa_id' => 'nullable|integer',
+            'skor' => 'nullable|numeric|min:0|max:100',
+            'jawaban' => 'nullable|array',
+            'jawaban.*' => 'nullable|string|max:10',
+        ]);
 
+        $siswaId = $request->input('siswa_id');
         $validSiswa = $siswaId ? Siswa::find($siswaId) : null;
         $effectiveSiswaId = $validSiswa?->id;
 
+        // Anti-Cheat: Jika materi memiliki latihan soal, seluruh butir soal wajib dikerjakan
+        $totalSoal = $materi->soals->count();
+        if ($totalSoal > 0) {
+            $userAnswers = $request->input('jawaban');
+            $answeredCount = is_array($userAnswers)
+                ? count(array_filter($userAnswers, fn ($v) => $v !== null && trim((string) $v) !== ''))
+                : 0;
+
+            if ($answeredCount < $totalSoal) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => "Seluruh {$totalSoal} butir latihan soal pemahaman wajib diselesaikan sebelum menuntaskan materi!",
+                ], 422);
+            }
+
+            $benar = 0;
+            foreach ($materi->soals as $soal) {
+                $userAns = strtoupper(trim((string) ($userAnswers[$soal->id] ?? $userAnswers[(string) $soal->id] ?? '')));
+                if ($userAns !== '' && $userAns === strtoupper(trim((string) $soal->kunci_jawaban))) {
+                    $benar++;
+                }
+            }
+            $skor = (int) round(($benar / $totalSoal) * 100);
+        } else {
+            // Modul materi tanpa butir soal (hanya materi bacaan/cerita), otomatis tuntas sempurna
+            $skor = 100;
+        }
+
+        // Anti-Cheat: XP reward SELALU ditentukan dari nilai di database modul materi, bukan payload request
+        $baseXp = (int) ($materi->xp_reward ?? 50);
+        $xpDidapat = $totalSoal > 0 ? (int) round($baseXp * max(0.2, $skor / 100)) : $baseXp;
+        $xpDidapat = max(5, $xpDidapat);
+
         if ($effectiveSiswaId) {
-            SiswaMateriProgres::updateOrCreate(
-                ['siswa_id' => $effectiveSiswaId, 'materi_id' => $materi->id],
-                [
-                    'status' => 'selesai',
-                    'skor' => $skor,
-                    'xp_didapat' => $xpReward,
-                    'completed_at' => now(),
-                ]
-            );
+            DB::transaction(function () use ($effectiveSiswaId, $materi, $skor, $xpDidapat) {
+                SiswaMateriProgres::updateOrCreate(
+                    ['siswa_id' => $effectiveSiswaId, 'materi_id' => $materi->id],
+                    [
+                        'status' => 'selesai',
+                        'skor' => $skor,
+                        'xp_didapat' => $xpDidapat,
+                        'completed_at' => now(),
+                    ]
+                );
+            });
         }
 
         $totalMateri = Materi::where('status', 'aktif')->count();
@@ -174,7 +214,8 @@ class MateriApiController extends Controller
             'data' => [
                 'materi_id' => $materi->id,
                 'judul' => $materi->judul,
-                'xp_didapat' => $xpReward,
+                'skor' => $skor,
+                'xp_didapat' => $xpDidapat,
                 'total_materi' => $totalMateri,
                 'materi_selesai' => $materiSelesai,
                 'persentase' => min($persentase, 100),

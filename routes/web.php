@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginGuruController;
 use App\Http\Controllers\Guru\KategoriMateriController;
 use App\Http\Controllers\Guru\MateriController;
 use App\Http\Controllers\Guru\ModulListeningController;
+use App\Http\Controllers\Guru\QuizController;
 use App\Models\Kosakata;
 use App\Models\Siswa;
 use Illuminate\Support\Facades\Route;
@@ -57,10 +58,14 @@ Route::middleware(['auth'])->group(function () {
     Route::match(['post', 'put'], '/listening/{listening}/update', [ModulListeningController::class, 'update'])->name('guru.listening.update');
     Route::match(['post', 'delete'], '/listening/{listening}/destroy', [ModulListeningController::class, 'destroy'])->name('guru.listening.destroy');
 
-    // Bank Soal & Kuis Guru
-    Route::get('/quiz', function () {
-        return view('guru.bank_soal_kuis.index');
-    })->name('guru.quiz.index');
+    // MODUL 3: BANK SOAL & KUIS GURU (EKSPLISIT GET & POST)
+    Route::get('/quiz', [QuizController::class, 'index'])->name('guru.quiz.index');
+    Route::get('/quiz/create', [QuizController::class, 'create'])->name('guru.quiz.create');
+    Route::post('/quiz/store', [QuizController::class, 'store'])->name('guru.quiz.store');
+    Route::get('/quiz/{quiz}', [QuizController::class, 'show'])->name('guru.quiz.show');
+    Route::get('/quiz/{quiz}/edit', [QuizController::class, 'edit'])->name('guru.quiz.edit');
+    Route::post('/quiz/{quiz}/update', [QuizController::class, 'update'])->name('guru.quiz.update');
+    Route::post('/quiz/{quiz}/destroy', [QuizController::class, 'destroy'])->name('guru.quiz.destroy');
 
     // Bank Kosakata Guru
     Route::get('/kosakata', function () {
