@@ -14,33 +14,20 @@
         </x-button>
     </div>
 
-    @if ($errors->any())
-        <div class="mb-6 p-4 rounded-3xl bg-rose-50 border border-rose-200 text-rose-700 text-xs space-y-1">
-            <div class="font-bold flex items-center gap-2">
-                <span>⚠️</span> Mohon periksa kembali input formulir:
-            </div>
-            <ul class="list-disc list-inside space-y-0.5 pl-4 text-[11px]">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+    <!-- Alert Error Validasi -->
+    <x-alert-errors title="Mohon periksa kembali input formulir:" />
 
     <form action="{{ route('guru.listening.update', $listening->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
         @csrf
 
         <!-- 1. INFORMASI DASAR MODUL -->
         <div class="bg-white p-6 lg:p-7 rounded-3xl border border-slate-100 shadow-xs space-y-5">
-            <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
-                <div class="w-10 h-10 rounded-2xl bg-blue-50 text-[#1E6BFF] flex items-center justify-center font-bold text-sm">
-                    01
-                </div>
-                <div>
-                    <h3 class="font-bold text-slate-800 text-base">Informasi Utama Modul</h3>
-                    <p class="text-xs text-slate-400">Judul, target kelas, dan tingkat kesulitan listening</p>
-                </div>
-            </div>
+            <x-section-header 
+                number="01" 
+                title="Informasi Utama Modul" 
+                subtitle="Judul, target kelas, dan tingkat kesulitan listening" 
+                color="blue" 
+            />
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div class="md:col-span-2">
@@ -114,22 +101,18 @@
 
         <!-- 2. DAFTAR FILE AUDIO PERCAKAPAN (MULTI-TRACK AUDIO) -->
         <div class="bg-white p-6 lg:p-7 rounded-3xl border border-slate-100 shadow-xs space-y-5">
-            <div class="flex items-center justify-between pb-4 border-b border-slate-100 flex-wrap gap-3">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-sm">
-                        02
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-slate-800 text-base">Daftar File Audio / Rekaman Percakapan</h3>
-                        <p class="text-xs text-slate-400">Satu audio bisa digunakan untuk beberapa soal. Kamu bisa menambahkan atau menghapus rekaman audio.</p>
-                    </div>
-                </div>
+            <x-section-header 
+                number="02" 
+                title="Daftar File Audio / Rekaman Percakapan" 
+                subtitle="Satu audio bisa digunakan untuk beberapa soal. Kamu bisa menambahkan atau menghapus rekaman audio." 
+                color="purple"
+            >
                 <button type="button" 
                         onclick="tambahAudioTrack()" 
                         class="px-4 py-2 rounded-2xl bg-purple-50 text-purple-700 hover:bg-purple-100 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs">
                     <span>+</span> Tambah Track Audio Baru
                 </button>
-            </div>
+            </x-section-header>
 
             <!-- Wadah Kartu Audio Tracks -->
             <div id="audio-tracks-container" class="space-y-4">
@@ -262,23 +245,18 @@
 
         <!-- 3. BUILDER LATIHAN SOAL PEMAHAMAN LISTENING (STEP 2 - 5) -->
         <div class="bg-white p-6 lg:p-7 rounded-3xl border border-slate-100 shadow-xs space-y-5">
-            <div class="flex items-center justify-between pb-4 border-b border-slate-100 flex-wrap gap-3">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm">
-                        03
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-slate-800 text-base">Butir Soal Latihan Pemahaman Audio</h3>
-                        <p class="text-xs text-slate-400">Pilih audio yang sesuai untuk tiap butir pertanyaan di bawah ini</p>
-                    </div>
-                </div>
-
+            <x-section-header 
+                number="03" 
+                title="Butir Soal Latihan Pemahaman Audio" 
+                subtitle="Pilih audio yang sesuai untuk tiap butir pertanyaan di bawah ini" 
+                color="emerald"
+            >
                 <button type="button" 
                         onclick="tambahSoal()" 
                         class="px-4 py-2 rounded-2xl bg-blue-50 text-[#1E6BFF] hover:bg-blue-100 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs">
                     <span>+</span> Tambah Pertanyaan
                 </button>
-            </div>
+            </x-section-header>
 
             <!-- Live Peta Sebaran Audio Soal & Deteksi Nomor Loncat (Anti-Teledor) -->
             <div id="audio-mapping-summary" class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2"></div>

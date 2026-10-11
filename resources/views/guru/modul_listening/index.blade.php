@@ -77,35 +77,9 @@
 
     <!-- Ringkasan Statistik Listening -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-5 mb-6">
-        <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-xs flex items-center gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-blue-50 text-[#1E6BFF] flex items-center justify-center font-bold text-lg shrink-0">
-                🎧
-            </div>
-            <div>
-                <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Total Track Audio</p>
-                <h4 class="text-xl font-bold text-slate-800 mt-0.5">{{ $totalAudio }} Paket</h4>
-            </div>
-        </div>
-
-        <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-xs flex items-center gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-lg shrink-0">
-                ✅
-            </div>
-            <div>
-                <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Track Aktif Tayang</p>
-                <h4 class="text-xl font-bold text-slate-800 mt-0.5">{{ $totalAktif }} Track</h4>
-            </div>
-        </div>
-
-        <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-xs flex items-center gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-lg shrink-0">
-                📝
-            </div>
-            <div>
-                <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Total Latihan Soal</p>
-                <h4 class="text-xl font-bold text-slate-800 mt-0.5">{{ $totalSoal }} Pertanyaan</h4>
-            </div>
-        </div>
+        <x-stat-card title="Total Track Audio" :value="$totalAudio . ' Paket'" icon="🎧" color="blue" />
+        <x-stat-card title="Track Aktif Tayang" :value="$totalAktif . ' Track'" icon="✅" color="emerald" />
+        <x-stat-card title="Total Latihan Soal" :value="$totalSoal . ' Pertanyaan'" icon="📝" color="purple" />
     </div>
 
     <!-- Tabel Daftar Track Listening -->
@@ -178,15 +152,7 @@
                                 </span>
                             </td>
                             <td class="py-3 px-3 whitespace-nowrap">
-                                @if($item->status === 'aktif')
-                                    <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[10.5px] font-semibold border border-emerald-200">
-                                        Aktif
-                                    </span>
-                                @else
-                                    <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-[10.5px] font-semibold">
-                                        Draft
-                                    </span>
-                                @endif
+                                <x-badge-status :status="$item->status" />
                             </td>
                             <td class="py-3 px-4 text-center whitespace-nowrap">
                                 <div class="flex items-center justify-center gap-1">
@@ -201,18 +167,14 @@
                             </td>
                         </tr>
                     @empty
-                        <tr>
-                            <td colspan="6" class="py-12 text-center text-slate-400">
-                                <div class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-3 text-xl">
-                                    🎧
-                                </div>
-                                <p class="text-sm font-semibold text-slate-700">Belum Ada Modul Listening</p>
-                                <p class="text-xs text-slate-400 mt-1">Unggah audio rekaman percakapan pertama untuk pembelajaran listening siswa.</p>
-                                <x-button variant="create" href="{{ route('guru.listening.create') }}" class="mt-4">
-                                    Unggah Audio Baru
-                                </x-button>
-                            </td>
-                        </tr>
+                        <x-empty-state 
+                            colspan="6" 
+                            icon="🎧" 
+                            title="Belum Ada Modul Listening" 
+                            subtitle="Unggah audio rekaman percakapan pertama untuk pembelajaran listening siswa."
+                            actionText="Unggah Audio Baru"
+                            :actionUrl="route('guru.listening.create')"
+                        />
                     @endforelse
                 </tbody>
             </table>

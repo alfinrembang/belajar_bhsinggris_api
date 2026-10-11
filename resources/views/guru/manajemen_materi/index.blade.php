@@ -71,35 +71,9 @@
 
     <!-- Ringkasan Statistik Cepat Materi -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-5">
-        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs flex items-center gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-blue-50 text-[#1E6BFF] flex items-center justify-center font-bold text-lg shrink-0">
-                📚
-            </div>
-            <div>
-                <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Total Modul Materi</p>
-                <h4 class="text-xl font-bold text-slate-800 mt-0.5">{{ $totalMateri }} Modul</h4>
-            </div>
-        </div>
-
-        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs flex items-center gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-lg shrink-0">
-                ✅
-            </div>
-            <div>
-                <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Materi Aktif Tayang</p>
-                <h4 class="text-xl font-bold text-slate-800 mt-0.5">{{ $totalAktif }} Modul</h4>
-            </div>
-        </div>
-
-        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs flex items-center gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-lg shrink-0">
-                📱
-            </div>
-            <div>
-                <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Sinkronisasi Flutter</p>
-                <h4 class="text-xl font-bold text-slate-800 mt-0.5">Real-time Live</h4>
-            </div>
-        </div>
+        <x-stat-card title="Total Modul Materi" :value="$totalMateri . ' Modul'" icon="📚" color="blue" />
+        <x-stat-card title="Materi Aktif Tayang" :value="$totalAktif . ' Modul'" icon="✅" color="emerald" />
+        <x-stat-card title="Sinkronisasi Flutter" value="Real-time Live" icon="📱" color="purple" />
     </div>
 
     <!-- Tabel Daftar Modul Materi -->
@@ -168,16 +142,7 @@
                                 </div>
                             </td>
                             <td class="py-4 px-6">
-                                @if($materi->status === 'aktif')
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-semibold">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                        Aktif
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 text-[11px] font-semibold">
-                                        Draft
-                                    </span>
-                                @endif
+                                <x-badge-status :status="$materi->status" />
                             </td>
                             <td class="py-4 px-6 text-center">
                                 <div class="flex items-center justify-center gap-1.5">
@@ -196,17 +161,14 @@
                             </td>
                         </tr>
                     @empty
-                        <tr>
-                            <td colspan="6" class="py-12 text-center text-slate-400">
-                                <div class="flex flex-col items-center justify-center gap-3">
-                                    <div class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-2xl">
-                                        📖
-                                    </div>
-                                    <p class="font-semibold text-slate-600">Belum ada modul materi pembelajaran.</p>
-                                    <p class="text-xs text-slate-400">Klik tombol <strong>+ Tambah Materi Baru</strong> untuk membuat modul pembelajaran pertama.</p>
-                                </div>
-                            </td>
-                        </tr>
+                        <x-empty-state 
+                            colspan="6" 
+                            icon="📖" 
+                            title="Belum ada modul materi pembelajaran." 
+                            subtitle="Klik tombol + Tambah Materi Baru untuk membuat modul pembelajaran pertama."
+                            actionText="Tambah Materi Baru"
+                            :actionUrl="route('guru.materi.create')"
+                        />
                     @endforelse
                 </tbody>
             </table>

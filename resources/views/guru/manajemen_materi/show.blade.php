@@ -65,21 +65,21 @@
         </div>
     </div>
 
-    <!-- KONTEN 2: CONTOH TEKS, GAMBAR, DAN AUDIO LISTENING -->
-    @if($materi->contoh_teks || $materi->audio_materi || $materi->gambar_materi)
+    <!-- KONTEN 2: CONTOH TEKS / CERITA BACAAN & GAMBAR ILUSTRASI -->
+    @if($materi->contoh_teks || $materi->gambar_materi)
         <div class="bg-white p-6 lg:p-7 rounded-3xl border border-slate-100 shadow-xs space-y-5">
             <div class="flex items-center gap-2.5 pb-3 border-b border-slate-100">
-                <span class="p-2 rounded-xl bg-emerald-50 text-emerald-600 text-base">🎧</span>
+                <span class="p-2 rounded-xl bg-emerald-50 text-emerald-600 text-base">📚</span>
                 <div>
-                    <h3 class="font-bold text-slate-800 text-sm">Contoh Penerapan & Audio Listening</h3>
-                    <p class="text-[11px] text-slate-400">Dapat didengar oleh siswa saat membaca contoh teks</p>
+                    <h3 class="font-bold text-slate-800 text-sm">Contoh Teks / Cerita Bacaan</h3>
+                    <p class="text-[11px] text-slate-400">Contoh penerapan materi dalam teks nyata, cerita pendek, atau dialog percakapan</p>
                 </div>
             </div>
 
-            <!-- Gambar Cover / Ilustrasi jika ada -->
+            <!-- Gambar Ilustrasi jika ada -->
             @if($materi->gambar_materi)
                 <div class="rounded-2xl overflow-hidden max-h-72 border border-slate-200">
-                    <img src="{{ $materi->gambar_url }}" alt="Cover Materi" class="w-full h-full object-cover">
+                    <img src="{{ $materi->gambar_url }}" alt="Ilustrasi Cerita" class="w-full h-full object-cover">
                 </div>
             @endif
 
@@ -87,22 +87,6 @@
             @if($materi->contoh_teks)
                 <div class="p-5 rounded-2xl bg-emerald-50/40 border border-emerald-100 text-xs text-slate-800 leading-relaxed italic whitespace-pre-line">
                     "{{ $materi->contoh_teks }}"
-                </div>
-            @endif
-
-            <!-- Pemutar Audio MP3 jika ada -->
-            @if($materi->audio_materi)
-                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-base">
-                            ▶
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-slate-800">Audio Pelafalan Contoh Teks</p>
-                            <p class="text-[11px] text-slate-400">Dengarkan cara pengucapan native speaker</p>
-                        </div>
-                    </div>
-                    <audio controls src="{{ $materi->audio_url }}" class="w-full sm:w-72 h-9"></audio>
                 </div>
             @endif
         </div>
