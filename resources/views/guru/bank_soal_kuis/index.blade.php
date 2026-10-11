@@ -1,81 +1,89 @@
 <x-layout 
     title="Bank Soal & Kuis - Study English Prima" 
     pageTitle="Bank Soal & Kuis" 
-    pageSubtitle="Kelola paket soal kuis, butir pertanyaan, kunci jawaban, dan kode room siswa." 
+    pageSubtitle="Kelola paket kuis evaluasi, room ujian live, butir soal interaktif, dan kunci jawaban." 
     active="quiz"
 >
-    <!-- Bar Aksi Atas: Pencarian & Tombol Buat Paket Kuis -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 lg:p-6 rounded-3xl border border-slate-100 shadow-xs">
-        <!-- Pencarian Kuis -->
-        <div class="relative w-full md:w-80">
-            <svg class="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <input type="text" 
-                   placeholder="Cari paket kuis atau kode room..." 
-                   class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none transition-all">
+    <!-- Pesan Flash Sukses / Error -->
+    @if (session('success'))
+        <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-base">✅</span>
+                <span>{{ session('success') }}</span>
+            </div>
+            <button onclick="this.parentElement.remove()" class="text-emerald-600 hover:text-emerald-900 font-bold text-sm leading-none">&times;</button>
         </div>
+    @endif
 
-        <!-- Filter & Tombol Tambah -->
-        <div class="flex items-center gap-3">
-            <select class="px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#1E6BFF]">
+    @if (session('error'))
+        <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-base">⚠️</span>
+                <span>{{ session('error') }}</span>
+            </div>
+            <button onclick="this.parentElement.remove()" class="text-rose-600 hover:text-rose-900 font-bold text-sm leading-none">&times;</button>
+        </div>
+    @endif
+
+    <!-- Bar Aksi Atas: Pencarian, Filter & Tombol Buat Paket Kuis -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 lg:p-6 rounded-3xl border border-slate-100 shadow-xs">
+        <form method="GET" action="{{ route('guru.quiz.index') }}" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto flex-1">
+            <!-- Pencarian Kuis -->
+            <div class="relative flex-1 max-w-md">
+                <svg class="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" 
+                       name="q" 
+                       value="{{ request('q') }}"
+                       placeholder="Cari judul kuis atau kode room..." 
+                       class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none transition-all">
+            </div>
+
+            <!-- Filter Kategori -->
+            <select name="kategori" onchange="this.form.submit()" class="px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#1E6BFF]">
                 <option value="">Semua Kategori</option>
-                <option value="grammar">Grammar Test</option>
-                <option value="vocab">Vocabulary Challenge</option>
-                <option value="reading">Reading Comprehension</option>
+                <option value="Grammar" {{ request('kategori') == 'Grammar' ? 'selected' : '' }}>Grammar Test</option>
+                <option value="Vocabulary" {{ request('kategori') == 'Vocabulary' ? 'selected' : '' }}>Vocabulary Challenge</option>
+                <option value="Reading" {{ request('kategori') == 'Reading' ? 'selected' : '' }}>Reading Comprehension</option>
+                <option value="Speaking" {{ request('kategori') == 'Speaking' ? 'selected' : '' }}>Speaking & Expression</option>
+                <option value="General" {{ request('kategori') == 'General' ? 'selected' : '' }}>General English</option>
             </select>
 
-            <!-- Tombol Tambah Kuis -->
-            <a href="#" 
-               class="px-5 py-2.5 rounded-2xl bg-[#1E6BFF] hover:bg-[#155BE5] text-white font-semibold text-xs shadow-[0_6px_16px_rgba(30,107,255,0.28)] transition-all flex items-center gap-2 shrink-0">
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-                Buat Paket Kuis
-            </a>
-        </div>
+            <!-- Filter Kelas -->
+            <select name="kelas" onchange="this.form.submit()" class="px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#1E6BFF]">
+                <option value="">Semua Kelas</option>
+                <option value="10" {{ request('kelas') == '10' ? 'selected' : '' }}>Kelas 10</option>
+                <option value="11" {{ request('kelas') == '11' ? 'selected' : '' }}>Kelas 11</option>
+                <option value="12" {{ request('kelas') == '12' ? 'selected' : '' }}>Kelas 12</option>
+            </select>
+
+            @if(request('q') || request('kategori') || request('kelas'))
+                <a href="{{ route('guru.quiz.index') }}" class="px-3 py-2 text-xs font-semibold text-slate-500 hover:text-rose-600 transition-colors flex items-center gap-1">
+                    Reset
+                </a>
+            @endif
+        </form>
+
+        <!-- Tombol Tambah Kuis -->
+        <x-button variant="create" href="{{ route('guru.quiz.create') }}">
+            Buat Paket Kuis
+        </x-button>
     </div>
 
     <!-- Ringkasan Statistik Kuis -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-5">
-        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs flex items-center gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-blue-50 text-[#1E6BFF] flex items-center justify-center font-bold text-lg shrink-0">
-                📋
-            </div>
-            <div>
-                <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Total Paket Kuis</p>
-                <h4 class="text-xl font-bold text-slate-800 mt-0.5">5 Paket</h4>
-            </div>
-        </div>
-
-        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs flex items-center gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-lg shrink-0">
-                ❓
-            </div>
-            <div>
-                <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Total Butir Soal</p>
-                <h4 class="text-xl font-bold text-slate-800 mt-0.5">50 Butir Soal</h4>
-            </div>
-        </div>
-
-        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs flex items-center gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-lg shrink-0">
-                🚀
-            </div>
-            <div>
-                <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Room Ujian Aktif</p>
-                <h4 class="text-xl font-bold text-slate-800 mt-0.5">2 Room Kelas</h4>
-            </div>
-        </div>
+        <x-stat-card title="Total Paket Kuis" :value="$totalQuiz . ' Paket'" icon="📋" color="blue" />
+        <x-stat-card title="Total Butir Soal" :value="$totalSoal . ' Butir'" icon="❓" color="purple" />
+        <x-stat-card title="Paket Kuis Aktif" :value="$totalAktif . ' Kuis'" icon="🚀" color="emerald" />
     </div>
 
     <!-- Tabel Daftar Paket Kuis -->
     <div class="bg-white rounded-3xl border border-slate-100 shadow-xs overflow-hidden">
         <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
             <h3 class="font-bold text-slate-800 text-sm">Daftar Paket Kuis & Room Ujian</h3>
-            <span class="text-xs text-slate-400">Sinkron dengan menu kuis aplikasi siswa</span>
+            <span class="text-xs text-slate-400">Terhubung live dengan kuis & kode room aplikasi siswa</span>
         </div>
 
         <div class="overflow-x-auto">
@@ -83,97 +91,135 @@
                 <thead>
                     <tr class="bg-slate-50/75 border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                         <th class="py-3.5 px-6">Nama Paket & Kode Room</th>
-                        <th class="py-3.5 px-6">Kategori</th>
+                        <th class="py-3.5 px-6">Kategori & Kelas</th>
                         <th class="py-3.5 px-6">Jumlah Soal</th>
-                        <th class="py-3.5 px-6">Durasi Waktu</th>
+                        <th class="py-3.5 px-6">Durasi</th>
                         <th class="py-3.5 px-6">Status</th>
                         <th class="py-3.5 px-6 text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-xs font-medium text-slate-700">
-                    <!-- Baris 1 -->
-                    <tr class="hover:bg-slate-50/50 transition-colors">
-                        <td class="py-4 px-6">
-                            <div class="flex items-center gap-3">
-                                <div class="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-xs shrink-0">
-                                    Q1
+                    @forelse ($quizzes as $quiz)
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                            <td class="py-4 px-6">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#1E6BFF] flex items-center justify-center font-bold text-xs shrink-0">
+                                        {{ $quiz->kategori_inisial }}
+                                    </div>
+                                    <div>
+                                        <a href="{{ route('guru.quiz.show', $quiz) }}" class="font-bold text-slate-800 hover:text-[#1E6BFF] transition-colors block">
+                                            {{ $quiz->judul }}
+                                        </a>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <span class="inline-flex items-center gap-1 font-mono text-[11px] font-bold text-[#1E6BFF] bg-blue-50 px-2 py-0.5 rounded-md">
+                                                ROOM: {{ $quiz->kode_room }}
+                                            </span>
+                                            <button type="button" 
+                                                    onclick="salinKodeRoom('{{ $quiz->kode_room }}', this)" 
+                                                    class="text-slate-400 hover:text-[#1E6BFF] transition-colors p-0.5" 
+                                                    title="Salin Kode Room">
+                                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p class="font-bold text-slate-800">Basic Grammar & Tenses Quiz</p>
-                                    <span class="inline-flex items-center gap-1 font-mono text-[11px] font-bold text-[#1E6BFF] bg-blue-50 px-2 py-0.5 rounded-md mt-0.5">
-                                        ROOM: ENG-10RPL1
+                            </td>
+                            <td class="py-4 px-6">
+                                <div class="flex flex-col gap-1 items-start">
+                                    <span class="px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 text-[11px] font-semibold">
+                                        {{ $quiz->kategori }}
+                                    </span>
+                                    <span class="text-[11px] text-slate-400">
+                                        Kelas: {{ $quiz->tingkat_kelas }}
                                     </span>
                                 </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <span class="px-3 py-1 rounded-full bg-purple-50 text-purple-600 text-[11px] font-semibold">Grammar</span>
-                        </td>
-                        <td class="py-4 px-6 text-slate-600">10 Soal PG</td>
-                        <td class="py-4 px-6 text-slate-600">15 Menit</td>
-                        <td class="py-4 px-6">
-                            <span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-semibold">Aktif</span>
-                        </td>
-                        <td class="py-4 px-6 text-center">
-                            <div class="flex items-center justify-center gap-2">
-                                <button class="p-1.5 rounded-lg text-slate-400 hover:text-[#1E6BFF] hover:bg-blue-50 transition-colors" title="Edit Kuis">
-                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                    </svg>
-                                </button>
-                                <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus Kuis">
-                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="3 6 5 6 21 6"></polyline>
-                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                            <td class="py-4 px-6 text-slate-600 font-semibold">
+                                {{ $quiz->soals_count ?? $quiz->soals->count() }} Butir
+                            </td>
+                            <td class="py-4 px-6 text-slate-600">
+                                {{ $quiz->durasi_menit }} Menit
+                            </td>
+                            <td class="py-4 px-6">
+                                <x-badge-status :status="$quiz->status" />
+                            </td>
+                            <td class="py-4 px-6 text-center">
+                                <div class="flex items-center justify-center gap-2">
+                                    <!-- Detail / Pratinjau -->
+                                    <a href="{{ route('guru.quiz.show', $quiz) }}" 
+                                       class="p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors" 
+                                       title="Pratinjau & Hasil Siswa">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                    </a>
 
-                    <!-- Baris 2 -->
-                    <tr class="hover:bg-slate-50/50 transition-colors">
-                        <td class="py-4 px-6">
-                            <div class="flex items-center gap-3">
-                                <div class="w-9 h-9 rounded-xl bg-blue-50 text-[#1E6BFF] flex items-center justify-center font-bold text-xs shrink-0">
-                                    Q2
+                                    <!-- Edit -->
+                                    <a href="{{ route('guru.quiz.edit', $quiz) }}" 
+                                       class="p-1.5 rounded-lg text-slate-400 hover:text-[#1E6BFF] hover:bg-blue-50 transition-colors" 
+                                       title="Edit Paket Kuis">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                        </svg>
+                                    </a>
+
+                                    <!-- Hapus -->
+                                    <form action="{{ route('guru.quiz.destroy', $quiz) }}" 
+                                          method="POST" 
+                                          onsubmit="return confirm('Apakah Anda yakin ingin menghapus paket kuis &quot;{{ addslashes($quiz->judul) }}&quot; beserta seluruh butir soalnya?')"
+                                          class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" 
+                                                class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" 
+                                                title="Hapus Kuis">
+                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <polyline points="3 6 5 6 21 6"></polyline>
+                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                            </svg>
+                                        </button>
+                                    </form>
                                 </div>
-                                <div>
-                                    <p class="font-bold text-slate-800">Vocabulary Master Level 1</p>
-                                    <span class="inline-flex items-center gap-1 font-mono text-[11px] font-bold text-[#1E6BFF] bg-blue-50 px-2 py-0.5 rounded-md mt-0.5">
-                                        ROOM: VOCAB-10
-                                    </span>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <span class="px-3 py-1 rounded-full bg-blue-50 text-[#1E6BFF] text-[11px] font-semibold">Vocabulary</span>
-                        </td>
-                        <td class="py-4 px-6 text-slate-600">15 Soal PG</td>
-                        <td class="py-4 px-6 text-slate-600">20 Menit</td>
-                        <td class="py-4 px-6">
-                            <span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-semibold">Aktif</span>
-                        </td>
-                        <td class="py-4 px-6 text-center">
-                            <div class="flex items-center justify-center gap-2">
-                                <button class="p-1.5 rounded-lg text-slate-400 hover:text-[#1E6BFF] hover:bg-blue-50 transition-colors" title="Edit Kuis">
-                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                    </svg>
-                                </button>
-                                <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus Kuis">
-                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="3 6 5 6 21 6"></polyline>
-                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
+                    @empty
+                        <x-empty-state 
+                            colspan="6" 
+                            icon="📭" 
+                            title="Belum ada paket kuis" 
+                            subtitle="Buat paket kuis dan bagikan kode room ujian kepada siswa Anda."
+                            actionText="Buat Paket Kuis Baru"
+                            :actionUrl="route('guru.quiz.create')"
+                        />
+                    @endforelse
                 </tbody>
             </table>
         </div>
+
+        @if($quizzes->hasPages())
+            <div class="px-6 py-4 border-t border-slate-100">
+                {{ $quizzes->links() }}
+            </div>
+        @endif
     </div>
+
+    <!-- Script Salin Kode Room -->
+    <script>
+        function salinKodeRoom(kode, btn) {
+            navigator.clipboard.writeText(kode).then(() => {
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = `<span class="text-[10px] text-emerald-600 font-bold">Tersalin!</span>`;
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                }, 1500);
+            }).catch(err => {
+                alert('Kode room: ' + kode);
+            });
+        }
+    </script>
 </x-layout>
