@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             SiswaSeeder::class,
             KategoriMateriSeeder::class,
             ModulListeningSeeder::class,
+            QuizSeeder::class,
         ]);
     }
 }
