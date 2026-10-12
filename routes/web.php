@@ -2,10 +2,15 @@
 
 use App\Http\Controllers\Auth\LoginGuruController;
 use App\Http\Controllers\Guru\KategoriMateriController;
+use App\Http\Controllers\Guru\LaporanAnalitikController;
 use App\Http\Controllers\Guru\MateriController;
 use App\Http\Controllers\Guru\ModulListeningController;
+use App\Http\Controllers\Guru\PengaturanSistemController;
 use App\Http\Controllers\Guru\QuizController;
-use App\Models\Kosakata;
+use App\Http\Controllers\Guru\SiswaController;
+use App\Models\Materi;
+use App\Models\ModulListening;
+use App\Models\Quiz;
 use App\Models\Siswa;
 use Illuminate\Support\Facades\Route;
 
@@ -26,9 +31,11 @@ Route::middleware(['auth'])->group(function () {
     // 0. Dashboard Utama
     Route::get('/dashboard', function () {
         $totalSiswa = Siswa::count();
-        $totalKosakata = Kosakata::count();
+        $totalMateri = Materi::count();
+        $totalListening = ModulListening::count();
+        $totalQuiz = Quiz::count();
 
-        return view('guru.dashboard', compact('totalSiswa', 'totalKosakata'));
+        return view('guru.dashboard', compact('totalSiswa', 'totalMateri', 'totalListening', 'totalQuiz'));
     })->name('guru.dashboard');
 
     // MODUL 1: MANAJEMEN MATERI PEMBELAJARAN (EKSPLISIT GET & POST)
@@ -67,19 +74,16 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/quiz/{quiz}/update', [QuizController::class, 'update'])->name('guru.quiz.update');
     Route::post('/quiz/{quiz}/destroy', [QuizController::class, 'destroy'])->name('guru.quiz.destroy');
 
-    // Bank Kosakata Guru
-    Route::get('/kosakata', function () {
-        $daftarKosakata = Kosakata::latest()->get();
-
-        return view('guru.bank_kosakata.index', compact('daftarKosakata'));
-    })->name('guru.kosakata.index');
-
-    // Manajemen Siswa & Kelas Guru
-    Route::get('/siswa', function () {
-        $daftarSiswa = Siswa::latest()->get();
-
-        return view('guru.manajemen_siswa_kelas.index', compact('daftarSiswa'));
-    })->name('guru.siswa.index');
+    // MODUL 4: MANAJEMEN SISWA & KELAS GURU
+    Route::get('/siswa', [SiswaController::class, 'index'])->name('guru.siswa.index');
+    Route::get('/siswa/create', [SiswaController::class, 'create'])->name('guru.siswa.create');
+    Route::post('/siswa/store', [SiswaController::class, 'store'])->name('guru.siswa.store');
+    Route::get('/siswa/{siswa}', [SiswaController::class, 'show'])->name('guru.siswa.show');
+    Route::get('/siswa/{siswa}/edit', [SiswaController::class, 'edit'])->name('guru.siswa.edit');
+    Route::post('/siswa/{siswa}/update', [SiswaController::class, 'update'])->name('guru.siswa.update');
+    Route::post('/siswa/toggle-kenaikan-kelas', [SiswaController::class, 'toggleKenaikanKelas'])->name('guru.siswa.toggle_kenaikan');
+    Route::post('/siswa/{siswa}/reset-password', [SiswaController::class, 'resetPassword'])->name('guru.siswa.reset_password');
+    Route::post('/siswa/{siswa}/destroy', [SiswaController::class, 'destroy'])->name('guru.siswa.destroy');
 
     // Mini Games & Leaderboard Guru
     Route::get('/games', function () {
@@ -88,15 +92,15 @@ Route::middleware(['auth'])->group(function () {
         return view('guru.mini_game_leaderboard.index', compact('daftarSiswa'));
     })->name('guru.game.index');
 
-    // Laporan & Analitik Guru
-    Route::get('/laporan', function () {
-        $daftarSiswa = Siswa::latest()->get();
+    // MODUL 5: LAPORAN & ANALITIK GURU
+    Route::get('/laporan', [LaporanAnalitikController::class, 'index'])->name('guru.laporan.index');
+    Route::get('/laporan/export-excel', [LaporanAnalitikController::class, 'exportExcel'])->name('guru.laporan.export_excel');
+    Route::get('/laporan/export-csv', [LaporanAnalitikController::class, 'exportCsv'])->name('guru.laporan.export_csv');
+    Route::get('/laporan/cetak', [LaporanAnalitikController::class, 'cetak'])->name('guru.laporan.cetak');
 
-        return view('guru.laporan_analitik.index', compact('daftarSiswa'));
-    })->name('guru.laporan.index');
-
-    // Pengaturan Sistem Guru
-    Route::get('/pengaturan', function () {
-        return view('guru.pengaturan_sistem.index');
-    })->name('guru.pengaturan.index');
+    // MODUL 6: PENGATURAN SISTEM GURU
+    Route::get('/pengaturan', [PengaturanSistemController::class, 'index'])->name('guru.pengaturan.index');
+    Route::post('/pengaturan/profil', [PengaturanSistemController::class, 'updateProfil'])->name('guru.pengaturan.update_profil');
+    Route::post('/pengaturan/password', [PengaturanSistemController::class, 'updatePassword'])->name('guru.pengaturan.update_password');
+    Route::post('/pengaturan/akademik', [PengaturanSistemController::class, 'updateAkademik'])->name('guru.pengaturan.update_akademik');
 });
