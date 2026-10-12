@@ -27,6 +27,7 @@ class Siswa extends Authenticatable
         'no_absen',
         'password',
         'api_token',
+        'koin',
     ];
 
     /**

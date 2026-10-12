@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\LoginSiswaController;
 use App\Http\Controllers\Api\MateriApiController;
 use App\Http\Controllers\Api\ModulListeningApiController;
 use App\Http\Controllers\Api\QuizApiController;
+use App\Http\Controllers\Api\PuzzleApiController;
 use Illuminate\Support\Facades\Route;
 
 // API Routes - Belajar Bahasa Inggris (Khusus Aplikasi Siswa / Flutter)
@@ -55,6 +56,12 @@ Route::get('/quiz', [QuizApiController::class, 'index']);
 Route::get('/quiz/{id}', [QuizApiController::class, 'show']);
 // Mengirim lembar jawaban kuis siswa (+ evaluasi nilai & XP reward server-side)
 Route::post('/quiz/{id}/submit', [QuizApiController::class, 'submit']);
+
+// 2D. MODUL GAME PUZZLE MASTER (FLUTTER SISWA)
+// Mengambil data progres level & koin siswa (?siswa_id=...&difficulty=mudah/sedang/sulit)
+Route::get('/puzzle/progres', [PuzzleApiController::class, 'getProgres']);
+// Menyimpan hasil penyelesaian puzzle siswa (+ koin reward & unlock level berikutnya)
+Route::post('/puzzle/selesai', [PuzzleApiController::class, 'submitSelesai']);
 
 // 3. RUTE TERPROTEKSI SISWA (Wajib Token Siswa)
 Route::middleware('auth.siswa')->group(function () {
