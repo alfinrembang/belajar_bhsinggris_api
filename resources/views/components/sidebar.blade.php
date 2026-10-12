@@ -89,17 +89,6 @@
                 <span>Bank Soal & Kuis</span>
             </a>
 
-            <!-- 5. Bank Kosakata -->
-            <a href="{{ route('guru.kosakata.index') }}" 
-               class="flex items-center gap-3.5 px-4 py-3.5 rounded-2xl text-[14px] transition-all duration-150 {{ $active === 'kosakata' ? 'bg-[#1E6BFF] text-white shadow-[0_6px_16px_rgba(30,107,255,0.28)] font-semibold' : 'text-slate-700 hover:bg-slate-100/80 hover:text-slate-900 font-medium' }}">
-                <svg class="w-5 h-5 shrink-0 {{ $active === 'kosakata' ? 'text-white' : 'text-slate-600' }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path>
-                    <path d="M9 7h6"></path>
-                    <path d="M9 11h6"></path>
-                </svg>
-                <span>Bank Kosakata</span>
-            </a>
-
             <!-- 6. Manajemen Siswa & Kelas -->
             <a href="{{ route('guru.siswa.index') }}" 
                class="flex items-center gap-3.5 px-4 py-3.5 rounded-2xl text-[14px] transition-all duration-150 {{ $active === 'siswa' ? 'bg-[#1E6BFF] text-white shadow-[0_6px_16px_rgba(30,107,255,0.28)] font-semibold' : 'text-slate-700 hover:bg-slate-100/80 hover:text-slate-900 font-medium' }}">

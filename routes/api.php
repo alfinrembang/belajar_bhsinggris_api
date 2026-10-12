@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Api\AuthSiswaController;
 use App\Http\Controllers\Api\KategoriMateriApiController;
-use App\Http\Controllers\Api\KosakataController;
 use App\Http\Controllers\Api\LoginSiswaController;
 use App\Http\Controllers\Api\MateriApiController;
 use App\Http\Controllers\Api\ModulListeningApiController;
@@ -22,6 +21,8 @@ Route::post('/siswa/reset-sandi', [LoginSiswaController::class, 'resetSandi']);
 // Masuk Siswa & Cek Profil Siswa Sendiri (Kompatibilitas)
 Route::post('/siswa/masuk', [LoginSiswaController::class, 'masuk']);
 Route::get('/siswa/profil/{nis}', [AuthSiswaController::class, 'profil']);
+Route::get('/siswa/status-akademik', [AuthSiswaController::class, 'statusAkademik']);
+Route::post('/siswa/update-profil', [AuthSiswaController::class, 'updateProfil']);
 
 // 2. MODUL MATERI PEMBELAJARAN (FLUTTER SISWA)
 // Mengambil daftar master kategori materi untuk Flutter (nama, warna, icon)
@@ -69,11 +70,7 @@ Route::middleware('auth.siswa')->group(function () {
     Route::post('/siswa/logout', [LoginSiswaController::class, 'logout']);
 });
 
-// 4. DATA KOSAKATA & MASTER KELAS
-// Data Kosakata (Hanya Baca: Siswa & Guru bisa melihat)
-Route::get('/kosakata', [KosakataController::class, 'index']);
-Route::get('/kosakata/{id}', [KosakataController::class, 'show']);
-
+// 4. DATA MASTER KELAS
 // Helper: Data Master Dropdown Kelas untuk Flutter (Tingkat, Jurusan, Nomor)
 Route::get('/kelas', function () {
     return response()->json([
@@ -88,9 +85,4 @@ Route::get('/kelas', function () {
 Route::middleware('auth.guru')->group(function () {
     // Kelola Data Siswa (Hanya Guru yang boleh melihat rekap semua siswa)
     Route::get('/siswa', [AuthSiswaController::class, 'index']);
-
-    // Kelola Kosakata (Hanya Guru yang boleh Tambah, Ubah, Hapus)
-    Route::post('/kosakata', [KosakataController::class, 'store']);
-    Route::put('/kosakata/{id}', [KosakataController::class, 'update']);
-    Route::delete('/kosakata/{id}', [KosakataController::class, 'destroy']);
 });
