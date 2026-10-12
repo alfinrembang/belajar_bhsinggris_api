@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -25,6 +26,8 @@ class Siswa extends Authenticatable
         'jurusan',
         'no_kelas',
         'no_absen',
+        'tahun_ajaran_aktif',
+        'status_kelulusan',
         'password',
         'api_token',
         'koin',
@@ -72,4 +75,28 @@ class Siswa extends Authenticatable
     protected $appends = [
         'kelas_lengkap',
     ];
+
+    /**
+     * Relasi ke riwayat pengerjaan latihan modul materi.
+     */
+    public function materiProgres(): HasMany
+    {
+        return $this->hasMany(SiswaMateriProgres::class, 'siswa_id');
+    }
+
+    /**
+     * Relasi ke riwayat pengerjaan modul listening audio.
+     */
+    public function listeningProgres(): HasMany
+    {
+        return $this->hasMany(SiswaListeningProgres::class, 'siswa_id');
+    }
+
+    /**
+     * Relasi ke riwayat pengerjaan paket kuis & room ujian.
+     */
+    public function quizProgres(): HasMany
+    {
+        return $this->hasMany(SiswaQuizProgres::class, 'siswa_id');
+    }
 }
