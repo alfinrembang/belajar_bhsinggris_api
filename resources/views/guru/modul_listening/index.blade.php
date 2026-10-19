@@ -77,40 +77,40 @@
 
     <!-- Ringkasan Statistik Listening -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-5 mb-6">
-        <x-stat-card title="Total Track Audio" :value="$totalAudio . ' Paket'" icon="🎧" color="blue" />
-        <x-stat-card title="Track Aktif Tayang" :value="$totalAktif . ' Track'" icon="✅" color="emerald" />
-        <x-stat-card title="Total Latihan Soal" :value="$totalSoal . ' Pertanyaan'" icon="📝" color="purple" />
+        <x-stat-card title="Total Track Audio" :value="$totalAudio . ' Paket'" icon="headphones" color="blue" />
+        <x-stat-card title="Track Aktif Tayang" :value="$totalAktif . ' Track'" icon="check" color="emerald" />
+        <x-stat-card title="Total Latihan Soal" :value="$totalSoal . ' Pertanyaan'" icon="file-text" color="purple" />
     </div>
 
     <!-- Tabel Daftar Track Listening -->
-    <div class="bg-white rounded-3xl border border-slate-100 shadow-xs overflow-hidden">
+    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
                 <h3 class="font-bold text-slate-800 text-sm">Daftar Modul Rekaman Audio</h3>
                 <p class="text-[11px] text-slate-400 mt-0.5">Sinkron otomatis dengan menu listening aplikasi siswa</p>
             </div>
-            <span class="text-xs text-slate-400 font-medium">Total: {{ $listenings->total() }} Paket</span>
+            <span class="text-xs text-slate-500 font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200/60">Total: {{ $listenings->total() }} Paket</span>
         </div>
 
-        <div class="w-full">
-            <table class="w-full text-left border-collapse table-auto">
+        <div class="w-full overflow-hidden">
+            <table class="w-full table-fixed text-left border-collapse">
                 <thead>
-                    <tr class="bg-slate-50/75 border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                        <th class="py-3 px-4">Judul Percakapan & Audio</th>
-                        <th class="py-3 px-3 w-28">Tingkat</th>
-                        <th class="py-3 px-3 w-20">Durasi</th>
-                        <th class="py-3 px-3 w-24">Latihan Soal</th>
-                        <th class="py-3 px-3 w-20">Status</th>
-                        <th class="py-3 px-4 w-24 text-center">Aksi</th>
+                    <tr class="bg-slate-50/75 border-b border-slate-200/70 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                        <th class="py-3 px-4 w-[36%]">Judul Percakapan & Audio</th>
+                        <th class="py-3 px-2.5 w-[13%]">Tingkat</th>
+                        <th class="py-3 px-2.5 w-[11%]">Durasi</th>
+                        <th class="py-3 px-2.5 w-[13%]">Latihan Soal</th>
+                        <th class="py-3 px-2.5 w-[11%]">Status</th>
+                        <th class="py-3 px-3 w-[16%] text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-xs font-medium text-slate-700">
                     @forelse($listenings as $item)
                         @php
                             $levelColor = match($item->tingkat_kesulitan) {
-                                'Intermediate' => 'bg-purple-50 text-purple-600 border border-purple-200/80',
-                                'Advanced' => 'bg-rose-50 text-rose-600 border border-rose-200/80',
-                                default => 'bg-blue-50 text-[#1E6BFF] border border-blue-200/80',
+                                'Intermediate' => 'bg-purple-50 text-purple-700 border-purple-100',
+                                'Advanced' => 'bg-rose-50 text-rose-700 border-rose-100',
+                                default => 'bg-blue-50 text-[#1E6BFF] border-blue-100',
                             };
                             $iconBg = match($item->tingkat_kesulitan) {
                                 'Intermediate' => 'bg-purple-50 text-purple-600',
@@ -118,51 +118,54 @@
                                 default => 'bg-blue-50 text-[#1E6BFF]',
                             };
                         @endphp
-                        <tr class="hover:bg-slate-50/50 transition-colors">
+                        <tr class="hover:bg-slate-50/70 transition-colors">
                             <td class="py-3 px-4">
-                                <div class="flex items-center gap-2.5">
-                                    <div class="w-8 h-8 rounded-xl {{ $iconBg }} flex items-center justify-center font-bold text-xs shrink-0">
-                                        🎧
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div class="w-8 h-8 rounded-lg {{ $iconBg }} flex items-center justify-center shrink-0 border border-slate-200/60">
+                                        <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                                            <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+                                        </svg>
                                     </div>
-                                    <div class="min-w-0 max-w-xs lg:max-w-md">
-                                        <a href="{{ route('guru.listening.show', $item->id) }}" class="font-bold text-slate-800 hover:text-[#1E6BFF] transition-colors truncate block text-xs">
+                                    <div class="min-w-0 flex-1">
+                                        <a href="{{ route('guru.listening.show', $item->id) }}" class="font-bold text-slate-800 hover:text-blue-600 transition-colors truncate block text-xs" title="{{ $item->judul }}">
                                             {{ $item->judul }}
                                         </a>
-                                        <p class="text-[11px] text-slate-400 truncate mt-0.5">
+                                        <p class="text-[11px] text-slate-400 truncate mt-0.5" title="{{ $item->deskripsi }}">
                                             {{ $item->deskripsi ?? 'Tidak ada ringkasan deskripsi' }}
                                         </p>
                                     </div>
                                 </div>
                             </td>
-                            <td class="py-3 px-3 whitespace-nowrap">
-                                <span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold {{ $levelColor }}">
+                            <td class="py-3 px-2.5 whitespace-nowrap">
+                                <span class="whitespace-nowrap px-2.5 py-0.5 rounded-md text-[10.5px] font-semibold border {{ $levelColor }} inline-flex items-center">
                                     {{ $item->tingkat_kesulitan }}
                                 </span>
                             </td>
-                            <td class="py-3 px-3 text-slate-600 font-mono text-[11.5px] whitespace-nowrap">
-                                <div>{{ $item->durasi ?? '00:00' }}</div>
+                            <td class="py-3 px-2.5 text-slate-600 font-mono text-[11.5px] whitespace-nowrap">
+                                <div class="whitespace-nowrap">{{ $item->durasi ?? '00:00' }}</div>
                                 @if(isset($item->audios_count) && $item->audios_count > 1)
-                                    <span class="text-[10px] text-purple-600 font-bold bg-purple-50 px-1.5 py-0.5 rounded-md">{{ $item->audios_count }} Track</span>
+                                    <span class="text-[10px] text-purple-600 font-bold bg-purple-50 px-1.5 py-0.5 rounded-md whitespace-nowrap">{{ $item->audios_count }} Track</span>
                                 @endif
                             </td>
-                            <td class="py-3 px-3 whitespace-nowrap">
-                                <span class="inline-flex items-center gap-1.5 text-slate-700 font-semibold text-[11.5px]">
+                            <td class="py-3 px-2.5 whitespace-nowrap">
+                                <span class="whitespace-nowrap inline-flex items-center gap-1.5 text-slate-700 font-semibold text-[11.5px]">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                     {{ $item->soals_count }} Soal
                                 </span>
                             </td>
-                            <td class="py-3 px-3 whitespace-nowrap">
+                            <td class="py-3 px-2.5 whitespace-nowrap">
                                 <x-badge-status :status="$item->status" />
                             </td>
-                            <td class="py-3 px-4 text-center whitespace-nowrap">
+                            <td class="py-3 px-3 text-center whitespace-nowrap">
                                 <div class="flex items-center justify-center gap-1">
                                     <x-button variant="show" href="{{ route('guru.listening.show', $item->id) }}" title="Lihat Detail Audio & Soal" />
                                     <x-button variant="edit" href="{{ route('guru.listening.edit', $item->id) }}" title="Edit Modul" />
-                                    <!-- Form Hapus Eksplisit POST -->
-                                    <form action="{{ route('guru.listening.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus paket modul listening ini?');" class="inline">
-                                        @csrf
-                                        <x-button variant="delete" type="submit" title="Hapus Modul" />
-                                    </form>
+                                    <!-- Tombol Hapus -->
+                                    <x-button variant="delete" 
+                                              type="button" 
+                                              onclick="konfirmasiHapus('{{ route('guru.listening.destroy', $item->id) }}', '{{ addslashes($item->judul) }}', 'Paket modul listening dan seluruh rekaman audio terkait akan dihapus secara permanen.')" 
+                                              title="Hapus Modul" />
                                 </div>
                             </td>
                         </tr>

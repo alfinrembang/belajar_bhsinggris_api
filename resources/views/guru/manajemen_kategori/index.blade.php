@@ -58,17 +58,17 @@
     </div>
 
     <!-- Tabel Daftar Kategori Materi -->
-    <div class="bg-white rounded-3xl border border-slate-100 shadow-xs overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs text-slate-600">
-                <thead class="bg-slate-50/80 text-slate-400 font-bold uppercase text-[10px] tracking-wider border-b border-slate-100">
+    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] overflow-hidden">
+        <div class="w-full overflow-hidden">
+            <table class="w-full table-fixed text-left text-xs text-slate-600 border-collapse">
+                <thead class="bg-slate-50/75 text-slate-500 font-semibold uppercase text-[11px] tracking-wider border-b border-slate-200/70">
                     <tr>
-                        <th class="py-4 px-6">Kategori & Visual</th>
-                        <th class="py-4 px-6">Ikon</th>
-                        <th class="py-4 px-6">Deskripsi Pembelajaran</th>
-                        <th class="py-4 px-6">Jumlah Modul</th>
-                        <th class="py-4 px-6">Status</th>
-                        <th class="py-4 px-6 text-right">Aksi</th>
+                        <th class="py-3 px-4 w-[22%] whitespace-nowrap">Kategori & Visual</th>
+                        <th class="py-3 px-3 w-[11%] whitespace-nowrap">Ikon</th>
+                        <th class="py-3 px-3 w-[32%] whitespace-nowrap">Deskripsi Pembelajaran</th>
+                        <th class="py-3 px-3 w-[12%] whitespace-nowrap">Jumlah Modul</th>
+                        <th class="py-3 px-3 w-[9%] whitespace-nowrap">Status</th>
+                        <th class="py-3 px-3 w-[14%] text-right whitespace-nowrap">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -86,57 +86,57 @@
                             ];
                             $emoji = $iconEmojis[$kategori->icon_name] ?? '🏷️';
                         @endphp
-                        <tr class="hover:bg-slate-50/60 transition-colors">
-                            <td class="py-4 px-6">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-xs shrink-0" style="background-color: {{ $kategori->warna_hex }};">
+                        <tr class="hover:bg-slate-50/70 transition-colors">
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm shadow-xs shrink-0" style="background-color: {{ $kategori->warna_hex }};">
                                         {{ $emoji }}
                                     </div>
                                     <div>
-                                        <a href="{{ route('guru.kategori.show', $kategori->id) }}" class="font-bold text-slate-800 hover:text-[#1E6BFF] text-sm transition-colors">
+                                        <a href="{{ route('guru.kategori.show', $kategori->id) }}" class="font-bold text-slate-800 hover:text-blue-600 text-xs transition-colors">
                                             {{ $kategori->nama }}
                                         </a>
-                                        <p class="text-[11px] text-slate-400 font-mono mt-0.5">{{ $kategori->warna_hex }}</p>
+                                        <p class="text-[10px] text-slate-400 font-mono mt-0.5">{{ $kategori->warna_hex }}</p>
                                     </div>
                                 </div>
                             </td>
-                            <td class="py-4 px-6">
-                                <span class="px-2.5 py-1 rounded-lg bg-slate-100 font-mono text-slate-600 text-[11px] font-semibold">
+                            <td class="py-3 px-3 whitespace-nowrap">
+                                <span class="px-2 py-0.5 rounded-md bg-slate-100 font-mono text-slate-600 text-[10.5px] font-semibold border border-slate-200/60">
                                     {{ $kategori->icon_name }}
                                 </span>
                             </td>
-                            <td class="py-4 px-6 max-w-xs">
+                            <td class="py-3 px-4 max-w-xs">
                                 <p class="text-slate-600 text-[11px] line-clamp-2">
                                     {{ $kategori->deskripsi ?: 'Belum ada deskripsi.' }}
                                 </p>
                             </td>
-                            <td class="py-4 px-6">
-                                <a href="{{ route('guru.kategori.show', $kategori->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#1E6BFF] font-semibold text-[11px] hover:bg-blue-100 transition-colors">
+                            <td class="py-3 px-3.5 whitespace-nowrap">
+                                <a href="{{ route('guru.kategori.show', $kategori->id) }}" class="whitespace-nowrap inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 font-semibold text-[11px] border border-blue-100 hover:bg-blue-100 transition-colors">
                                     📘 {{ $kategori->materis_count }} Materi
                                 </a>
                             </td>
-                            <td class="py-4 px-6">
+                            <td class="py-3 px-3 whitespace-nowrap">
                                 @if($kategori->is_aktif)
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600 font-semibold text-[10px]">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60 font-semibold text-[10px]">
                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Aktif
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-400 font-semibold text-[10px]">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200/60 font-semibold text-[10px]">
                                         Nonaktif
                                     </span>
                                 @endif
                             </td>
-                            <td class="py-4 px-6 text-right">
-                                <div class="flex items-center justify-end gap-2">
+                            <td class="py-3 px-4 text-right whitespace-nowrap">
+                                <div class="flex items-center justify-end gap-1">
                                     <x-button variant="show" href="{{ route('guru.kategori.show', $kategori->id) }}" title="Lihat Detail & Materi" />
 
                                     <x-button variant="edit" href="{{ route('guru.kategori.edit', $kategori->id) }}" title="Edit Kategori" />
 
-                                    <!-- Form Hapus (Eksplisit POST ke route destroy) -->
-                                    <form action="{{ route('guru.kategori.destroy', $kategori->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori ini?');" class="inline">
-                                        @csrf
-                                        <x-button variant="delete" type="submit" title="Hapus Kategori" />
-                                    </form>
+                                    <!-- Tombol Hapus -->
+                                    <x-button variant="delete" 
+                                              type="button" 
+                                              onclick="konfirmasiHapus('{{ route('guru.kategori.destroy', $kategori->id) }}', 'Kategori {{ addslashes($kategori->nama) }}', 'Kategori ini akan dihapus dari sistem.')" 
+                                              title="Hapus Kategori" />
                                 </div>
                             </td>
                         </tr>

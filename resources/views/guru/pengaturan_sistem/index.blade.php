@@ -241,7 +241,7 @@
 
                     <div class="pt-2 flex justify-end">
                         <button type="submit" 
-                                class="px-5 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs transition-all cursor-pointer">
+                                class="px-5 py-2.5 rounded-2xl bg-[#1E6BFF] hover:bg-[#155BE5] text-white font-bold text-xs shadow-[0_4px_14px_rgba(30,107,255,0.25)] transition-all cursor-pointer">
                             Simpan Pengaturan Akademik
                         </button>
                     </div>
@@ -255,7 +255,12 @@
                         <h3 class="font-extrabold text-slate-800 text-sm">Keamanan & Kata Sandi</h3>
                         <p class="text-xs text-slate-400 mt-0.5">Ubah kata sandi akun login portal pengajar</p>
                     </div>
-                    <span class="p-2.5 rounded-2xl bg-amber-50 text-amber-600 text-base">🔒</span>
+                    <span class="w-10 h-10 rounded-2xl bg-purple-50 text-purple-600 border border-purple-100/60 flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </span>
                 </div>
 
                 <form action="{{ route('guru.pengaturan.update_password') }}" method="POST" class="space-y-4">
@@ -291,7 +296,7 @@
 
                     <div class="pt-2 flex justify-end">
                         <button type="submit" 
-                                class="px-5 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-[0_6px_16px_rgba(217,119,6,0.25)] transition-all cursor-pointer">
+                                class="px-5 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-[0_4px_14px_rgba(147,51,234,0.25)] transition-all cursor-pointer">
                             Perbarui Kata Sandi
                         </button>
                     </div>

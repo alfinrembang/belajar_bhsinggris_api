@@ -74,44 +74,44 @@
 
     <!-- Ringkasan Statistik Kuis -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-5">
-        <x-stat-card title="Total Paket Kuis" :value="$totalQuiz . ' Paket'" icon="📋" color="blue" />
-        <x-stat-card title="Total Butir Soal" :value="$totalSoal . ' Butir'" icon="❓" color="purple" />
-        <x-stat-card title="Paket Kuis Aktif" :value="$totalAktif . ' Kuis'" icon="🚀" color="emerald" />
+        <x-stat-card title="Total Paket Kuis" :value="$totalQuiz . ' Paket'" icon="clipboard" color="blue" />
+        <x-stat-card title="Total Butir Soal" :value="$totalSoal . ' Butir'" icon="help" color="purple" />
+        <x-stat-card title="Paket Kuis Aktif" :value="$totalAktif . ' Kuis'" icon="rocket" color="emerald" />
     </div>
 
     <!-- Tabel Daftar Paket Kuis -->
-    <div class="bg-white rounded-3xl border border-slate-100 shadow-xs overflow-hidden">
-        <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
             <h3 class="font-bold text-slate-800 text-sm">Daftar Paket Kuis & Room Ujian</h3>
             <span class="text-xs text-slate-400">Terhubung live dengan kuis & kode room aplikasi siswa</span>
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
+        <div class="w-full overflow-hidden">
+            <table class="w-full table-fixed text-left border-collapse">
                 <thead>
-                    <tr class="bg-slate-50/75 border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                        <th class="py-3.5 px-6">Nama Paket & Kode Room</th>
-                        <th class="py-3.5 px-6">Kategori & Kelas</th>
-                        <th class="py-3.5 px-6">Jumlah Soal</th>
-                        <th class="py-3.5 px-6">Durasi</th>
-                        <th class="py-3.5 px-6">Status</th>
-                        <th class="py-3.5 px-6 text-center">Aksi</th>
+                    <tr class="bg-slate-50/75 border-b border-slate-200/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                        <th class="py-3 px-4 w-[36%] whitespace-nowrap">Nama Paket & Kode Room</th>
+                        <th class="py-3 px-3 w-[13%] whitespace-nowrap">Kategori & Kelas</th>
+                        <th class="py-3 px-3 w-[13%] whitespace-nowrap">Jumlah Soal</th>
+                        <th class="py-3 px-3 w-[11%] whitespace-nowrap">Durasi</th>
+                        <th class="py-3 px-3 w-[11%] whitespace-nowrap">Status</th>
+                        <th class="py-3 px-3 w-[16%] text-center whitespace-nowrap">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-xs font-medium text-slate-700">
                     @forelse ($quizzes as $quiz)
-                        <tr class="hover:bg-slate-50/50 transition-colors">
-                            <td class="py-4 px-6">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#1E6BFF] flex items-center justify-center font-bold text-xs shrink-0">
+                        <tr class="hover:bg-slate-50/60 transition-colors">
+                            <td class="py-3 px-4">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div class="w-9 h-9 rounded-xl bg-blue-50 text-[#1E6BFF] flex items-center justify-center font-bold text-xs shrink-0">
                                         {{ $quiz->kategori_inisial }}
                                     </div>
-                                    <div>
-                                        <a href="{{ route('guru.quiz.show', $quiz) }}" class="font-bold text-slate-800 hover:text-[#1E6BFF] transition-colors block">
+                                    <div class="min-w-0 flex-1">
+                                        <a href="{{ route('guru.quiz.show', $quiz) }}" class="font-bold text-slate-800 hover:text-[#1E6BFF] transition-colors truncate block" title="{{ $quiz->judul }}">
                                             {{ $quiz->judul }}
                                         </a>
-                                        <div class="flex items-center gap-2 mt-1">
-                                            <span class="inline-flex items-center gap-1 font-mono text-[11px] font-bold text-[#1E6BFF] bg-blue-50 px-2 py-0.5 rounded-md">
+                                        <div class="flex items-center gap-2 mt-0.5">
+                                            <span class="inline-flex items-center gap-1 font-mono text-[11px] font-bold text-[#1E6BFF] bg-blue-50 px-2 py-0.5 rounded-md whitespace-nowrap">
                                                 ROOM: {{ $quiz->kode_room }}
                                             </span>
                                             <button type="button" 
@@ -127,27 +127,27 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="py-4 px-6">
-                                <div class="flex flex-col gap-1 items-start">
-                                    <span class="px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 text-[11px] font-semibold">
+                            <td class="py-3 px-3 whitespace-nowrap">
+                                <div class="flex flex-col gap-0.5 items-start">
+                                    <span class="px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 text-[11px] font-semibold whitespace-nowrap">
                                         {{ $quiz->kategori }}
                                     </span>
-                                    <span class="text-[11px] text-slate-400">
+                                    <span class="text-[11px] text-slate-400 whitespace-nowrap">
                                         Kelas: {{ $quiz->tingkat_kelas }}
                                     </span>
                                 </div>
                             </td>
-                            <td class="py-4 px-6 text-slate-600 font-semibold">
+                            <td class="py-3 px-3 text-slate-700 font-semibold whitespace-nowrap">
                                 {{ $quiz->soals_count ?? $quiz->soals->count() }} Butir
                             </td>
-                            <td class="py-4 px-6 text-slate-600">
+                            <td class="py-3 px-3 text-slate-700 whitespace-nowrap font-medium">
                                 {{ $quiz->durasi_menit }} Menit
                             </td>
-                            <td class="py-4 px-6">
+                            <td class="py-3 px-3 whitespace-nowrap">
                                 <x-badge-status :status="$quiz->status" />
                             </td>
-                            <td class="py-4 px-6 text-center">
-                                <div class="flex items-center justify-center gap-2">
+                            <td class="py-3 px-3 text-center whitespace-nowrap">
+                                <div class="flex items-center justify-center gap-1.5">
                                     <!-- Detail / Pratinjau -->
                                     <a href="{{ route('guru.quiz.show', $quiz) }}" 
                                        class="p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors" 
@@ -169,21 +169,15 @@
                                     </a>
 
                                     <!-- Hapus -->
-                                    <form action="{{ route('guru.quiz.destroy', $quiz) }}" 
-                                          method="POST" 
-                                          onsubmit="return confirm('Apakah Anda yakin ingin menghapus paket kuis &quot;{{ addslashes($quiz->judul) }}&quot; beserta seluruh butir soalnya?')"
-                                          class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" 
-                                                class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" 
-                                                title="Hapus Kuis">
-                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <polyline points="3 6 5 6 21 6"></polyline>
-                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                            </svg>
-                                        </button>
-                                    </form>
+                                    <button type="button" 
+                                            onclick="konfirmasiHapus('{{ route('guru.quiz.destroy', $quiz) }}', '{{ addslashes($quiz->judul) }}', 'Paket kuis ini beserta seluruh butir soal ujiannya akan dihapus permanen.')"
+                                            class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer" 
+                                            title="Hapus Kuis">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="3 6 5 6 21 6"></polyline>
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                        </svg>
+                                    </button>
                                 </div>
                             </td>
                         </tr>

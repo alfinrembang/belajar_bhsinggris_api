@@ -15,10 +15,10 @@
                 Edit Materi Ini
             </x-button>
 
-            <form action="{{ route('guru.materi.destroy', $materi->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus materi ini?');" class="inline">
-                @csrf
-                <x-button variant="delete" type="submit" title="Hapus Materi" />
-            </form>
+            <x-button variant="delete" 
+                      type="button" 
+                      onclick="konfirmasiHapus('{{ route('guru.materi.destroy', $materi->id) }}', '{{ addslashes($materi->judul) }}', 'Materi ini beserta seluruh soal latihannya akan dihapus secara permanen.')" 
+                      title="Hapus Materi" />
         </div>
     </div>
 

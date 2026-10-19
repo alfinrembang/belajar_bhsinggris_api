@@ -71,81 +71,84 @@
 
     <!-- Ringkasan Statistik Cepat Materi -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-5">
-        <x-stat-card title="Total Modul Materi" :value="$totalMateri . ' Modul'" icon="📚" color="blue" />
-        <x-stat-card title="Materi Aktif Tayang" :value="$totalAktif . ' Modul'" icon="✅" color="emerald" />
-        <x-stat-card title="Sinkronisasi Flutter" value="Real-time Live" icon="📱" color="purple" />
+        <x-stat-card title="Total Modul Materi" :value="$totalMateri . ' Modul'" icon="book" color="blue" />
+        <x-stat-card title="Materi Aktif Tayang" :value="$totalAktif . ' Modul'" icon="check" color="emerald" />
+        <x-stat-card title="Sinkronisasi Flutter" value="Real-time Live" icon="mobile" color="purple" />
     </div>
 
     <!-- Tabel Daftar Modul Materi -->
-    <div class="bg-white rounded-3xl border border-slate-100 shadow-xs overflow-hidden">
-        <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+    <!-- Tabel Daftar Modul Materi Pembelajaran -->
+    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
             <div>
                 <h3 class="font-bold text-slate-800 text-sm">Daftar Modul Materi Pembelajaran</h3>
                 <p class="text-xs text-slate-400 mt-0.5">Materi terintegrasi dengan audio listening & latihan soal siswa</p>
             </div>
-            <span class="text-xs text-slate-400">Total: {{ $materis->total() }} Data</span>
+            <span class="text-xs text-slate-500 font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200/60">Total: {{ $materis->total() }} Data</span>
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
+        <div class="w-full overflow-hidden">
+            <table class="w-full table-fixed text-left border-collapse">
                 <thead>
-                    <tr class="bg-slate-50/75 border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                        <th class="py-3.5 px-6">Modul & Judul Materi</th>
-                        <th class="py-3.5 px-6">Kategori</th>
-                        <th class="py-3.5 px-6">Tingkat Kelas</th>
-                        <th class="py-3.5 px-6">Konten & Fitur</th>
-                        <th class="py-3.5 px-6">Status</th>
-                        <th class="py-3.5 px-6 text-center">Aksi</th>
+                    <tr class="bg-slate-50/75 border-b border-slate-200/70 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                        <th class="py-3 px-4 w-[34%]">Modul & Judul Materi</th>
+                        <th class="py-3 px-2.5 w-[13%]">Kategori</th>
+                        <th class="py-3 px-2.5 w-[13%]">Tingkat Kelas</th>
+                        <th class="py-3 px-2.5 w-[15%]">Konten & Fitur</th>
+                        <th class="py-3 px-2.5 w-[11%]">Status</th>
+                        <th class="py-3 px-3 w-[14%] text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-xs font-medium text-slate-700">
                     @forelse($materis as $index => $materi)
-                        <tr class="hover:bg-slate-50/50 transition-colors">
-                            <td class="py-4 px-6">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-9 h-9 rounded-xl bg-blue-50 text-[#1E6BFF] flex items-center justify-center font-bold text-xs shrink-0">
+                        <tr class="hover:bg-slate-50/70 transition-colors">
+                            <td class="py-3 px-4">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div class="w-8 h-8 rounded-lg bg-blue-50 text-[#1E6BFF] flex items-center justify-center font-bold text-xs shrink-0 border border-blue-100">
                                         {{ str_pad($materis->firstItem() + $index, 2, '0', STR_PAD_LEFT) }}
                                     </div>
-                                    <div class="min-w-0 max-w-xs">
-                                        <p class="font-bold text-slate-800 text-sm truncate">{{ $materi->judul }}</p>
-                                        <p class="text-[11px] text-slate-400 truncate mt-0.5">{{ $materi->deskripsi_singkat ?: 'Tidak ada ringkasan' }}</p>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="font-bold text-slate-800 text-xs truncate" title="{{ $materi->judul }}">{{ $materi->judul }}</p>
+                                        <p class="text-[11px] text-slate-400 truncate mt-0.5" title="{{ $materi->deskripsi_singkat }}">{{ $materi->deskripsi_singkat ?: 'Tidak ada ringkasan' }}</p>
                                     </div>
                                 </div>
                             </td>
-                            <td class="py-4 px-6">
+                            <td class="py-3 px-2.5 whitespace-nowrap">
                                 @php
                                     $badgeColor = match($materi->kategori) {
-                                        'Reading' => 'bg-blue-50 text-[#1E6BFF]',
-                                        'Grammar' => 'bg-emerald-50 text-emerald-600',
-                                        'Conversation' => 'bg-purple-50 text-purple-600',
-                                        'Vocabulary' => 'bg-amber-50 text-amber-600',
-                                        default => 'bg-slate-50 text-slate-600',
+                                        'Reading' => 'bg-blue-50 text-[#1E6BFF] border-blue-100',
+                                        'Grammar' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
+                                        'Conversation' => 'bg-purple-50 text-purple-700 border-purple-100',
+                                        'Vocabulary' => 'bg-amber-50 text-amber-700 border-amber-100',
+                                        default => 'bg-slate-50 text-slate-700 border-slate-200',
                                     };
                                 @endphp
-                                <span class="px-3 py-1 rounded-full {{ $badgeColor }} text-[11px] font-semibold">
+                                <span class="whitespace-nowrap px-2.5 py-0.5 rounded-md {{ $badgeColor }} border text-[11px] font-semibold inline-flex items-center">
                                     {{ $materi->kategori }}
                                 </span>
                             </td>
-                            <td class="py-4 px-6 text-slate-600 font-semibold">
-                                {{ $materi->tingkat_kelas === 'Semua Kelas' ? 'Semua Kelas' : 'Kelas ' . $materi->tingkat_kelas }}
+                            <td class="py-3 px-2.5 whitespace-nowrap text-slate-700 font-semibold text-xs">
+                                <span class="whitespace-nowrap">{{ $materi->tingkat_kelas === 'Semua Kelas' ? 'Semua Kelas' : 'Kelas ' . $materi->tingkat_kelas }}</span>
                             </td>
-                            <td class="py-4 px-6">
-                                <div class="flex flex-col gap-1 text-[11px]">
-                                    <span class="inline-flex items-center gap-1 font-semibold text-slate-700">
-                                        🎯 {{ $materi->soals_count }} Soal Latihan
+                            <td class="py-3 px-2.5 whitespace-nowrap">
+                                <div class="flex flex-col gap-0.5 text-[11px]">
+                                    <span class="whitespace-nowrap inline-flex items-center gap-1 font-semibold text-slate-700">
+                                        <svg class="w-3.5 h-3.5 text-blue-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
+                                        {{ $materi->soals_count }} Soal Latihan
                                     </span>
                                     @if($materi->audio_materi)
-                                        <span class="inline-flex items-center gap-1 text-emerald-600 font-semibold">
-                                            🎧 Ada Audio MP3
+                                        <span class="whitespace-nowrap inline-flex items-center gap-1 text-emerald-600 font-semibold">
+                                            <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+                                            Audio MP3
                                         </span>
                                     @endif
                                 </div>
                             </td>
-                            <td class="py-4 px-6">
+                            <td class="py-3 px-2.5 whitespace-nowrap">
                                 <x-badge-status :status="$materi->status" />
                             </td>
-                            <td class="py-4 px-6 text-center">
-                                <div class="flex items-center justify-center gap-1.5">
+                            <td class="py-3 px-3 text-center whitespace-nowrap">
+                                <div class="flex items-center justify-center gap-1">
                                     <!-- Tombol Preview Siswa -->
                                     <x-button variant="show" href="{{ route('guru.materi.show', $materi->id) }}" title="Lihat Tampilan Siswa" />
 
@@ -153,10 +156,10 @@
                                     <x-button variant="edit" href="{{ route('guru.materi.edit', $materi->id) }}" title="Edit Materi" />
 
                                     <!-- Tombol Hapus -->
-                                    <form action="{{ route('guru.materi.destroy', $materi->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus modul materi ini beserta seluruh soal latihannya?');" class="inline">
-                                        @csrf
-                                        <x-button variant="delete" type="submit" title="Hapus Materi" />
-                                    </form>
+                                    <x-button variant="delete" 
+                                              type="button" 
+                                              onclick="konfirmasiHapus('{{ route('guru.materi.destroy', $materi->id) }}', '{{ addslashes($materi->judul) }}', 'Modul materi ini beserta seluruh butir latihan soalnya akan dihapus secara permanen.')" 
+                                              title="Hapus Materi" />
                                 </div>
                             </td>
                         </tr>

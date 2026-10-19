@@ -15,13 +15,12 @@
                 Edit Kategori
             </x-button>
 
-            <!-- Form Hapus (Eksplisit POST) -->
-            <form action="{{ route('guru.kategori.destroy', $kategori->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori ini?');" class="inline">
-                @csrf
-                <x-button variant="delete" type="submit">
-                    Hapus
-                </x-button>
-            </form>
+            <!-- Tombol Hapus -->
+            <x-button variant="delete" 
+                      type="button" 
+                      onclick="konfirmasiHapus('{{ route('guru.kategori.destroy', $kategori->id) }}', 'Kategori {{ addslashes($kategori->nama) }}', 'Kategori ini akan dihapus dari sistem.')">
+                Hapus
+            </x-button>
         </div>
     </div>
 

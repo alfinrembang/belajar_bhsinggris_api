@@ -83,25 +83,25 @@
         <x-stat-card 
             title="Rata-rata Nilai Siswa" 
             :value="$rataRataKeseluruhan . ' / 100'" 
-            icon="📊" 
+            icon="chart" 
             color="blue" 
         />
         <x-stat-card 
             title="Tingkat Ketuntasan KKM" 
             :value="$persentaseKetuntasan . '%'" 
-            icon="✅" 
+            icon="check" 
             color="emerald" 
         />
         <x-stat-card 
             title="Total Pengerjaan Soal" 
             :value="$totalAktivitasBelajar . ' Submit'" 
-            icon="⚡" 
+            icon="zap" 
             color="purple" 
         />
         <x-stat-card 
             title="Siswa Perlu Remedial" 
             :value="$totalRemedial . ' Siswa'" 
-            icon="⚠️" 
+            icon="alert" 
             color="rose" 
         />
     </div>
@@ -110,12 +110,18 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <!-- Card Ketuntasan per Modul Pembelajaran (Komponen Reusable x-progress-item) -->
-        <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs space-y-5 flex flex-col justify-between">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-5 flex flex-col justify-between">
             <div>
                 <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
-                    <span>📈</span> Ketuntasan per Modul Belajar
+                    <span class="w-6 h-6 rounded-lg bg-blue-50 text-[#1E6BFF] flex items-center justify-center shrink-0">
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                            <polyline points="17 6 23 6 23 12"></polyline>
+                        </svg>
+                    </span>
+                    Ketuntasan per Modul Belajar
                 </h3>
-                <p class="text-xs text-slate-400 mt-0.5">Persentase penyelesaian & rerata nilai per pilar</p>
+                <p class="text-xs text-slate-400 mt-0.5 truncate" title="Progres ketuntasan & rerata modul">Progres ketuntasan & rerata modul</p>
 
                 <div class="space-y-4 pt-4">
                     <x-progress-item 
@@ -123,7 +129,7 @@
                         :percentage="$ketuntasanMateriPersen"
                         :averageScore="$rataModulMateri"
                         color="blue"
-                        icon="📖"
+                        icon="book"
                     />
 
                     <x-progress-item 
@@ -131,7 +137,7 @@
                         :percentage="$ketuntasanListeningPersen"
                         :averageScore="$rataModulListening"
                         color="purple"
-                        icon="🎧"
+                        icon="headphones"
                     />
 
                     <x-progress-item 
@@ -139,28 +145,43 @@
                         :percentage="$ketuntasanQuizPersen"
                         :averageScore="$rataModulQuiz"
                         color="emerald"
-                        icon="📝"
+                        icon="file-text"
                     />
                 </div>
             </div>
 
-            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-[11px] text-slate-500 leading-relaxed mt-4">
-                💡 <span class="font-bold text-slate-700">Rumus Nilai Akhir:</span> 30% Modul Materi + 30% Modul Listening + 40% Kuis/Ujian. Standar KKM kelulusan adalah <strong>{{ $kkm }}</strong>.
+            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-[11px] text-slate-500 leading-relaxed mt-4 flex items-start gap-2.5">
+                <svg class="w-4 h-4 text-blue-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                <div>
+                    <span class="font-bold text-slate-700">Rumus Nilai Akhir:</span> 30% Modul Materi + 30% Modul Listening + 40% Kuis/Ujian. Standar KKM kelulusan adalah <strong>{{ $kkm }}</strong>.
+                </div>
             </div>
         </div>
 
         <!-- Card Komparasi Rata-rata Nilai per Rombel -->
-        <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs flex flex-col justify-between space-y-4">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-4">
             <div>
                 <div class="flex items-center justify-between">
                     <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
-                        <span>🏫</span> Performa Nilai per Rombel
+                        <span class="w-6 h-6 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </span>
+                        Performa Nilai per Rombel
                     </h3>
                     <span class="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
                         {{ $komparasiRombel->count() }} Kelas
                     </span>
                 </div>
-                <p class="text-xs text-slate-400 mt-0.5">Rata-rata capaian nilai tertinggi antar rombel</p>
+                <p class="text-xs text-slate-400 mt-0.5 truncate" title="Rerata capaian nilai per rombel">Rerata capaian nilai per rombel</p>
 
                 <!-- Scrollable list: tetap rapi dan tidak melar ke bawah meski ada puluhan kelas -->
                 <div class="space-y-2.5 pt-3 max-h-[300px] overflow-y-auto pr-1">
@@ -188,24 +209,38 @@
                 </div>
             </div>
 
-            <div class="text-[10px] text-slate-400 pt-2 border-t border-slate-50 flex items-center justify-between">
-                <span>💡 Klik kelas untuk memfilter tabel leger</span>
+            <div class="text-[10px] text-slate-400 pt-2 border-t border-slate-50 flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                <span>Klik kelas untuk memfilter tabel leger</span>
             </div>
         </div>
 
         <!-- Card Siswa Berprestasi & Perlu Perhatian -->
-        <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs flex flex-col justify-between space-y-4">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-4">
             <div class="space-y-4">
                 <div>
                     <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
-                        <span>🏆</span> Siswa Berprestasi & Perhatian
+                        <span class="w-6 h-6 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                                <path d="M4 22h16"></path>
+                                <path d="M10 14.66V17c0 .55-.45 1-1 1H7"></path>
+                                <path d="M14 14.66V17c0 .55.45 1 1 1h2"></path>
+                                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                            </svg>
+                        </span>
+                        Siswa Berprestasi & Perhatian
                     </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Siswa nilai tertinggi & butuh bimbingan remedial</p>
+                    <p class="text-xs text-slate-400 mt-0.5 truncate" title="Siswa nilai unggul & remedial">Siswa nilai unggul & remedial</p>
                 </div>
 
                 <!-- Top 3 Siswa Terunggul -->
                 <div>
-                    <span class="text-[11px] font-extrabold text-emerald-600 uppercase tracking-wider block mb-2">⭐ Top 3 Siswa Terunggul</span>
+                    <span class="text-[11px] font-extrabold text-emerald-600 uppercase tracking-wider flex items-center gap-1.5 mb-2">
+                        <svg class="w-3.5 h-3.5 text-emerald-600 fill-emerald-600" viewBox="0 0 24 24" stroke="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        Top 3 Siswa Terunggul
+                    </span>
                     <div class="space-y-2">
                         @forelse($topSiswa as $ts)
                             <div class="flex items-center justify-between p-2 rounded-xl bg-emerald-50/50 border border-emerald-100 text-xs">
@@ -229,7 +264,10 @@
                 <!-- Siswa Butuh Remedial (< KKM) -->
                 <div class="pt-2 border-t border-slate-100">
                     <div class="flex items-center justify-between mb-2">
-                        <span class="text-[11px] font-extrabold text-rose-600 uppercase tracking-wider">⚠️ Perlu Remedial (<{{ $kkm }})</span>
+                        <span class="text-[11px] font-extrabold text-rose-600 uppercase tracking-wider flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 text-rose-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                            Perlu Remedial (&lt;{{ $kkm }})
+                        </span>
                         @if($totalRemedial > 0)
                             <span class="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full">
                                 Total: {{ $totalRemedial }} Siswa
@@ -247,8 +285,9 @@
                                 <span class="font-mono font-bold text-rose-600">{{ $rs['nilai_akhir'] }}</span>
                             </div>
                         @empty
-                            <div class="p-2.5 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-semibold text-center">
-                                🎉 Luar biasa! Semua siswa telah mencapai batas KKM.
+                            <div class="p-2.5 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-semibold text-center flex items-center justify-center gap-1.5">
+                                <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                Luar biasa! Semua siswa telah mencapai batas KKM.
                             </div>
                         @endforelse
                     </div>
@@ -317,8 +356,8 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="py-4 px-6">
-                                <span class="px-2.5 py-1 rounded-full bg-blue-50 text-[#1E6BFF] font-semibold text-xs">
+                            <td class="py-3.5 px-6 whitespace-nowrap">
+                                <span class="whitespace-nowrap px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 font-semibold text-xs border border-blue-100/70 inline-flex items-center">
                                     {{ $item['kelas_lengkap'] ?: 'Belum diatur' }}
                                 </span>
                             </td>
