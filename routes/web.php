@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Auth\LoginGuruController;
 use App\Http\Controllers\Guru\KategoriMateriController;
 use App\Http\Controllers\Guru\LaporanAnalitikController;
@@ -28,8 +29,12 @@ Route::post('/logout', [LoginGuruController::class, 'logout'])->name('logout');
 
 // AREA TERPROTEKSI WEB GURU / ADMIN (WAJIB LOGIN)
 Route::middleware(['auth'])->group(function () {
-    // 0. Dashboard Utama
+    // 0. Dashboard Utama (Jika login adalah admin, alihkan ke admin.dashboard)
     Route::get('/dashboard', function () {
+        if (auth()->user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+
         $totalSiswa = Siswa::count();
         $totalMateri = Materi::count();
         $totalListening = ModulListening::count();
@@ -38,14 +43,14 @@ Route::middleware(['auth'])->group(function () {
         return view('guru.dashboard', compact('totalSiswa', 'totalMateri', 'totalListening', 'totalQuiz'));
     })->name('guru.dashboard');
 
-    // MODUL 1: MANAJEMEN MATERI PEMBELAJARAN (EKSPLISIT GET & POST)
+    // MODUL 1: MANAJEMEN MATERI PEMBELAJARAN (EKSPLISIT GET & POST/PUT/DELETE)
     Route::get('/materi', [MateriController::class, 'index'])->name('guru.materi.index');
     Route::get('/materi/create', [MateriController::class, 'create'])->name('guru.materi.create');
     Route::post('/materi/store', [MateriController::class, 'store'])->name('guru.materi.store');
     Route::get('/materi/{materi}', [MateriController::class, 'show'])->name('guru.materi.show');
     Route::get('/materi/{materi}/edit', [MateriController::class, 'edit'])->name('guru.materi.edit');
-    Route::post('/materi/{materi}/update', [MateriController::class, 'update'])->name('guru.materi.update');
-    Route::post('/materi/{materi}/destroy', [MateriController::class, 'destroy'])->name('guru.materi.destroy');
+    Route::match(['post', 'put'], '/materi/{materi}/update', [MateriController::class, 'update'])->name('guru.materi.update');
+    Route::match(['post', 'delete'], '/materi/{materi}/destroy', [MateriController::class, 'destroy'])->name('guru.materi.destroy');
 
     // MODUL 1B: MANAJEMEN KATEGORI MATERI (EKSPLISIT GET & POST)
     Route::get('/kategori', [KategoriMateriController::class, 'index'])->name('guru.kategori.index');
@@ -53,8 +58,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/kategori/store', [KategoriMateriController::class, 'store'])->name('guru.kategori.store');
     Route::get('/kategori/{kategori}', [KategoriMateriController::class, 'show'])->name('guru.kategori.show');
     Route::get('/kategori/{kategori}/edit', [KategoriMateriController::class, 'edit'])->name('guru.kategori.edit');
-    Route::post('/kategori/{kategori}/update', [KategoriMateriController::class, 'update'])->name('guru.kategori.update');
-    Route::post('/kategori/{kategori}/destroy', [KategoriMateriController::class, 'destroy'])->name('guru.kategori.destroy');
+    Route::match(['post', 'put'], '/kategori/{kategori}/update', [KategoriMateriController::class, 'update'])->name('guru.kategori.update');
+    Route::match(['post', 'delete'], '/kategori/{kategori}/destroy', [KategoriMateriController::class, 'destroy'])->name('guru.kategori.destroy');
 
     // MODUL 2: MODUL LISTENING GURU (EKSPLISIT GET & POST/PUT)
     Route::get('/listening', [ModulListeningController::class, 'index'])->name('guru.listening.index');
@@ -65,14 +70,14 @@ Route::middleware(['auth'])->group(function () {
     Route::match(['post', 'put'], '/listening/{listening}/update', [ModulListeningController::class, 'update'])->name('guru.listening.update');
     Route::match(['post', 'delete'], '/listening/{listening}/destroy', [ModulListeningController::class, 'destroy'])->name('guru.listening.destroy');
 
-    // MODUL 3: BANK SOAL & KUIS GURU (EKSPLISIT GET & POST)
+    // MODUL 3: BANK SOAL & KUIS GURU (EKSPLISIT GET & POST/PUT/DELETE)
     Route::get('/quiz', [QuizController::class, 'index'])->name('guru.quiz.index');
     Route::get('/quiz/create', [QuizController::class, 'create'])->name('guru.quiz.create');
     Route::post('/quiz/store', [QuizController::class, 'store'])->name('guru.quiz.store');
     Route::get('/quiz/{quiz}', [QuizController::class, 'show'])->name('guru.quiz.show');
     Route::get('/quiz/{quiz}/edit', [QuizController::class, 'edit'])->name('guru.quiz.edit');
-    Route::post('/quiz/{quiz}/update', [QuizController::class, 'update'])->name('guru.quiz.update');
-    Route::post('/quiz/{quiz}/destroy', [QuizController::class, 'destroy'])->name('guru.quiz.destroy');
+    Route::match(['post', 'put'], '/quiz/{quiz}/update', [QuizController::class, 'update'])->name('guru.quiz.update');
+    Route::match(['post', 'delete'], '/quiz/{quiz}/destroy', [QuizController::class, 'destroy'])->name('guru.quiz.destroy');
 
     // MODUL 4: MANAJEMEN SISWA & KELAS GURU
     Route::get('/siswa', [SiswaController::class, 'index'])->name('guru.siswa.index');
@@ -103,4 +108,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/pengaturan/profil', [PengaturanSistemController::class, 'updateProfil'])->name('guru.pengaturan.update_profil');
     Route::post('/pengaturan/password', [PengaturanSistemController::class, 'updatePassword'])->name('guru.pengaturan.update_password');
     Route::post('/pengaturan/akademik', [PengaturanSistemController::class, 'updateAkademik'])->name('guru.pengaturan.update_akademik');
+});
+
+// AREA KHUSUS ADMINISTRATOR UTAMA (HANYA ROLE ADMIN)
+Route::middleware(['auth', 'role.admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::post('/guru/store', [AdminDashboardController::class, 'storeGuru'])->name('guru.store');
+    Route::post('/guru/{guru}/update', [AdminDashboardController::class, 'updateGuru'])->name('guru.update');
+    Route::post('/guru/{guru}/reset-password', [AdminDashboardController::class, 'resetPasswordGuru'])->name('guru.reset_password');
+    Route::post('/guru/{guru}/destroy', [AdminDashboardController::class, 'destroyGuru'])->name('guru.destroy');
 });

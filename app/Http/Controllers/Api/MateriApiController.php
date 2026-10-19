@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Materi;
 use App\Models\Siswa;
 use App\Models\SiswaMateriProgres;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,13 +19,17 @@ class MateriApiController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = Materi::where('status', 'aktif')
+            ->with(['user', 'soals'])
             ->withCount('soals')
             ->latest();
 
-        // Filter berdasarkan kelas siswa (jika diberikan)
-        if ($request->filled('kelas')) {
-            $rawKelas = (string) $request->kelas;
-            $tingkat = null;
+        $siswaId = $request->input('siswa_id');
+        $siswa = $siswaId ? Siswa::find($siswaId) : null;
+        $rombel = $siswa ? $siswa->kelas_lengkap : null;
+        $tingkat = $siswa ? (string) $siswa->kelas : null;
+
+        if (! $rombel && $request->filled('kelas')) {
+            $rawKelas = trim((string) $request->kelas);
             if (preg_match('/\b(10|11|12)\b/', $rawKelas, $matches)) {
                 $tingkat = $matches[1];
             } elseif (preg_match('/\b(XII|XI|X)\b/i', $rawKelas, $matches)) {
@@ -32,13 +37,53 @@ class MateriApiController extends Controller
                 $tingkat = $romanMap[strtoupper($matches[1])] ?? null;
             }
 
-            $query->where(function ($q) use ($rawKelas, $tingkat) {
+            if (preg_match('/^(10|11|12)\s+[A-Za-z0-9]+\s+\d+$/', $rawKelas)) {
+                $rombel = $rawKelas;
+            }
+        }
+
+        // 1. Filter Tingkat Kelas (10, 11, 12, atau Semua Kelas)
+        if ($tingkat || $request->filled('kelas')) {
+            $rawKelas = (string) ($request->kelas ?? $tingkat);
+            $query->where(function ($q) use ($rawKelas, $tingkat, $rombel) {
                 $q->where('tingkat_kelas', 'Semua Kelas')
                     ->orWhere('tingkat_kelas', $rawKelas);
                 if ($tingkat) {
                     $q->orWhere('tingkat_kelas', $tingkat);
                 }
+                if ($rombel) {
+                    $q->orWhere('tingkat_kelas', $rombel);
+                }
             });
+        }
+
+        // 2. Isolasi Konten: Guru Pengampu Kelas Siswa
+        if ($rombel) {
+            $teacherIds = User::where('role', 'guru')
+                ->whereJsonContains('kelas_diampu', $rombel)
+                ->pluck('id');
+
+            if ($teacherIds->isNotEmpty()) {
+                $query->where(function ($q) use ($teacherIds, $rombel) {
+                    $q->where(function ($sub) use ($teacherIds, $rombel) {
+                        $sub->whereIn('user_id', $teacherIds)
+                            ->where(function ($r) use ($rombel) {
+                                $r->whereNull('target_rombel')
+                                    ->orWhere('target_rombel', $rombel);
+                            });
+                    })->orWhere(function ($sub) {
+                        $sub->whereNull('user_id')
+                            ->orWhereHas('user', fn ($u) => $u->where('role', 'admin'));
+                    });
+                });
+            } else {
+                // Jika belum ada guru yang diplot ke rombel ini, sediakan materi umum sekolah
+                $query->where(function ($q) {
+                    $q->whereNull('user_id')
+                        ->orWhereHas('user', fn ($u) => $u->where('role', 'admin'))
+                        ->orWhereNull('target_rombel');
+                });
+            }
         }
 
         // Filter berdasarkan kategori
