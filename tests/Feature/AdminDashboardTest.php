@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\PengaturanAkademik;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
@@ -62,6 +63,7 @@ class AdminDashboardTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Dashboard Administrator');
         $response->assertSee('Daftar Akun Guru Pengajar');
+        $response->assertSee('Periode Kenaikan Kelas');
         $response->assertSee($this->guru->name);
         $response->assertSee('ADMIN PORTAL');
         $response->assertDontSee('MODUL PEMBELAJARAN');
@@ -195,5 +197,54 @@ class AdminDashboardTest extends TestCase
         $this->assertDatabaseHas('users', [
             'id' => $this->admin->id,
         ]);
+    }
+
+    /**
+     * Administrator dapat membuka dan menutup periode kenaikan kelas dari admin dashboard.
+     */
+    public function test_admin_can_toggle_kenaikan_kelas_periode(): void
+    {
+        $setting = PengaturanAkademik::getActiveSetting();
+        $setting->update([
+            'is_periode_kenaikan_aktif' => false,
+            'opened_at' => null,
+            'closed_at' => null,
+        ]);
+
+        // 1. Admin membuka periode kenaikan kelas
+        $response = $this->actingAs($this->admin)->post(route('admin.kenaikan_kelas.toggle'), [
+            'keterangan' => 'Dibuka untuk semester baru oleh admin',
+        ]);
+
+        $response->assertRedirect(route('admin.dashboard'));
+        $response->assertSessionHas('success');
+
+        $setting->refresh();
+        $this->assertTrue($setting->is_periode_kenaikan_aktif);
+        $this->assertNotNull($setting->opened_at);
+        $this->assertEquals('Dibuka untuk semester baru oleh admin', $setting->keterangan);
+
+        // 2. Admin menutup periode kenaikan kelas
+        $response = $this->actingAs($this->admin)->post(route('admin.kenaikan_kelas.toggle'), [
+            'keterangan' => 'Ditutup kembali oleh admin',
+        ]);
+
+        $response->assertRedirect(route('admin.dashboard'));
+        $response->assertSessionHas('success');
+
+        $setting->refresh();
+        $this->assertFalse($setting->is_periode_kenaikan_aktif);
+        $this->assertNotNull($setting->closed_at);
+        $this->assertEquals('Ditutup kembali oleh admin', $setting->keterangan);
+    }
+
+    /**
+     * Guru ditolak (403 Forbidden) saat mencoba mengakses endpoint sakelar kenaikan kelas admin.
+     */
+    public function test_guru_cannot_toggle_kenaikan_kelas_periode(): void
+    {
+        $response = $this->actingAs($this->guru)->post(route('admin.kenaikan_kelas.toggle'));
+
+        $response->assertStatus(403);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Materi;
+use App\Models\PengaturanAkademik;
 use App\Models\Siswa;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -56,6 +57,8 @@ class AdminDashboardController extends Controller
         $daftarRombel = array_values(array_unique(array_merge($rombelDariSiswa, $defaultRombels)));
         sort($daftarRombel);
 
+        $pengaturanAkademik = PengaturanAkademik::getActiveSetting();
+
         return view('admin.dashboard', compact(
             'gurus',
             'totalGuru',
@@ -63,7 +66,8 @@ class AdminDashboardController extends Controller
             'totalSiswa',
             'totalMateri',
             'search',
-            'daftarRombel'
+            'daftarRombel',
+            'pengaturanAkademik'
         ));
     }
 
@@ -170,5 +174,36 @@ class AdminDashboardController extends Controller
         $guru->delete();
 
         return redirect()->route('admin.dashboard')->with('success', "Akun guru '{$guruName}' berhasil dihapus dari sistem!");
+    }
+
+    /**
+     * Membuka atau menutup periode kenaikan kelas untuk siswa di aplikasi mobile.
+     * Hanya dapat diakses oleh Administrator Utama.
+     */
+    public function toggleKenaikanKelas(Request $request): RedirectResponse
+    {
+        $pengaturan = PengaturanAkademik::getActiveSetting();
+        $isAktif = ! $pengaturan->is_periode_kenaikan_aktif;
+
+        $pengaturan->is_periode_kenaikan_aktif = $isAktif;
+        $pengaturan->tahun_ajaran = PengaturanAkademik::getTahunAjaranOtomatis();
+
+        if ($isAktif) {
+            $pengaturan->opened_at = now();
+        } else {
+            $pengaturan->closed_at = now();
+        }
+
+        if ($request->filled('keterangan')) {
+            $pengaturan->keterangan = trim($request->input('keterangan'));
+        }
+
+        $pengaturan->save();
+
+        $pesan = $isAktif
+            ? "Periode kenaikan kelas ({$pengaturan->tahun_ajaran}) berhasil DIBUKA! Siswa sekarang dapat memperbarui rombel & no absen di aplikasi mobile."
+            : 'Periode kenaikan kelas berhasil DITUTUP. Rombel siswa kembali dikunci untuk mencegah perubahan sepihak.';
+
+        return redirect()->route('admin.dashboard')->with('success', $pesan);
     }
 }

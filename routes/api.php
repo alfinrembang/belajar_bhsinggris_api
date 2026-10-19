@@ -5,8 +5,8 @@ use App\Http\Controllers\Api\KategoriMateriApiController;
 use App\Http\Controllers\Api\LoginSiswaController;
 use App\Http\Controllers\Api\MateriApiController;
 use App\Http\Controllers\Api\ModulListeningApiController;
-use App\Http\Controllers\Api\QuizApiController;
 use App\Http\Controllers\Api\PuzzleApiController;
+use App\Http\Controllers\Api\QuizApiController;
 use Illuminate\Support\Facades\Route;
 
 // API Routes - Belajar Bahasa Inggris (Khusus Aplikasi Siswa / Flutter)

@@ -102,7 +102,7 @@ class PuzzleApiController extends Controller
             $progres->stars = $stars;
         }
         // Simpan best time (jika baru atau lebih cepat)
-        if (!$progres->best_time || strcmp($timeSpent, $progres->best_time) < 0) {
+        if (! $progres->best_time || strcmp($timeSpent, $progres->best_time) < 0) {
             $progres->best_time = $timeSpent;
         }
         $progres->save();

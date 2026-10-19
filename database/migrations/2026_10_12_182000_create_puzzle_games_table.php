@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         // 1. Tambahkan kolom koin pada tabel siswas (default 120 koin) jika belum ada
-        if (Schema::hasTable('siswas') && !Schema::hasColumn('siswas', 'koin')) {
+        if (Schema::hasTable('siswas') && ! Schema::hasColumn('siswas', 'koin')) {
             Schema::table('siswas', function (Blueprint $table) {
                 $table->integer('koin')->default(120)->after('password');
             });
         }
 
         // 2. Tabel progres level puzzle siswa
-        if (!Schema::hasTable('siswa_puzzle_progres')) {
+        if (! Schema::hasTable('siswa_puzzle_progres')) {
             Schema::create('siswa_puzzle_progres', function (Blueprint $table) {
                 $table->id();
                 $table->unsignedBigInteger('siswa_id')->nullable()->index();

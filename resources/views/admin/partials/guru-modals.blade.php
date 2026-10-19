@@ -6,7 +6,7 @@
      role="dialog" 
      aria-modal="true">
     <div id="tambahGuruCard" 
-         class="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform scale-95 transition-all duration-300">
+         class="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-slate-200/80 overflow-hidden transform scale-95 transition-all duration-300">
         
         <!-- Modal Header -->
         <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
@@ -114,7 +114,7 @@
      role="dialog" 
      aria-modal="true">
     <div id="editGuruCard" 
-         class="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform scale-95 transition-all duration-300">
+         class="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-slate-200/80 overflow-hidden transform scale-95 transition-all duration-300">
         
         <!-- Modal Header -->
         <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
@@ -210,7 +210,7 @@
      role="dialog" 
      aria-modal="true">
     <div id="resetPasswordCard" 
-         class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform scale-95 transition-all duration-300">
+         class="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-200/80 overflow-hidden transform scale-95 transition-all duration-300">
         
         <!-- Modal Header -->
         <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-amber-50/50">
@@ -275,7 +275,7 @@
      role="dialog" 
      aria-modal="true">
     <div id="hapusGuruCard" 
-         class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform scale-95 transition-all duration-300">
+         class="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-200/80 overflow-hidden transform scale-95 transition-all duration-300">
         
         <!-- Modal Header -->
         <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-rose-50/50">
@@ -304,8 +304,12 @@
                 Apakah Anda yakin ingin menghapus akun guru <strong id="hapusGuruNameText" class="text-slate-800 font-bold">Nama Guru</strong>?
             </p>
 
-            <div class="p-3.5 rounded-2xl bg-rose-50/80 border border-rose-200/60 text-xs text-rose-700 flex items-start gap-2.5">
-                <span class="text-base leading-none">⚠️</span>
+            <div class="p-3.5 rounded-xl bg-rose-50/80 border border-rose-200/60 text-xs text-rose-700 flex items-start gap-2.5">
+                <svg class="w-4 h-4 text-rose-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
                 <p class="leading-relaxed">
                     Akun yang dihapus tidak akan dapat login lagi ke portal guru. Pastikan guru ini sudah tidak aktif mengajar.
                 </p>
