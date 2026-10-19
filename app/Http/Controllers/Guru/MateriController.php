@@ -21,7 +21,16 @@ class MateriController extends Controller
      */
     public function index(Request $request): View
     {
+        $user = auth()->user();
         $query = Materi::withCount('soals')->latest();
+
+        // Isolasi Materi: Akun guru hanya dapat mengelola materi miliknya sendiri atau materi umum
+        if ($user && $user->role === 'guru') {
+            $query->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhereNull('user_id');
+            });
+        }
 
         // Filter berdasarkan Kategori
         if ($request->filled('kategori')) {
@@ -48,9 +57,21 @@ class MateriController extends Controller
 
         $materis = $query->paginate(10)->withQueryString();
 
-        // Statistik Ringkas
-        $totalMateri = Materi::count();
-        $totalAktif = Materi::where('status', 'aktif')->count();
+        // Statistik Ringkas Berdasarkan Hak Akses Guru
+        $totalQuery = Materi::query();
+        $aktifQuery = Materi::where('status', 'aktif');
+        if ($user && $user->role === 'guru') {
+            $totalQuery->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhereNull('user_id');
+            });
+            $aktifQuery->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhereNull('user_id');
+            });
+        }
+        $totalMateri = $totalQuery->count();
+        $totalAktif = $aktifQuery->count();
         $kategoriList = KategoriMateri::where('is_aktif', true)->orderBy('urutan')->get();
 
         return view('guru.manajemen_materi.index', compact('materis', 'totalMateri', 'totalAktif', 'kategoriList'));
@@ -62,8 +83,9 @@ class MateriController extends Controller
     public function create(): View
     {
         $kategoriList = KategoriMateri::where('is_aktif', true)->orderBy('urutan')->get();
+        $kelasDiampu = auth()->user()->kelas_diampu ?? [];
 
-        return view('guru.manajemen_materi.create', compact('kategoriList'));
+        return view('guru.manajemen_materi.create', compact('kategoriList', 'kelasDiampu'));
     }
 
     /**
@@ -79,6 +101,7 @@ class MateriController extends Controller
                     'judul',
                     'kategori',
                     'tingkat_kelas',
+                    'target_rombel',
                     'deskripsi_singkat',
                     'penjelasan',
                     'contoh_teks',
@@ -86,6 +109,7 @@ class MateriController extends Controller
                     'status',
                 ]);
 
+                $data['user_id'] = auth()->id();
                 $data['xp_reward'] = $data['xp_reward'] ?? 50;
 
                 // Upload Gambar Materi jika ada
@@ -125,6 +149,11 @@ class MateriController extends Controller
      */
     public function show(Materi $materi): View
     {
+        $user = auth()->user();
+        if ($user && $user->role === 'guru' && $materi->user_id && $materi->user_id !== $user->id) {
+            abort(403, 'Anda tidak memiliki hak akses untuk melihat materi guru lain.');
+        }
+
         $materi->load('soals');
 
         return view('guru.manajemen_materi.show', compact('materi'));
@@ -135,10 +164,16 @@ class MateriController extends Controller
      */
     public function edit(Materi $materi): View
     {
+        $user = auth()->user();
+        if ($user && $user->role === 'guru' && $materi->user_id && $materi->user_id !== $user->id) {
+            abort(403, 'Anda tidak memiliki hak akses untuk mengedit materi guru lain.');
+        }
+
         $materi->load('soals');
         $kategoriList = KategoriMateri::where('is_aktif', true)->orderBy('urutan')->get();
+        $kelasDiampu = auth()->user()->kelas_diampu ?? [];
 
-        return view('guru.manajemen_materi.edit', compact('materi', 'kategoriList'));
+        return view('guru.manajemen_materi.edit', compact('materi', 'kategoriList', 'kelasDiampu'));
     }
 
     /**
@@ -146,6 +181,11 @@ class MateriController extends Controller
      */
     public function update(UpdateMateriRequest $request, Materi $materi): RedirectResponse
     {
+        $user = auth()->user();
+        if ($user && $user->role === 'guru' && $materi->user_id && $materi->user_id !== $user->id) {
+            abort(403, 'Anda tidak memiliki hak akses untuk memperbarui materi guru lain.');
+        }
+
         $newFiles = [];
         $filesToDelete = [];
 
@@ -155,12 +195,18 @@ class MateriController extends Controller
                     'judul',
                     'kategori',
                     'tingkat_kelas',
+                    'target_rombel',
                     'deskripsi_singkat',
                     'penjelasan',
                     'contoh_teks',
                     'xp_reward',
                     'status',
                 ]);
+
+                // Jika materi belum memiliki pemilik, tautkan ke guru yang mengeditnya
+                if (! $materi->user_id) {
+                    $data['user_id'] = auth()->id();
+                }
 
                 // Ganti gambar jika diunggah baru
                 if ($request->hasFile('gambar_materi')) {
@@ -212,6 +258,11 @@ class MateriController extends Controller
      */
     public function destroy(Materi $materi): RedirectResponse
     {
+        $user = auth()->user();
+        if ($user && $user->role === 'guru' && $materi->user_id && $materi->user_id !== $user->id) {
+            abort(403, 'Anda tidak memiliki hak akses untuk menghapus materi guru lain.');
+        }
+
         $filesToDelete = [];
 
         if ($materi->gambar_materi) {

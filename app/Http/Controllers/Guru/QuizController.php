@@ -20,7 +20,16 @@ class QuizController extends Controller
      */
     public function index(Request $request): View
     {
+        $user = auth()->user();
         $query = Quiz::withCount('soals')->latest();
+
+        // Isolasi Kuis: Akun guru hanya dapat mengelola kuis miliknya sendiri atau kuis umum
+        if ($user && $user->role === 'guru') {
+            $query->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhereNull('user_id');
+            });
+        }
 
         // Filter Kategori
         if ($request->filled('kategori')) {
@@ -47,10 +56,27 @@ class QuizController extends Controller
 
         $quizzes = $query->paginate(10)->withQueryString();
 
-        // Statistik Ringkas
-        $totalQuiz = Quiz::count();
-        $totalAktif = Quiz::where('status', 'aktif')->count();
-        $totalSoal = QuizSoal::count();
+        // Statistik Ringkas Berdasarkan Hak Akses Guru
+        $totalQuizQuery = Quiz::query();
+        $totalAktifQuery = Quiz::where('status', 'aktif');
+        $totalSoalQuery = QuizSoal::query();
+        if ($user && $user->role === 'guru') {
+            $totalQuizQuery->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhereNull('user_id');
+            });
+            $totalAktifQuery->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhereNull('user_id');
+            });
+            $totalSoalQuery->whereHas('quiz', function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhereNull('user_id');
+            });
+        }
+        $totalQuiz = $totalQuizQuery->count();
+        $totalAktif = $totalAktifQuery->count();
+        $totalSoal = $totalSoalQuery->count();
 
         return view('guru.bank_soal_kuis.index', compact('quizzes', 'totalQuiz', 'totalAktif', 'totalSoal'));
     }
@@ -61,8 +87,9 @@ class QuizController extends Controller
     public function create(): View
     {
         $defaultRoomCode = Quiz::generateUniqueRoomCode();
+        $kelasDiampu = auth()->user()->kelas_diampu ?? [];
 
-        return view('guru.bank_soal_kuis.create', compact('defaultRoomCode'));
+        return view('guru.bank_soal_kuis.create', compact('defaultRoomCode', 'kelasDiampu'));
     }
 
     /**
@@ -78,6 +105,7 @@ class QuizController extends Controller
                     'judul',
                     'kategori',
                     'tingkat_kelas',
+                    'target_rombel',
                     'kode_room',
                     'durasi_menit',
                     'deskripsi',
@@ -85,6 +113,7 @@ class QuizController extends Controller
                     'status',
                 ]);
 
+                $data['user_id'] = auth()->id();
                 $data['xp_reward'] = $data['xp_reward'] ?? 60;
                 $data['kode_room'] = ! empty($data['kode_room'])
                     ? strtoupper(trim($data['kode_room']))
@@ -111,6 +140,11 @@ class QuizController extends Controller
      */
     public function show(Quiz $quiz): View
     {
+        $user = auth()->user();
+        if ($user && $user->role === 'guru' && $quiz->user_id && $quiz->user_id !== $user->id) {
+            abort(403, 'Anda tidak memiliki hak akses untuk melihat paket kuis guru lain.');
+        }
+
         $quiz->load(['soals', 'progresSiswa.siswa']);
 
         return view('guru.bank_soal_kuis.show', compact('quiz'));
@@ -121,9 +155,15 @@ class QuizController extends Controller
      */
     public function edit(Quiz $quiz): View
     {
-        $quiz->load('soals');
+        $user = auth()->user();
+        if ($user && $user->role === 'guru' && $quiz->user_id && $quiz->user_id !== $user->id) {
+            abort(403, 'Anda tidak memiliki hak akses untuk mengedit paket kuis guru lain.');
+        }
 
-        return view('guru.bank_soal_kuis.edit', compact('quiz'));
+        $quiz->load('soals');
+        $kelasDiampu = auth()->user()->kelas_diampu ?? [];
+
+        return view('guru.bank_soal_kuis.edit', compact('quiz', 'kelasDiampu'));
     }
 
     /**
@@ -131,6 +171,11 @@ class QuizController extends Controller
      */
     public function update(UpdateQuizRequest $request, Quiz $quiz): RedirectResponse
     {
+        $user = auth()->user();
+        if ($user && $user->role === 'guru' && $quiz->user_id && $quiz->user_id !== $user->id) {
+            abort(403, 'Anda tidak memiliki hak akses untuk memperbarui paket kuis guru lain.');
+        }
+
         $newFiles = [];
         $filesToDelete = [];
 
@@ -140,12 +185,17 @@ class QuizController extends Controller
                     'judul',
                     'kategori',
                     'tingkat_kelas',
+                    'target_rombel',
                     'kode_room',
                     'durasi_menit',
                     'deskripsi',
                     'xp_reward',
                     'status',
                 ]);
+
+                if (! $quiz->user_id) {
+                    $data['user_id'] = auth()->id();
+                }
 
                 $data['kode_room'] = strtoupper(trim($data['kode_room']));
                 $quiz->update($data);
@@ -176,6 +226,11 @@ class QuizController extends Controller
      */
     public function destroy(Quiz $quiz): RedirectResponse
     {
+        $user = auth()->user();
+        if ($user && $user->role === 'guru' && $quiz->user_id && $quiz->user_id !== $user->id) {
+            abort(403, 'Anda tidak memiliki hak akses untuk menghapus paket kuis guru lain.');
+        }
+
         $filesToDelete = [];
 
         foreach ($quiz->soals as $soal) {

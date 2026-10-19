@@ -30,6 +30,7 @@ class UpdateQuizRequest extends FormRequest
             'judul' => ['required', 'string', 'max:255'],
             'kategori' => ['required', 'string', 'max:100'],
             'tingkat_kelas' => ['required', 'string', 'max:50'],
+            'target_rombel' => ['nullable', 'string', 'max:50'],
             'kode_room' => ['required', 'string', 'max:20', Rule::unique('quizzes', 'kode_room')->ignore($quizId)],
             'durasi_menit' => ['required', 'integer', 'min:1', 'max:180'],
             'deskripsi' => ['nullable', 'string', 'max:1000'],

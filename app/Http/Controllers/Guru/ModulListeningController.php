@@ -19,7 +19,16 @@ class ModulListeningController extends Controller
      */
     public function index(Request $request): View
     {
+        $user = auth()->user();
         $query = ModulListening::withCount('soals')->latest();
+
+        // Isolasi Modul Listening: Guru hanya melihat miliknya sendiri atau modul umum
+        if ($user && $user->role === 'guru') {
+            $query->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhereNull('user_id');
+            });
+        }
 
         // Filter Tingkat Kesulitan (Beginner, Intermediate, Advanced)
         if ($request->filled('tingkat')) {
@@ -46,10 +55,27 @@ class ModulListeningController extends Controller
 
         $listenings = $query->paginate(10)->withQueryString();
 
-        // Statistik Ringkas
-        $totalAudio = ModulListening::count();
-        $totalSoal = ListeningSoal::count();
-        $totalAktif = ModulListening::where('status', 'aktif')->count();
+        // Statistik Ringkas Berdasarkan Hak Akses Guru
+        $totalAudioQuery = ModulListening::query();
+        $totalSoalQuery = ListeningSoal::query();
+        $totalAktifQuery = ModulListening::where('status', 'aktif');
+        if ($user && $user->role === 'guru') {
+            $totalAudioQuery->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhereNull('user_id');
+            });
+            $totalSoalQuery->whereHas('modulListening', function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhereNull('user_id');
+            });
+            $totalAktifQuery->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhereNull('user_id');
+            });
+        }
+        $totalAudio = $totalAudioQuery->count();
+        $totalSoal = $totalSoalQuery->count();
+        $totalAktif = $totalAktifQuery->count();
 
         return view('guru.modul_listening.index', compact('listenings', 'totalAudio', 'totalSoal', 'totalAktif'));
     }
@@ -59,7 +85,9 @@ class ModulListeningController extends Controller
      */
     public function create(): View
     {
-        return view('guru.modul_listening.create');
+        $kelasDiampu = auth()->user()->kelas_diampu ?? [];
+
+        return view('guru.modul_listening.create', compact('kelasDiampu'));
     }
 
     /**
@@ -72,6 +100,7 @@ class ModulListeningController extends Controller
             'deskripsi' => 'nullable|string',
             'tingkat_kesulitan' => 'required|in:Beginner,Intermediate,Advanced',
             'tingkat_kelas' => 'required|string|max:50',
+            'target_rombel' => 'nullable|string|max:50',
             'xp_reward' => 'nullable|integer|min:0',
             'status' => 'required|in:aktif,draft',
             'tujuan_belajar' => 'nullable|array',
@@ -100,10 +129,12 @@ class ModulListeningController extends Controller
             'deskripsi',
             'tingkat_kesulitan',
             'tingkat_kelas',
+            'target_rombel',
             'xp_reward',
             'status',
         ]);
 
+        $data['user_id'] = auth()->id();
         $data['xp_reward'] = $data['xp_reward'] ?? 50;
 
         // Bersihkan array tujuan belajar
@@ -209,6 +240,11 @@ class ModulListeningController extends Controller
      */
     public function show(ModulListening $listening): View
     {
+        $user = auth()->user();
+        if ($user && $user->role === 'guru' && $listening->user_id && $listening->user_id !== $user->id) {
+            abort(403, 'Anda tidak memiliki hak akses untuk melihat modul listening guru lain.');
+        }
+
         $listening->load(['audios', 'soals.listeningAudio']);
 
         return view('guru.modul_listening.show', compact('listening'));
@@ -219,9 +255,15 @@ class ModulListeningController extends Controller
      */
     public function edit(ModulListening $listening): View
     {
-        $listening->load(['audios', 'soals.listeningAudio']);
+        $user = auth()->user();
+        if ($user && $user->role === 'guru' && $listening->user_id && $listening->user_id !== $user->id) {
+            abort(403, 'Anda tidak memiliki hak akses untuk mengedit modul listening guru lain.');
+        }
 
-        return view('guru.modul_listening.edit', compact('listening'));
+        $listening->load(['audios', 'soals.listeningAudio']);
+        $kelasDiampu = auth()->user()->kelas_diampu ?? [];
+
+        return view('guru.modul_listening.edit', compact('listening', 'kelasDiampu'));
     }
 
     /**
@@ -229,11 +271,17 @@ class ModulListeningController extends Controller
      */
     public function update(Request $request, ModulListening $listening): RedirectResponse
     {
+        $user = auth()->user();
+        if ($user && $user->role === 'guru' && $listening->user_id && $listening->user_id !== $user->id) {
+            abort(403, 'Anda tidak memiliki hak akses untuk memperbarui modul listening guru lain.');
+        }
+
         $request->validate([
             'judul' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'tingkat_kesulitan' => 'required|in:Beginner,Intermediate,Advanced',
             'tingkat_kelas' => 'required|string|max:50',
+            'target_rombel' => 'nullable|string|max:50',
             'xp_reward' => 'nullable|integer|min:0',
             'status' => 'required|in:aktif,draft',
             'tujuan_belajar' => 'nullable|array',
@@ -259,6 +307,7 @@ class ModulListeningController extends Controller
             'deskripsi',
             'tingkat_kesulitan',
             'tingkat_kelas',
+            'target_rombel',
             'xp_reward',
             'status',
         ]);
@@ -386,6 +435,11 @@ class ModulListeningController extends Controller
      */
     public function destroy(ModulListening $listening): RedirectResponse
     {
+        $user = auth()->user();
+        if ($user && $user->role === 'guru' && $listening->user_id && $listening->user_id !== $user->id) {
+            abort(403, 'Anda tidak memiliki hak akses untuk menghapus modul listening guru lain.');
+        }
+
         $judul = $listening->judul;
 
         if ($listening->audio_file && Storage::disk('public')->exists($listening->audio_file)) {

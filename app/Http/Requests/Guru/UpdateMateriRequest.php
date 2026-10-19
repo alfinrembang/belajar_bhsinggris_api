@@ -26,6 +26,7 @@ class UpdateMateriRequest extends FormRequest
             'judul' => ['required', 'string', 'max:255'],
             'kategori' => ['required', 'string', 'max:100'],
             'tingkat_kelas' => ['required', 'string', 'max:50'],
+            'target_rombel' => ['nullable', 'string', 'max:50'],
             'deskripsi_singkat' => ['nullable', 'string', 'max:1000'],
             'penjelasan' => ['required', 'string'],
             'contoh_teks' => ['nullable', 'string'],

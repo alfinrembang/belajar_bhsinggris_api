@@ -76,6 +76,23 @@
                     </select>
                 </div>
 
+                @if(!empty($kelasDiampu))
+                <!-- Target Rombel Spesifik -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+                        Target Rombel Spesifik <span class="text-slate-400 font-normal">(Opsional)</span>
+                    </label>
+                    <select name="target_rombel" class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] outline-none">
+                        <option value="">Semua Rombel yang Saya Ajar</option>
+                        @foreach($kelasDiampu as $rombel)
+                            <option value="{{ $rombel }}" {{ old('target_rombel') == $rombel ? 'selected' : '' }}>
+                                Khusus Rombel {{ $rombel }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                @endif
+
                 <!-- XP Reward -->
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">
