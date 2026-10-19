@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 
@@ -14,10 +15,12 @@ class ModulListening extends Model
     protected $table = 'modul_listenings';
 
     protected $fillable = [
+        'user_id',
         'judul',
         'deskripsi',
         'tingkat_kesulitan',
         'tingkat_kelas',
+        'target_rombel',
         'audio_file',
         'audio_title',
         'durasi',
@@ -26,6 +29,14 @@ class ModulListening extends Model
         'xp_reward',
         'status',
     ];
+
+    /**
+     * Relasi ke guru pembuat modul listening.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     protected $casts = [
         'tujuan_belajar' => 'array',

@@ -20,6 +20,7 @@ class UserSeeder extends Seeder
                 'name' => 'Guru Bahasa Inggris',
                 'role' => 'guru',
                 'password' => Hash::make('guru123'),
+                'kelas_diampu' => ['10 DKV 1', '11 RPL 2', '12 RPL 1'],
             ]
         );
 
@@ -27,9 +28,9 @@ class UserSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'admin@mail.com'],
             [
-                'name' => 'Administrator',
+                'name' => 'adminprima',
                 'role' => 'admin',
-                'password' => Hash::make('admin123'),
+                'password' => Hash::make('admin1234'),
             ]
         );
 
