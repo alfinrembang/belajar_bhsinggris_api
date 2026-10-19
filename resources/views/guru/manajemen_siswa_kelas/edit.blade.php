@@ -4,13 +4,23 @@
     pageSubtitle="Perbarui informasi akun, pembagian rombel kelas, atau reset kata sandi siswa." 
     active="siswa"
 >
+    <!-- Navigasi Kembali & Aksi Cepat -->
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <x-button variant="back" href="{{ route('guru.siswa.index') }}">
+            Kembali ke Manajemen Siswa & Kelas
+        </x-button>
+
+        <x-button variant="show" href="{{ route('guru.siswa.show', $siswa) }}">
+            Lihat Transkrip Siswa
+        </x-button>
+    </div>
+
     <x-alert-errors />
 
     <div class="max-w-4xl bg-white rounded-3xl border border-slate-100 shadow-xs p-6 lg:p-8">
         <x-section-header 
             title="Formulir Pembaruan Data Siswa"
             subtitle="Perubahan kelas atau identitas akan langsung tersinkronisasi ke aplikasi mobile siswa."
-            icon="✏️"
         />
 
         <form action="{{ route('guru.siswa.update', $siswa) }}" method="POST" class="mt-6 space-y-6">
@@ -159,14 +169,12 @@
 
             <!-- Tombol Aksi -->
             <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
-                <a href="{{ route('guru.siswa.index') }}" 
-                   class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold transition-colors">
+                <x-button variant="cancel" href="{{ route('guru.siswa.index') }}">
                     Batal
-                </a>
-                <button type="submit" 
-                        class="px-6 py-2.5 rounded-xl bg-[#1E6BFF] hover:bg-[#155BE5] text-white text-xs font-semibold shadow-[0_6px_16px_rgba(30,107,255,0.28)] transition-all">
+                </x-button>
+                <x-button variant="submit">
                     Simpan Perubahan
-                </button>
+                </x-button>
             </div>
         </form>
     </div>

@@ -65,15 +65,13 @@ class SiswaController extends Controller
             ->count();
 
         $daftarJurusan = ['RPL', 'DKV', 'TSM', 'BD', 'SA', 'MPLB', 'TKKR'];
-        $pengaturanAkademik = PengaturanAkademik::getActiveSetting();
 
         return view('guru.manajemen_siswa_kelas.index', compact(
             'daftarSiswa',
             'totalSiswa',
             'totalRombel',
             'siswaAktif',
-            'daftarJurusan',
-            'pengaturanAkademik'
+            'daftarJurusan'
         ));
     }
 
@@ -112,36 +110,6 @@ class SiswaController extends Controller
 
         return redirect()->route('guru.siswa.index')
             ->with('success', "Akun siswa {$siswa->nama_lengkap} berhasil ditambahkan! Kata sandi bawaan: {$defaultPassword}");
-    }
-
-    /**
-     * Membuka atau menutup periode kenaikan kelas untuk siswa di aplikasi mobile.
-     */
-    public function toggleKenaikanKelas(Request $request): RedirectResponse
-    {
-        $pengaturan = PengaturanAkademik::getActiveSetting();
-        $isAktif = ! $pengaturan->is_periode_kenaikan_aktif;
-
-        $pengaturan->is_periode_kenaikan_aktif = $isAktif;
-        $pengaturan->tahun_ajaran = PengaturanAkademik::getTahunAjaranOtomatis();
-
-        if ($isAktif) {
-            $pengaturan->opened_at = now();
-        } else {
-            $pengaturan->closed_at = now();
-        }
-
-        if ($request->filled('keterangan')) {
-            $pengaturan->keterangan = trim($request->input('keterangan'));
-        }
-
-        $pengaturan->save();
-
-        $pesan = $isAktif
-            ? "Periode kenaikan kelas ({$pengaturan->tahun_ajaran}) berhasil DIBUKA! Siswa sekarang dapat memilih rombel & no absen baru di aplikasi."
-            : 'Periode kenaikan kelas berhasil DITUTUP. Rombel siswa kembali dikunci untuk mencegah perubahan sepihak.';
-
-        return redirect()->back()->with('success', $pesan);
     }
 
     /**

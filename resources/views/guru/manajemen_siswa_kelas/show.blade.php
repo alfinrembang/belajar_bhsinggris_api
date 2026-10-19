@@ -56,17 +56,12 @@
         <!-- Tombol Aksi Cepat Guru -->
         <div class="flex items-center gap-2.5 flex-wrap self-stretch md:self-auto justify-end">
             <!-- Reset Password -->
-            <form action="{{ route('guru.siswa.reset_password', $siswa) }}" 
-                  method="POST" 
-                  onsubmit="return confirm('Reset kata sandi siswa &quot;{{ addslashes($siswa->nama_lengkap) }}&quot; ke default &quot;12345678&quot;?')" 
-                  class="inline">
-                @csrf
-                <button type="submit" 
-                        class="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 font-semibold text-xs transition-colors flex items-center gap-1.5 shadow-xs">
-                    <svg class="w-3.5 h-3.5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                    Reset Password
-                </button>
-            </form>
+            <button type="button" 
+                    onclick="konfirmasiResetPassword('{{ route('guru.siswa.reset_password', $siswa) }}', '{{ addslashes($siswa->nama_lengkap) }}')"
+                    class="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 font-semibold text-xs transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer">
+                <svg class="w-3.5 h-3.5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                Reset Password
+            </button>
 
             <!-- Edit Siswa -->
             <a href="{{ route('guru.siswa.edit', $siswa) }}" 
@@ -89,25 +84,25 @@
         <x-stat-card 
             title="Rata-rata Latihan Materi" 
             :value="$rataMateri . ' / 100'" 
-            icon="📚" 
+            icon="book" 
             color="blue" 
         />
         <x-stat-card 
             title="Rata-rata Listening Audio" 
             :value="$rataListening . ' / 100'" 
-            icon="🎧" 
+            icon="headphones" 
             color="purple" 
         />
         <x-stat-card 
             title="Rata-rata Ujian Kuis" 
             :value="$rataQuiz . ' / 100'" 
-            icon="📝" 
+            icon="file-text" 
             color="emerald" 
         />
         <x-stat-card 
             title="Total Perolehan XP" 
             :value="number_format($totalXp) . ' XP'" 
-            icon="⚡" 
+            icon="zap" 
             color="amber" 
         />
     </div>

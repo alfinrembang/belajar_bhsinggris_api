@@ -96,6 +96,33 @@ class SiswaManagementTest extends TestCase
     }
 
     /**
+     * Guru dapat mengakses halaman tambah siswa dan terdapat tombol navigasi kembali.
+     */
+    public function test_guru_can_view_create_siswa_page_with_back_button(): void
+    {
+        $response = $this->actingAs($this->guru)->get(route('guru.siswa.create'));
+
+        $response->assertStatus(200);
+        $response->assertSee('Kembali ke Manajemen Siswa');
+        $response->assertSee(route('guru.siswa.index'));
+    }
+
+    /**
+     * Guru dapat mengakses halaman edit siswa dan terdapat tombol navigasi kembali.
+     */
+    public function test_guru_can_view_edit_siswa_page_with_back_button(): void
+    {
+        $siswa = Siswa::factory()->create();
+
+        $response = $this->actingAs($this->guru)->get(route('guru.siswa.edit', $siswa));
+
+        $response->assertStatus(200);
+        $response->assertSee('Kembali ke Manajemen Siswa');
+        $response->assertSee(route('guru.siswa.index'));
+        $response->assertSee(route('guru.siswa.show', $siswa));
+    }
+
+    /**
      * Guru dapat melihat buku rapor & transkrip nilai detail siswa per modul.
      */
     public function test_guru_can_view_siswa_grade_transcript(): void
@@ -226,6 +253,28 @@ class SiswaManagementTest extends TestCase
     }
 
     /**
+     * Halaman manajemen siswa memuat modal konfirmasi reset password modern.
+     */
+    public function test_siswa_views_contain_modern_reset_password_modal(): void
+    {
+        $siswa = Siswa::factory()->create([
+            'nama_lengkap' => 'Budi Santoso',
+        ]);
+
+        // Cek halaman index
+        $indexResponse = $this->actingAs($this->guru)->get(route('guru.siswa.index'));
+        $indexResponse->assertStatus(200);
+        $indexResponse->assertSee('globalResetPasswordModal');
+        $indexResponse->assertSee('konfirmasiResetPassword');
+
+        // Cek halaman show / detail rapor
+        $showResponse = $this->actingAs($this->guru)->get(route('guru.siswa.show', $siswa));
+        $showResponse->assertStatus(200);
+        $showResponse->assertSee('globalResetPasswordModal');
+        $showResponse->assertSee('konfirmasiResetPassword');
+    }
+
+    /**
      * Guru dapat menghapus siswa beserta cascading progres belajarnya.
      */
     public function test_guru_can_delete_siswa(): void
@@ -241,28 +290,23 @@ class SiswaManagementTest extends TestCase
     }
 
     /**
-     * Guru dapat membuka dan menutup sakelar periode kenaikan kelas.
+     * Guru tidak lagi memiliki akses sakelar periode kenaikan kelas (eksklusif hak akses admin).
      */
-    public function test_guru_can_toggle_kenaikan_kelas_periode(): void
+    public function test_guru_cannot_toggle_kenaikan_kelas_periode(): void
     {
-        $setting = PengaturanAkademik::getActiveSetting();
-        $this->assertFalse($setting->is_periode_kenaikan_aktif);
-
-        // Buka periode
+        // 1. Endpoint lama pada guru tidak tersedia (405 Method Not Allowed karena cocok ke wildcard show GET)
         $response = $this->actingAs($this->guru)->post('/siswa/toggle-kenaikan-kelas');
-        $response->assertStatus(302);
+        $this->assertContains($response->getStatusCode(), [404, 405]);
 
-        $setting->refresh();
-        $this->assertTrue($setting->is_periode_kenaikan_aktif);
-        $this->assertNotNull($setting->opened_at);
+        // 2. Guru ditolak (403 Forbidden) jika mencoba mengakses sakelar admin
+        $adminToggleResponse = $this->actingAs($this->guru)->post(route('admin.kenaikan_kelas.toggle'));
+        $adminToggleResponse->assertStatus(403);
 
-        // Tutup periode
-        $response = $this->actingAs($this->guru)->post('/siswa/toggle-kenaikan-kelas');
-        $response->assertStatus(302);
-
-        $setting->refresh();
-        $this->assertFalse($setting->is_periode_kenaikan_aktif);
-        $this->assertNotNull($setting->closed_at);
+        // 3. Halaman manajemen siswa guru tidak menampilkan sakelar periode kenaikan kelas
+        $indexResponse = $this->actingAs($this->guru)->get(route('guru.siswa.index'));
+        $indexResponse->assertStatus(200);
+        $indexResponse->assertDontSee('Tutup Periode Kenaikan Kelas');
+        $indexResponse->assertDontSee('Buka Periode Kenaikan Kelas');
     }
 
     /**

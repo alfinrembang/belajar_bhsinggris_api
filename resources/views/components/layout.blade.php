@@ -58,5 +58,11 @@
         </main>
     </div>
 
+    <!-- Modal Pop-up Konfirmasi Hapus Universal -->
+    <x-modal-delete />
+
+    <!-- Modal Pop-up Konfirmasi Reset Password Siswa Universal -->
+    <x-modal-reset-password />
+
 </body>
 </html>
