@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Auth\LoginGuruController;
+use App\Http\Controllers\Guru\DashboardController;
 use App\Http\Controllers\Guru\KategoriMateriController;
 use App\Http\Controllers\Guru\LaporanAnalitikController;
 use App\Http\Controllers\Guru\MateriController;
@@ -10,8 +11,6 @@ use App\Http\Controllers\Guru\PengaturanSistemController;
 use App\Http\Controllers\Guru\QuizController;
 use App\Http\Controllers\Guru\SiswaController;
 use App\Models\Materi;
-use App\Models\ModulListening;
-use App\Models\Quiz;
 use App\Models\Siswa;
 use Illuminate\Support\Facades\Route;
 
@@ -29,19 +28,8 @@ Route::post('/logout', [LoginGuruController::class, 'logout'])->name('logout');
 
 // AREA TERPROTEKSI WEB GURU / ADMIN (WAJIB LOGIN)
 Route::middleware(['auth'])->group(function () {
-    // 0. Dashboard Utama (Jika login adalah admin, alihkan ke admin.dashboard)
-    Route::get('/dashboard', function () {
-        if (auth()->user()->role === 'admin') {
-            return redirect()->route('admin.dashboard');
-        }
-
-        $totalSiswa = Siswa::count();
-        $totalMateri = Materi::count();
-        $totalListening = ModulListening::count();
-        $totalQuiz = Quiz::count();
-
-        return view('guru.dashboard', compact('totalSiswa', 'totalMateri', 'totalListening', 'totalQuiz'));
-    })->name('guru.dashboard');
+    // 0. Dashboard Utama Pendidik
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('guru.dashboard');
 
     // MODUL 1: MANAJEMEN MATERI PEMBELAJARAN (EKSPLISIT GET & POST/PUT/DELETE)
     Route::get('/materi', [MateriController::class, 'index'])->name('guru.materi.index');
@@ -86,7 +74,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/siswa/{siswa}', [SiswaController::class, 'show'])->name('guru.siswa.show');
     Route::get('/siswa/{siswa}/edit', [SiswaController::class, 'edit'])->name('guru.siswa.edit');
     Route::post('/siswa/{siswa}/update', [SiswaController::class, 'update'])->name('guru.siswa.update');
-    Route::post('/siswa/toggle-kenaikan-kelas', [SiswaController::class, 'toggleKenaikanKelas'])->name('guru.siswa.toggle_kenaikan');
     Route::post('/siswa/{siswa}/reset-password', [SiswaController::class, 'resetPassword'])->name('guru.siswa.reset_password');
     Route::post('/siswa/{siswa}/destroy', [SiswaController::class, 'destroy'])->name('guru.siswa.destroy');
 
@@ -117,4 +104,5 @@ Route::middleware(['auth', 'role.admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/guru/{guru}/update', [AdminDashboardController::class, 'updateGuru'])->name('guru.update');
     Route::post('/guru/{guru}/reset-password', [AdminDashboardController::class, 'resetPasswordGuru'])->name('guru.reset_password');
     Route::post('/guru/{guru}/destroy', [AdminDashboardController::class, 'destroyGuru'])->name('guru.destroy');
+    Route::post('/kenaikan-kelas/toggle', [AdminDashboardController::class, 'toggleKenaikanKelas'])->name('kenaikan_kelas.toggle');
 });
