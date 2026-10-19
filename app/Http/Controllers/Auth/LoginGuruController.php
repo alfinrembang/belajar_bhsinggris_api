@@ -16,7 +16,9 @@ class LoginGuruController extends Controller
     public function showLoginForm(): View|RedirectResponse
     {
         if (Auth::check() && in_array(Auth::user()->role, ['guru', 'admin'])) {
-            return redirect()->route('guru.dashboard');
+            return Auth::user()->role === 'admin'
+                ? redirect()->route('admin.dashboard')
+                : redirect()->route('guru.dashboard');
         }
 
         return view('auth.login');
@@ -47,7 +49,9 @@ class LoginGuruController extends Controller
             if (in_array($user->role, ['guru', 'admin'])) {
                 $request->session()->regenerate();
 
-                return redirect()->intended(route('guru.dashboard'));
+                $redirectRoute = $user->role === 'admin' ? 'admin.dashboard' : 'guru.dashboard';
+
+                return redirect()->intended(route($redirectRoute));
             }
 
             Auth::logout();

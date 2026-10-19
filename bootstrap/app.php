@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\CheckGuruToken;
 use App\Http\Middleware\CheckSiswaToken;
+use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -18,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'auth.guru' => CheckGuruToken::class,
             'auth.siswa' => CheckSiswaToken::class,
+            'role.admin' => EnsureUserIsAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
