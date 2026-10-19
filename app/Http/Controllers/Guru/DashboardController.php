@@ -85,9 +85,8 @@ class DashboardController extends Controller
             ->take(5)
             ->values();
 
-        // 5. Modul Pembelajaran Terbaru
-        $materiTerbaru = Materi::latest()->take(4)->get();
-        $quizTerbaru = Quiz::latest()->take(3)->get();
+        // 5. Modul Pembelajaran Materi Terbaru (Dipaginate 5 materi per halaman)
+        $materiTerbaru = Materi::latest()->paginate(5)->fragment('modul-terbaru')->withQueryString();
 
         // 6. Pengaturan Akademik Aktif
         $pengaturanAkademik = PengaturanAkademik::first();
@@ -111,7 +110,6 @@ class DashboardController extends Controller
             'rataKeseluruhan',
             'topSiswa',
             'materiTerbaru',
-            'quizTerbaru',
             'pengaturanAkademik'
         ));
     }

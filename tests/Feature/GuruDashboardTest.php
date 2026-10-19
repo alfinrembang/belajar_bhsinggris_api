@@ -87,4 +87,23 @@ class GuruDashboardTest extends TestCase
         $response = $this->get(route('guru.dashboard'));
         $response->assertRedirect(route('login'));
     }
+
+    /**
+     * Modul pembelajaran terkini dipaginate 5 materi per halaman dengan pagination kustom.
+     */
+    public function test_materi_terbaru_is_paginated_five_per_page(): void
+    {
+        // Buat 6 materi untuk memicu halaman ke-2
+        Materi::factory()->count(6)->create();
+
+        $response = $this->actingAs($this->guru)->get(route('guru.dashboard', ['page' => 1]));
+        $response->assertStatus(200);
+        $response->assertSee('Showing');
+        $response->assertSee('results');
+        $response->assertSee('Next');
+
+        $page2Response = $this->actingAs($this->guru)->get(route('guru.dashboard', ['page' => 2]));
+        $page2Response->assertStatus(200);
+        $page2Response->assertSee('Previous');
+    }
 }

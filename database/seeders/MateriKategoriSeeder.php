@@ -258,5 +258,77 @@ class MateriKategoriSeeder extends Seeder
         foreach ($soalVocabulary as $s) {
             $materiVocabulary->soals()->create($s);
         }
+
+        // =====================================================================
+        // 4. MATERI KATEGORI: READING - NARRATIVE TEXT
+        // =====================================================================
+        Materi::updateOrCreate(
+            ['judul' => 'Narrative Text: Timeless Legends and Moral Folktales'],
+            [
+                'kategori' => 'Reading',
+                'tingkat_kelas' => 'Semua Kelas',
+                'deskripsi_singkat' => 'Memahami struktur teks naratif: orientasi, komplikasi, resolusi, dan reorientasi.',
+                'penjelasan' => "Narrative Text bertujuan menghibur pembaca dan menyampaikan pesan moral melalui urutan peristiwa masa lampau (Past Tense). Struktur generik meliputi:\n1. Orientation: Pengenalan tokoh, tempat, dan waktu cerita.\n2. Complication: Munculnya konflik atau masalah utama.\n3. Resolution: Penyelesaian masalah.\n4. Re-orientation / Coda: Nilai moral atau kesimpulan.",
+                'contoh_teks' => 'Once upon a time in a tranquil coastal village in West Sumatra, lived a hardworking widow and her devoted young son named Malin Kundang. They lived in modest simplicity, relying on the bounty of the sea for sustenance.',
+                'gambar_materi' => null,
+                'audio_materi' => null,
+                'xp_reward' => 50,
+                'status' => 'aktif',
+            ]
+        );
+
+        // =====================================================================
+        // 5. MATERI KATEGORI: WRITING - BUSINESS CORRESPONDENCE
+        // =====================================================================
+        Materi::updateOrCreate(
+            ['judul' => 'Formal Email & Business Correspondence Essentials'],
+            [
+                'kategori' => 'Writing',
+                'tingkat_kelas' => 'Kelas 11',
+                'deskripsi_singkat' => 'Format etiket penulisan surel formal untuk keperluan bisnis, magang kerja, dan akademik.',
+                'penjelasan' => "Menulis surel resmi menuntut ketepatan salam pembuka, bahasa yang santun, isi yang lugas, dan penutup profesional. Hindari penggunaan singkatan informal seperti 'gonna', 'wanna', atau 'u'.",
+                'contoh_teks' => "Dear Mr. Henderson,\n\nI am writing to formally submit our proposal regarding the digital English literacy program for vocational students. Please find the detailed project timeline attached for your review.\n\nSincerely,\nBudi Pratama",
+                'gambar_materi' => null,
+                'audio_materi' => null,
+                'xp_reward' => 60,
+                'status' => 'aktif',
+            ]
+        );
+
+        // =====================================================================
+        // 6. MATERI KATEGORI: GRAMMAR - CONDITIONAL SENTENCES
+        // =====================================================================
+        Materi::updateOrCreate(
+            ['judul' => 'Conditional Sentences: Real and Unreal Situations (Type 1, 2, 3)'],
+            [
+                'kategori' => 'Grammar',
+                'tingkat_kelas' => 'Kelas 12',
+                'deskripsi_singkat' => 'Memahami pengandaian realistis masa depan dan penyesalan masa lampau.',
+                'penjelasan' => "Kalimat pengandaian terdiri dari if-clause dan main clause:\n- Type 1 (Real in Future): If + Simple Present, Will + Verb 1.\n- Type 2 (Unreal in Present): If + Simple Past, Would + Verb 1.\n- Type 3 (Unreal in Past): If + Past Perfect, Would have + Verb 3.",
+                'contoh_teks' => 'If students prepare thoroughly for the English exam, they will achieve outstanding results. If I had known about the scholarship seminar yesterday, I would have attended it with enthusiasm.',
+                'gambar_materi' => null,
+                'audio_materi' => null,
+                'xp_reward' => 75,
+                'status' => 'aktif',
+            ]
+        );
+
+        // =====================================================================
+        // 7. MATERI KATEGORI: GRAMMAR - PASSIVE VOICE
+        // =====================================================================
+        Materi::updateOrCreate(
+            ['judul' => 'Passive Voice in Academic and Media Reports'],
+            [
+                'kategori' => 'Grammar',
+                'tingkat_kelas' => 'Kelas 11',
+                'deskripsi_singkat' => 'Struktur kalimat pasif untuk laporan ilmiah, berita jurnalistik, dan teks objektif.',
+                'penjelasan' => 'Passive voice digunakan ketika objek atau tindakan lebih ditekankan daripada pelaku tindakan itu sendiri. Rumus dasar: Subject + to be + Verb 3 (Past Participle) + (by agent).',
+                'contoh_teks' => 'The annual international science conference was hosted by the education ministry. Several innovative renewable energy prototypes were showcased by talented vocational students.',
+                'gambar_materi' => null,
+                'audio_materi' => null,
+                'xp_reward' => 60,
+                'status' => 'aktif',
+            ]
+        );
     }
 }
