@@ -114,18 +114,7 @@
                                 </div>
                             </td>
                             <td class="py-3 px-2.5 whitespace-nowrap">
-                                @php
-                                    $badgeColor = match($materi->kategori) {
-                                        'Reading' => 'bg-blue-50 text-[#1E6BFF] border-blue-100',
-                                        'Grammar' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
-                                        'Conversation' => 'bg-purple-50 text-purple-700 border-purple-100',
-                                        'Vocabulary' => 'bg-amber-50 text-amber-700 border-amber-100',
-                                        default => 'bg-slate-50 text-slate-700 border-slate-200',
-                                    };
-                                @endphp
-                                <span class="whitespace-nowrap px-2.5 py-0.5 rounded-md {{ $badgeColor }} border text-[11px] font-semibold inline-flex items-center">
-                                    {{ $materi->kategori }}
-                                </span>
+                                <x-badge-kategori :kategori="$materi->kategori" size="text-[11px] px-2.5 py-0.5" />
                             </td>
                             <td class="py-3 px-2.5 whitespace-nowrap text-slate-700 font-semibold text-xs">
                                 <span class="whitespace-nowrap">{{ $materi->tingkat_kelas === 'Semua Kelas' ? 'Semua Kelas' : 'Kelas ' . $materi->tingkat_kelas }}</span>

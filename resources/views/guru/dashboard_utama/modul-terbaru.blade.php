@@ -26,9 +26,21 @@
     @if($materiTerbaru->isNotEmpty())
         <div class="divide-y divide-slate-100">
             @foreach($materiTerbaru as $materi)
+                @php
+                    $kat = strtolower(trim((string) $materi->kategori));
+                    $iconStyle = match($kat) {
+                        'reading' => 'bg-blue-50 text-[#1E6BFF] border-blue-100/80 group-hover:bg-[#1E6BFF] group-hover:text-white',
+                        'grammar' => 'bg-emerald-50 text-emerald-600 border-emerald-100/80 group-hover:bg-emerald-600 group-hover:text-white',
+                        'conversation' => 'bg-purple-50 text-purple-600 border-purple-100/80 group-hover:bg-purple-600 group-hover:text-white',
+                        'vocabulary' => 'bg-amber-50 text-amber-600 border-amber-100/80 group-hover:bg-amber-600 group-hover:text-white',
+                        'writing' => 'bg-slate-100 text-slate-700 border-slate-200/80 group-hover:bg-slate-700 group-hover:text-white',
+                        'listening' => 'bg-indigo-50 text-indigo-600 border-indigo-100/80 group-hover:bg-indigo-600 group-hover:text-white',
+                        default => 'bg-blue-50 text-[#1E6BFF] border-blue-100/80 group-hover:bg-[#1E6BFF] group-hover:text-white',
+                    };
+                @endphp
                 <div class="py-3.5 first:pt-0 last:pb-0 flex items-center justify-between gap-3 group">
                     <div class="flex items-center gap-3.5 min-w-0">
-                        <div class="w-9 h-9 rounded-xl bg-blue-50 text-[#1E6BFF] border border-blue-100/80 flex items-center justify-center shrink-0 group-hover:bg-[#1E6BFF] group-hover:text-white transition-all shadow-xs">
+                        <div class="w-9 h-9 rounded-xl {{ $iconStyle }} border flex items-center justify-center shrink-0 transition-all shadow-xs">
                             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
                                 <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
@@ -39,9 +51,7 @@
                                 {{ $materi->judul }}
                             </a>
                             <div class="flex items-center gap-2 mt-0.5 text-[11px] text-slate-400">
-                                <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-semibold text-[10px]">
-                                    {{ $materi->kategori ?: 'General' }}
-                                </span>
+                                <x-badge-kategori :kategori="$materi->kategori" size="text-[10px] px-2 py-0.5" />
                                 <span>Kelas {{ $materi->tingkat_kelas ?: 'Semua' }}</span>
                                 <span>·</span>
                                 <span class="text-amber-600 font-medium">+{{ $materi->xp_reward ?? 50 }} XP</span>
