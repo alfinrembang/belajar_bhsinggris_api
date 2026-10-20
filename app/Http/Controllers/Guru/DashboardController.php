@@ -26,7 +26,38 @@ class DashboardController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
-        // 1. Metrik Pokok Siswa & Rombel
+        $guru = auth()->user();
+        $kelasDiampu = is_array($guru?->kelas_diampu) ? array_filter($guru->kelas_diampu) : [];
+        $isFilterKelas = ! empty($kelasDiampu);
+
+        // 1. Metrik Pokok Siswa & Rombel (Filter khusus kelas binaan guru jika tersedia)
+        $siswaDiampuQuery = Siswa::query();
+        if ($isFilterKelas) {
+            $siswaDiampuQuery->where(function ($query) use ($kelasDiampu) {
+                foreach ($kelasDiampu as $rombel) {
+                    $parts = explode(' ', trim((string) $rombel));
+                    if (count($parts) >= 3) {
+                        $query->orWhere(function ($q) use ($parts) {
+                            $q->where('kelas', $parts[0])
+                                ->where('jurusan', $parts[1])
+                                ->where('no_kelas', $parts[2]);
+                        });
+                    } elseif (count($parts) === 2) {
+                        $query->orWhere(function ($q) use ($parts) {
+                            $q->where('kelas', $parts[0])
+                                ->where('jurusan', $parts[1]);
+                        });
+                    } elseif (count($parts) === 1 && ! empty($parts[0])) {
+                        $query->orWhere('kelas', $parts[0]);
+                    }
+                }
+            });
+        }
+
+        $siswaDiampuIds = $siswaDiampuQuery->pluck('id');
+        $totalSiswaDiampu = $siswaDiampuIds->count();
+        $labelKelasDiampu = $isFilterKelas ? implode(', ', $kelasDiampu) : 'Seluruh Siswa Terdaftar';
+
         $totalSiswa = Siswa::count();
         $siswaKelas10 = Siswa::where('kelas', '10')->count();
         $siswaKelas11 = Siswa::where('kelas', '11')->count();
@@ -38,24 +69,54 @@ class DashboardController extends Controller
         $totalListening = ModulListening::count();
         $totalQuiz = Quiz::count();
 
-        // 3. Ringkasan Ketuntasan Belajar & Rata-rata Skor
-        $materiSkors = SiswaMateriProgres::whereNotNull('skor')->pluck('skor');
+        // 3. Ringkasan Ketuntasan Belajar & Rata-rata Skor (Dinamis sesuai siswa binaan guru)
+        $materiQuery = SiswaMateriProgres::query();
+        $listeningQuery = SiswaListeningProgres::query();
+        $quizQuery = SiswaQuizProgres::query();
+
+        if ($isFilterKelas) {
+            $materiQuery->whereIn('siswa_id', $siswaDiampuIds);
+            $listeningQuery->whereIn('siswa_id', $siswaDiampuIds);
+            $quizQuery->whereIn('siswa_id', $siswaDiampuIds);
+        }
+
+        $materiSkors = (clone $materiQuery)->whereNotNull('skor')->pluck('skor');
         $rataMateri = $materiSkors->isNotEmpty() ? round($materiSkors->avg(), 1) : 0;
-        $totalMateriSelesai = SiswaMateriProgres::where('status', 'selesai')->count();
+        $totalMateriSelesai = (clone $materiQuery)->where('status', 'selesai')->count();
 
-        $listeningSkors = SiswaListeningProgres::whereNotNull('skor')->pluck('skor');
+        $listeningSkors = (clone $listeningQuery)->whereNotNull('skor')->pluck('skor');
         $rataListening = $listeningSkors->isNotEmpty() ? round($listeningSkors->avg(), 1) : 0;
-        $totalListeningSelesai = SiswaListeningProgres::where('status', 'selesai')->count();
+        $totalListeningSelesai = (clone $listeningQuery)->where('status', 'selesai')->count();
 
-        $quizSkors = SiswaQuizProgres::whereNotNull('skor')->pluck('skor');
+        $quizSkors = (clone $quizQuery)->whereNotNull('skor')->pluck('skor');
         $rataQuiz = $quizSkors->isNotEmpty() ? round($quizSkors->avg(), 1) : 0;
-        $totalQuizSelesai = SiswaQuizProgres::where('status', 'selesai')->count();
+        $totalQuizSelesai = (clone $quizQuery)->where('status', 'selesai')->count();
 
         $totalAktivitasSelesai = $totalMateriSelesai + $totalListeningSelesai + $totalQuizSelesai;
         $rataKeseluruhan = round(($rataMateri * 0.3) + ($rataListening * 0.3) + ($rataQuiz * 0.4), 1);
 
+        // Derajat pembagian segmen Donut Chart (360 derajat)
+        $bobotMateri = $rataMateri * 0.3;
+        $bobotListening = $rataListening * 0.3;
+        $bobotQuiz = $rataQuiz * 0.4;
+        $totalBobot = $bobotMateri + $bobotListening + $bobotQuiz;
+
+        if ($totalBobot > 0) {
+            $degMateri = round(($bobotMateri / $totalBobot) * 360, 1);
+            $degListening = round((($bobotMateri + $bobotListening) / $totalBobot) * 360, 1);
+        } else {
+            // Proporsi default berbobot jika belum ada skor (30%, 30%, 40%)
+            $degMateri = 108.0;
+            $degListening = 216.0;
+        }
+
         // 4. Siswa Paling Unggul (Top 5 Siswa dengan Akumulasi XP Tertinggi)
-        $topSiswa = Siswa::query()
+        $topSiswaQuery = Siswa::query();
+        if ($isFilterKelas) {
+            $topSiswaQuery->whereIn('id', $siswaDiampuIds);
+        }
+
+        $topSiswa = $topSiswaQuery
             ->with(['materiProgres', 'listeningProgres', 'quizProgres'])
             ->get()
             ->map(function (Siswa $siswa): array {
@@ -110,7 +171,12 @@ class DashboardController extends Controller
             'rataKeseluruhan',
             'topSiswa',
             'materiTerbaru',
-            'pengaturanAkademik'
+            'pengaturanAkademik',
+            'isFilterKelas',
+            'labelKelasDiampu',
+            'totalSiswaDiampu',
+            'degMateri',
+            'degListening'
         ));
     }
 }

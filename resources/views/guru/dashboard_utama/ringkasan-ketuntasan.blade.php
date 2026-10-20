@@ -1,4 +1,4 @@
-<!-- Ringkasan Ketuntasan Belajar & Performa Siswa -->
+<!-- Ringkasan Ketuntasan Belajar & Performa Siswa (Model Donut Chart) -->
 <div class="bg-white rounded-3xl p-6 lg:p-7 border border-slate-200/80 shadow-[0_2px_10px_rgba(0,0,0,0.02)] space-y-6">
     
     <!-- Header Kartu -->
@@ -12,8 +12,21 @@
                 </svg>
             </div>
             <div>
-                <h3 class="font-bold text-slate-900 text-base">Ketuntasan & Rerata Nilai Siswa</h3>
-                <p class="text-xs text-slate-400">Ringkasan capaian belajar siswa pada seluruh modul pembelajaran aktif</p>
+                <div class="flex flex-wrap items-center gap-2">
+                    <h3 class="font-bold text-slate-900 text-base">Ketuntasan & Rerata Nilai Siswa</h3>
+                    @if ($isFilterKelas)
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-[#1E6BFF] border border-blue-100">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#1E6BFF] animate-pulse"></span>
+                            Kelas Diampu: {{ $labelKelasDiampu }}
+                        </span>
+                    @else
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                            Seluruh Kelas
+                        </span>
+                    @endif
+                </div>
+                <p class="text-xs text-slate-400 mt-0.5">Ringkasan capaian belajar siswa pada seluruh modul pembelajaran aktif</p>
             </div>
         </div>
 
@@ -26,78 +39,79 @@
         </a>
     </div>
 
-    <!-- Metrik Nilai Rerata Keseluruhan -->
-    <div class="bg-slate-50/80 rounded-2xl p-5 border border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Rata-rata Skor Keseluruhan</p>
-            <div class="flex items-baseline gap-2 mt-1">
-                <span class="text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">{{ $rataKeseluruhan }}</span>
-                <span class="text-sm font-bold text-slate-400">/ 100</span>
+    <!-- Tampilan Utama: Donut Chart Melingkar (Kiri) & Rincian Metrik Vertikal (Kanan) sesuai Gambar 1 -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 items-center pt-1">
+        
+        <!-- Bagian Donut Chart Lingkaran (5 Kolom di Desktop) -->
+        <div class="md:col-span-5 flex flex-col items-center justify-center p-3 sm:p-4 bg-slate-50/60 rounded-3xl border border-slate-100/80">
+            <x-donut-chart 
+                :center-value="$rataKeseluruhan" 
+                center-label="Rerata" 
+                center-subtext="skala 100" 
+                :deg-materi="$degMateri" 
+                :deg-listening="$degListening" 
+                size="w-44 h-44 sm:w-48 sm:h-48"
+            />
+
+            <!-- Keterangan Status KKM -->
+            <div class="mt-4 text-center space-y-1">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold {{ $rataKeseluruhan >= 75 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/80' : 'bg-amber-50 text-amber-700 border border-amber-200/80' }}">
+                    <span class="w-2 h-2 rounded-full {{ $rataKeseluruhan >= 75 ? 'bg-emerald-500' : 'bg-amber-500' }}"></span>
+                    {{ $rataKeseluruhan >= 75 ? 'Rata-rata di Atas KKM (75)' : 'Perlu Pendampingan Tambahan' }}
+                </span>
+                <p class="text-[11px] text-slate-400 font-medium">
+                    Bobot: 30% Teori • 30% Audio • 40% Kuis
+                </p>
             </div>
-            <p class="text-[11px] text-slate-500 mt-1">
-                Akumulasi bobot: 30% Teori Materi + 30% Listening + 40% Kuis
-            </p>
         </div>
 
-        <div class="sm:text-right">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold {{ $rataKeseluruhan >= 75 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/80' : 'bg-amber-50 text-amber-700 border border-amber-200/80' }}">
-                <span class="w-2 h-2 rounded-full {{ $rataKeseluruhan >= 75 ? 'bg-emerald-500' : 'bg-amber-500' }}"></span>
-                {{ $rataKeseluruhan >= 75 ? 'Rata-rata di Atas KKM (75)' : 'Perlu Pendampingan Tambahan' }}
-            </span>
-            <p class="text-[11px] text-slate-400 mt-1.5 font-medium">
-                Total <strong class="text-slate-700 font-bold">{{ $totalAktivitasSelesai }}</strong> sesi belajar telah dituntaskan siswa
-            </p>
+        <!-- Bagian Rincian Metrik Vertikal (7 Kolom di Desktop) -->
+        <div class="md:col-span-7 flex flex-col justify-center space-y-3">
+            
+            <!-- 1. Latihan Teori Materi (Royal Blue) -->
+            <x-donut-metric-row 
+                label="Latihan Teori Materi"
+                :value="$rataMateri"
+                color="blue"
+                subtext="{{ $totalMateriSelesai }} Selesai"
+                :max="100"
+            />
+
+            <!-- 2. Listening Audio (Emerald Green) -->
+            <x-donut-metric-row 
+                label="Listening Audio"
+                :value="$rataListening"
+                color="emerald"
+                subtext="{{ $totalListeningSelesai }} Selesai"
+                :max="100"
+            />
+
+            <!-- 3. Paket Kuis & Ujian (Warm Amber) -->
+            <x-donut-metric-row 
+                label="Paket Kuis & Ujian"
+                :value="$rataQuiz"
+                color="amber"
+                subtext="{{ $totalQuizSelesai }} Selesai"
+                :max="100"
+            />
+
         </div>
+
     </div>
 
-    <!-- Rincian 3 Modul Pembelajaran Utama -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        
-        <!-- 1. Materi Modul -->
-        <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-xs space-y-2">
-            <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-slate-700">Latihan Teori Materi</span>
-                <span class="text-xs font-extrabold text-blue-600">{{ $rataMateri }}</span>
-            </div>
-            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                <div class="bg-[#1E6BFF] h-2 rounded-full transition-all duration-500" style="width: {{ min(100, max(0, $rataMateri)) }}%"></div>
-            </div>
-            <div class="flex items-center justify-between text-[11px] text-slate-400">
-                <span>{{ $totalMateriSelesai }} Selesai</span>
-                <span>Skala 100</span>
-            </div>
+    <!-- Footer Status & Total Sesi Tuntas -->
+    <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs text-slate-500 gap-2">
+        <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span>Total <strong class="text-slate-800 font-bold">{{ $totalAktivitasSelesai }}</strong> sesi belajar telah dituntaskan oleh siswa</span>
         </div>
-
-        <!-- 2. Listening Audio -->
-        <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-xs space-y-2">
-            <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-slate-700">Listening Audio</span>
-                <span class="text-xs font-extrabold text-purple-600">{{ $rataListening }}</span>
-            </div>
-            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                <div class="bg-purple-600 h-2 rounded-full transition-all duration-500" style="width: {{ min(100, max(0, $rataListening)) }}%"></div>
-            </div>
-            <div class="flex items-center justify-between text-[11px] text-slate-400">
-                <span>{{ $totalListeningSelesai }} Selesai</span>
-                <span>Skala 100</span>
-            </div>
-        </div>
-
-        <!-- 3. Paket Kuis & Ujian -->
-        <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-xs space-y-2">
-            <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-slate-700">Paket Kuis & Ujian</span>
-                <span class="text-xs font-extrabold text-emerald-600">{{ $rataQuiz }}</span>
-            </div>
-            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                <div class="bg-emerald-600 h-2 rounded-full transition-all duration-500" style="width: {{ min(100, max(0, $rataQuiz)) }}%"></div>
-            </div>
-            <div class="flex items-center justify-between text-[11px] text-slate-400">
-                <span>{{ $totalQuizSelesai }} Selesai</span>
-                <span>Skala 100</span>
-            </div>
-        </div>
-
+        <span class="text-[11px] text-slate-400 font-medium">
+            @if ($isFilterKelas)
+                Memantau {{ $totalSiswaDiampu }} siswa dari kelas yang diampu
+            @else
+                Memantau seluruh {{ $totalSiswa }} siswa terdaftar
+            @endif
+        </span>
     </div>
 
 </div>

@@ -106,4 +106,58 @@ class GuruDashboardTest extends TestCase
         $page2Response->assertStatus(200);
         $page2Response->assertSee('Previous');
     }
+
+    /**
+     * Dashboard memfilter skor ketuntasan secara dinamis untuk kelas yang diampu oleh guru.
+     */
+    public function test_dashboard_filters_ketuntasan_for_guru_assigned_classes(): void
+    {
+        $guruDenganKelas = User::factory()->create([
+            'role' => 'guru',
+            'kelas_diampu' => ['10 DKV 1'],
+        ]);
+
+        $siswaDiampu = Siswa::factory()->create([
+            'kelas' => '10',
+            'jurusan' => 'DKV',
+            'no_kelas' => '1',
+            'nama_lengkap' => 'Siswa Kelas Diampu',
+        ]);
+
+        $siswaLain = Siswa::factory()->create([
+            'kelas' => '12',
+            'jurusan' => 'RPL',
+            'no_kelas' => '2',
+            'nama_lengkap' => 'Siswa Kelas Lain',
+        ]);
+
+        $materi = Materi::factory()->create();
+
+        // Siswa diampu dapat skor 90
+        SiswaMateriProgres::create([
+            'siswa_id' => $siswaDiampu->id,
+            'materi_id' => $materi->id,
+            'status' => 'selesai',
+            'skor' => 90,
+            'xp_didapat' => 100,
+            'completed_at' => now(),
+        ]);
+
+        // Siswa kelas lain dapat skor 40 (tidak boleh mempengaruhi agregasi guru ini)
+        SiswaMateriProgres::create([
+            'siswa_id' => $siswaLain->id,
+            'materi_id' => $materi->id,
+            'status' => 'selesai',
+            'skor' => 40,
+            'xp_didapat' => 50,
+            'completed_at' => now(),
+        ]);
+
+        $response = $this->actingAs($guruDenganKelas)->get(route('guru.dashboard'));
+
+        $response->assertStatus(200);
+        $response->assertSee('Kelas Diampu: 10 DKV 1');
+        $response->assertSee('Memantau 1 siswa dari kelas yang diampu');
+        $response->assertSee('90');
+    }
 }
