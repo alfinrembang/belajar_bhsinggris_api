@@ -31,11 +31,11 @@
     @endif
 
     <!-- Bar Aksi Atas: Pencarian, Filter & Tombol Tambah Audio -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 lg:p-6 rounded-3xl border border-slate-100 shadow-xs mb-6">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white p-5 lg:p-6 rounded-3xl border border-slate-100 shadow-xs mb-6">
         <!-- Form Filter & Pencarian -->
-        <form method="GET" action="{{ route('guru.listening.index') }}" class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+        <form method="GET" action="{{ route('guru.listening.index') }}" class="flex flex-wrap items-center gap-2.5 sm:gap-3 flex-1 min-w-0">
             <!-- Input Search -->
-            <div class="relative w-full sm:w-72">
+            <div class="relative w-full sm:w-64 lg:w-72">
                 <svg class="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -48,7 +48,7 @@
             </div>
 
             <!-- Filter Tingkat Kesulitan -->
-            <select name="tingkat" onchange="this.form.submit()" class="px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#1E6BFF]">
+            <select name="tingkat" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#1E6BFF]">
                 <option value="">Semua Tingkat</option>
                 <option value="Beginner" {{ request('tingkat') == 'Beginner' ? 'selected' : '' }}>Beginner (Pemula)</option>
                 <option value="Intermediate" {{ request('tingkat') == 'Intermediate' ? 'selected' : '' }}>Intermediate (Menengah)</option>
@@ -56,7 +56,7 @@
             </select>
 
             <!-- Filter Kelas -->
-            <select name="kelas" onchange="this.form.submit()" class="px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#1E6BFF]">
+            <select name="kelas" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#1E6BFF]">
                 <option value="">Semua Kelas</option>
                 <option value="10" {{ request('kelas') == '10' ? 'selected' : '' }}>Kelas 10</option>
                 <option value="11" {{ request('kelas') == '11' ? 'selected' : '' }}>Kelas 11</option>
@@ -70,9 +70,11 @@
         </form>
 
         <!-- Tombol Tambah Audio Listening Baru -->
-        <x-button variant="create" href="{{ route('guru.listening.create') }}">
-            Unggah Audio Baru
-        </x-button>
+        <div class="shrink-0 self-start lg:self-auto">
+            <x-button variant="create" href="{{ route('guru.listening.create') }}" class="whitespace-nowrap shrink-0">
+                Tambah Audio Baru
+            </x-button>
+        </div>
     </div>
 
     <!-- Ringkasan Statistik Listening -->
@@ -175,7 +177,7 @@
                             icon="🎧" 
                             title="Belum Ada Modul Listening" 
                             subtitle="Unggah audio rekaman percakapan pertama untuk pembelajaran listening siswa."
-                            actionText="Unggah Audio Baru"
+                            actionText="Tambah Audio Baru"
                             :actionUrl="route('guru.listening.create')"
                         />
                     @endforelse

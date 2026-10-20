@@ -13,7 +13,7 @@
     $buttonType = $type ?? ($variant === 'submit' ? 'submit' : 'button');
     $showIcon = $icon !== false && $icon !== 'false';
 
-    $baseClasses = 'inline-flex items-center justify-center font-medium transition-all duration-150 cursor-pointer select-none';
+    $baseClasses = 'inline-flex items-center justify-center font-medium transition-all duration-150 cursor-pointer select-none whitespace-nowrap';
 
     $variantClasses = match ($variant) {
         'create' => $isIconOnly 
