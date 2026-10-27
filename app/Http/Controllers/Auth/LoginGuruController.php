@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginGuruRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,17 +28,9 @@ class LoginGuruController extends Controller
     /**
      * Memproses autentikasi sesi masuk guru/admin.
      */
-    public function login(Request $request): RedirectResponse
+    public function login(LoginGuruRequest $request): RedirectResponse
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required', 'string'],
-        ], [
-            'email.required' => 'Email belum diisi! Silakan masukkan alamat email akun Anda.',
-            'email.email' => 'Format penulisan email tidak valid (contoh: guru@gmail.com)!',
-            'password.required' => 'Kata sandi belum diisi! Silakan masukkan kata sandi Anda.',
-        ]);
-
+        $credentials = $request->validated();
         $remember = $request->boolean('remember');
 
         if (Auth::attempt([

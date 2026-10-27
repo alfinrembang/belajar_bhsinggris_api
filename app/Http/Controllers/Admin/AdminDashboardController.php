@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ResetPasswordGuruRequest;
+use App\Http\Requests\Admin\StoreGuruRequest;
+use App\Http\Requests\Admin\UpdateGuruRequest;
 use App\Models\Materi;
 use App\Models\PengaturanAkademik;
 use App\Models\Siswa;
@@ -10,7 +13,6 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class AdminDashboardController extends Controller
@@ -74,30 +76,15 @@ class AdminDashboardController extends Controller
     /**
      * Mendaftarkan akun guru baru oleh administrator.
      */
-    public function storeGuru(Request $request): RedirectResponse
+    public function storeGuru(StoreGuruRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'nip' => ['nullable', 'string', 'max:50', 'unique:users,nip'],
-            'password' => ['required', 'string', 'min:6'],
-            'kelas_diampu' => ['nullable', 'array'],
-            'kelas_diampu.*' => ['string'],
-        ], [
-            'name.required' => 'Nama lengkap guru wajib diisi!',
-            'email.required' => 'Alamat email wajib diisi!',
-            'email.email' => 'Format email tidak valid!',
-            'email.unique' => 'Email ini sudah terdaftar oleh pengguna lain!',
-            'nip.unique' => 'NIP ini sudah terdaftar oleh guru lain!',
-            'password.required' => 'Kata sandi wajib diisi!',
-            'password.min' => 'Kata sandi minimal 6 karakter!',
-        ]);
+        $validated = $request->validated();
 
         User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'nip' => $validated['nip'] ?? null,
-            'kelas_diampu' => $request->input('kelas_diampu', []),
+            'kelas_diampu' => $validated['kelas_diampu'] ?? [],
             'role' => 'guru',
             'password' => Hash::make($validated['password']),
         ]);
@@ -108,31 +95,19 @@ class AdminDashboardController extends Controller
     /**
      * Memperbarui informasi profil akun guru.
      */
-    public function updateGuru(Request $request, User $guru): RedirectResponse
+    public function updateGuru(UpdateGuruRequest $request, User $guru): RedirectResponse
     {
         if ($guru->role !== 'guru') {
             return back()->with('error', 'Hanya akun guru yang dapat dikelola melalui menu ini!');
         }
 
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($guru->id)],
-            'nip' => ['nullable', 'string', 'max:50', Rule::unique('users', 'nip')->ignore($guru->id)],
-            'kelas_diampu' => ['nullable', 'array'],
-            'kelas_diampu.*' => ['string'],
-        ], [
-            'name.required' => 'Nama lengkap guru wajib diisi!',
-            'email.required' => 'Alamat email wajib diisi!',
-            'email.email' => 'Format email tidak valid!',
-            'email.unique' => 'Email ini sudah terdaftar oleh pengguna lain!',
-            'nip.unique' => 'NIP ini sudah terdaftar oleh guru lain!',
-        ]);
+        $validated = $request->validated();
 
         $guru->update([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'nip' => $validated['nip'] ?? null,
-            'kelas_diampu' => $request->input('kelas_diampu', []),
+            'kelas_diampu' => $validated['kelas_diampu'] ?? [],
         ]);
 
         return redirect()->route('admin.dashboard')->with('success', "Data akun guru '{$guru->name}' berhasil diperbarui!");
@@ -141,18 +116,13 @@ class AdminDashboardController extends Controller
     /**
      * Mereset kata sandi akun guru oleh administrator.
      */
-    public function resetPasswordGuru(Request $request, User $guru): RedirectResponse
+    public function resetPasswordGuru(ResetPasswordGuruRequest $request, User $guru): RedirectResponse
     {
         if ($guru->role !== 'guru') {
             return back()->with('error', 'Hanya akun guru yang dapat direset kata sandinya!');
         }
 
-        $validated = $request->validate([
-            'new_password' => ['required', 'string', 'min:6'],
-        ], [
-            'new_password.required' => 'Kata sandi baru wajib diisi!',
-            'new_password.min' => 'Kata sandi minimal 6 karakter!',
-        ]);
+        $validated = $request->validated();
 
         $guru->update([
             'password' => Hash::make($validated['new_password']),
