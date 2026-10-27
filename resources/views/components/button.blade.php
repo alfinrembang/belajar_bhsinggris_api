@@ -17,24 +17,26 @@
 
     $variantClasses = match ($variant) {
         'create' => $isIconOnly 
-            ? 'p-2 rounded-xl bg-[#1E6BFF] hover:bg-[#155BE5] text-white shadow-xs' 
-            : 'px-5 py-2.5 rounded-2xl bg-[#1E6BFF] hover:bg-[#155BE5] text-white font-semibold text-xs shadow-[0_4px_14px_rgba(30,107,255,0.25)] gap-2',
+            ? 'p-2 rounded-xl bg-[#4EA87D] hover:bg-[#43966E] text-white shadow-xs' 
+            : 'px-5 py-2.5 rounded-2xl bg-gradient-to-r from-[#4EA87D] to-[#3E946B] hover:from-[#43966E] hover:to-[#35825D] text-white font-semibold text-xs shadow-[0_4px_14px_rgba(78,168,125,0.25)] gap-2',
             
         'edit' => $isIconOnly 
-            ? 'p-2 rounded-xl text-slate-400 hover:text-[#1E6BFF] hover:bg-blue-50' 
-            : 'px-4 py-2 rounded-2xl bg-[#1E6BFF] hover:bg-[#155BE5] text-white font-semibold text-xs shadow-xs gap-2',
+            ? 'p-2 rounded-xl text-slate-400 hover:text-[#4EA87D] hover:bg-[#EAF5EF]' 
+            : 'px-4 py-2 rounded-2xl bg-[#4EA87D] hover:bg-[#43966E] text-white font-semibold text-xs shadow-xs gap-2',
             
         'delete' => $isIconOnly 
-            ? 'p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50' 
-            : 'px-4 py-2 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200/80 font-semibold text-xs gap-2',
+            ? 'p-2 rounded-xl text-slate-400 hover:text-[#FB7185] hover:bg-[#FDF2F4]' 
+            : 'px-4 py-2 rounded-2xl bg-[#FDF2F4] hover:bg-[#FCE7EC] text-[#E11D48] border border-[#F9C5D1] font-semibold text-xs gap-2',
             
         'show' => $isIconOnly 
-            ? 'p-2 rounded-xl text-slate-400 hover:text-emerald-600 hover:bg-emerald-50' 
-            : 'px-4 py-2 rounded-2xl bg-white border border-slate-200/80 text-slate-600 hover:bg-slate-50 font-semibold text-xs shadow-xs gap-2',
+            ? 'p-2 rounded-xl text-slate-400 hover:text-[#4EA87D] hover:bg-[#EAF5EF]' 
+            : 'px-4 py-2 rounded-2xl bg-white border border-slate-200/80 text-slate-600 hover:bg-[#FAFDFB] font-semibold text-xs shadow-xs gap-2',
             
-        'submit' => 'px-6 py-2.5 rounded-2xl bg-[#1E6BFF] hover:bg-[#155BE5] text-white font-bold text-xs shadow-[0_4px_14px_rgba(30,107,255,0.28)] gap-2',
+        'submit' => 'px-6 py-2.5 rounded-2xl bg-gradient-to-r from-[#4EA87D] to-[#3E946B] hover:from-[#43966E] hover:to-[#35825D] text-white font-bold text-xs shadow-[0_4px_14px_rgba(78,168,125,0.28)] gap-2',
         
-        'back' => 'text-xs font-semibold text-slate-500 hover:text-[#1E6BFF] gap-2',
+        'pink' => 'px-5 py-2.5 rounded-2xl bg-gradient-to-r from-[#FB7185] to-[#F472B6] hover:from-[#F43F5E] hover:to-[#EC4899] text-white font-semibold text-xs shadow-[0_4px_14px_rgba(251,113,133,0.28)] gap-2',
+        
+        'back' => 'text-xs font-semibold text-slate-500 hover:text-[#4EA87D] gap-2',
         
         'cancel' => 'px-5 py-2.5 rounded-2xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-xs gap-1.5',
         

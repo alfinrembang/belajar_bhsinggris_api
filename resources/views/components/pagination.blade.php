@@ -12,7 +12,7 @@
                     <span>Previous</span>
                 </span>
             @else
-                <a href="{{ $paginator->previousPageUrl() }}" rel="prev" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-[#1E6BFF] hover:bg-slate-100 transition-colors select-none">
+                <a href="{{ $paginator->previousPageUrl() }}" rel="prev" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-[#4EA87D] hover:bg-[#EAF5EF] transition-colors select-none">
                     <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
@@ -34,11 +34,11 @@
                     @if (is_array($element))
                         @foreach ($element as $page => $url)
                             @if ($page == $paginator->currentPage())
-                                <span aria-current="page" class="w-8 h-8 rounded-full bg-[#1E6BFF] text-white text-xs font-bold flex items-center justify-center shadow-[0_2px_8px_rgba(30,107,255,0.32)] select-none">
+                                <span aria-current="page" class="w-8 h-8 rounded-full bg-gradient-to-r from-[#4EA87D] to-[#3E946B] text-white text-xs font-bold flex items-center justify-center shadow-[0_2px_8px_rgba(78,168,125,0.32)] select-none">
                                     {{ $page }}
                                 </span>
                             @else
-                                <a href="{{ $url }}" class="w-8 h-8 rounded-full text-slate-600 hover:text-[#1E6BFF] hover:bg-slate-100 text-xs font-semibold flex items-center justify-center transition-colors select-none">
+                                <a href="{{ $url }}" class="w-8 h-8 rounded-full text-slate-600 hover:text-[#4EA87D] hover:bg-[#EAF5EF] text-xs font-semibold flex items-center justify-center transition-colors select-none">
                                     {{ $page }}
                                 </a>
                             @endif
@@ -49,7 +49,7 @@
 
             {{-- Tombol Next --}}
             @if ($paginator->hasMorePages())
-                <a href="{{ $paginator->nextPageUrl() }}" rel="next" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-[#1E6BFF] hover:bg-slate-100 transition-colors select-none">
+                <a href="{{ $paginator->nextPageUrl() }}" rel="next" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-[#4EA87D] hover:bg-[#EAF5EF] transition-colors select-none">
                     <span>Next</span>
                     <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="9 18 15 12 9 6"></polyline>

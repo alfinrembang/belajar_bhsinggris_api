@@ -25,7 +25,7 @@
     <!-- Header Informasi Materi -->
     <div class="bg-white p-6 lg:p-7 rounded-3xl border border-slate-100 shadow-xs space-y-4">
         <div class="flex flex-wrap items-center gap-2">
-            <span class="px-3 py-1 rounded-full bg-blue-50 text-[#1E6BFF] text-xs font-semibold">
+            <span class="px-3 py-1 rounded-full bg-[#EAF5EF] text-[#4EA87D] text-xs font-semibold">
                 {{ $materi->kategori }}
             </span>
             <span class="px-3 py-1 rounded-full bg-purple-50 text-purple-600 text-xs font-semibold">
@@ -57,7 +57,7 @@
     <!-- KONTEN 1: PENJELASAN TEORI -->
     <div class="bg-white p-6 lg:p-7 rounded-3xl border border-slate-100 shadow-xs space-y-4">
         <div class="flex items-center gap-2.5 pb-3 border-b border-slate-100">
-            <span class="p-2 rounded-xl bg-blue-50 text-[#1E6BFF] text-base">📖</span>
+            <span class="p-2 rounded-xl bg-[#EAF5EF] text-[#4EA87D] text-base">📖</span>
             <h3 class="font-bold text-slate-800 text-sm">Penjelasan Teori & Konsep Belajar</h3>
         </div>
         <div class="text-xs text-slate-700 leading-relaxed whitespace-pre-line bg-slate-50/50 p-5 rounded-2xl border border-slate-100">
@@ -111,7 +111,7 @@
                         <span class="px-2.5 py-1 rounded-lg bg-slate-200 text-slate-700 font-bold text-xs">
                             Soal #{{ $index + 1 }}
                         </span>
-                        <span class="px-2.5 py-0.5 rounded-full {{ $soal->tipe_soal === 'listening' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-[#1E6BFF]' }} text-[11px] font-semibold">
+                        <span class="px-2.5 py-0.5 rounded-full {{ $soal->tipe_soal === 'listening' ? 'bg-purple-100 text-purple-700' : 'bg-[#EAF5EF] text-[#4EA87D]' }} text-[11px] font-semibold">
                             {{ $soal->tipe_soal === 'listening' ? '🎧 Soal Listening' : '📝 Pilihan Ganda' }}
                         </span>
                     </div>
@@ -148,7 +148,7 @@
                     </div>
 
                     @if($soal->pembahasan)
-                        <div class="p-3 rounded-xl bg-blue-50/50 border border-blue-100 text-[11px] text-blue-900">
+                        <div class="p-3 rounded-xl bg-[#EAF5EF]/50 border border-[#D7EDE1] text-[11px] text-blue-900">
                             <strong>Pembahasan:</strong> {{ $soal->pembahasan }}
                         </div>
                     @endif

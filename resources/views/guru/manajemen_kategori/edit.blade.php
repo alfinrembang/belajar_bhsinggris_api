@@ -35,7 +35,7 @@
                 <!-- 1. Informasi Dasar -->
                 <div class="bg-white p-6 lg:p-7 rounded-3xl border border-slate-100 shadow-xs space-y-5">
                     <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
-                        <div class="w-10 h-10 rounded-2xl bg-blue-50 text-[#1E6BFF] flex items-center justify-center font-bold text-sm">
+                        <div class="w-10 h-10 rounded-2xl bg-[#EAF5EF] text-[#4EA87D] flex items-center justify-center font-bold text-sm">
                             01
                         </div>
                         <div>
@@ -57,7 +57,7 @@
                                    placeholder="Contoh: Reading, Grammar, Idioms" 
                                    required
                                    oninput="updatePreview()"
-                                   class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none transition-all">
+                                   class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
                         </div>
 
                         <!-- Deskripsi Kategori -->
@@ -70,7 +70,7 @@
                                       rows="3" 
                                       placeholder="Tuliskan tujuan dan cakupan materi dalam kategori ini..." 
                                       oninput="updatePreview()"
-                                      class="w-full p-4 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] outline-none transition-all leading-relaxed">{{ old('deskripsi', $kategori->deskripsi) }}</textarea>
+                                      class="w-full p-4 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none transition-all leading-relaxed">{{ old('deskripsi', $kategori->deskripsi) }}</textarea>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -83,7 +83,7 @@
                                        name="urutan" 
                                        value="{{ old('urutan', $kategori->urutan) }}"
                                        min="1"
-                                       class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] outline-none">
+                                       class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none">
                             </div>
 
                             <!-- Status Aktif -->
@@ -96,7 +96,7 @@
                                            name="is_aktif" 
                                            value="1" 
                                            {{ old('is_aktif', $kategori->is_aktif) ? 'checked' : '' }}
-                                           class="w-4 h-4 rounded text-[#1E6BFF] focus:ring-[#1E6BFF]">
+                                           class="w-4 h-4 rounded text-[#4EA87D] focus:ring-[#4EA87D]">
                                     <span class="text-xs font-medium text-slate-700">Tampilkan kategori ini ke siswa</span>
                                 </label>
                             </div>
@@ -118,7 +118,7 @@
 
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         @foreach($presetColors as $color)
-                            <label class="relative flex items-center gap-3 p-3 rounded-2xl border cursor-pointer transition-all hover:bg-slate-50 border-slate-200/80 has-checked:border-[#1E6BFF] has-checked:bg-blue-50/40 has-checked:ring-2 has-checked:ring-[#1E6BFF]/20">
+                            <label class="relative flex items-center gap-3 p-3 rounded-2xl border cursor-pointer transition-all hover:bg-slate-50 border-slate-200/80 has-checked:border-[#4EA87D] has-checked:bg-[#EAF5EF]/40 has-checked:ring-2 has-checked:ring-[#4EA87D]/20">
                                 <input type="radio" 
                                        name="warna_hex" 
                                        value="{{ $color['hex'] }}" 
@@ -149,7 +149,7 @@
 
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         @foreach($presetIcons as $icon)
-                            <label class="relative flex items-center gap-3 p-3 rounded-2xl border cursor-pointer transition-all hover:bg-slate-50 border-slate-200/80 has-checked:border-[#1E6BFF] has-checked:bg-blue-50/40 has-checked:ring-2 has-checked:ring-[#1E6BFF]/20">
+                            <label class="relative flex items-center gap-3 p-3 rounded-2xl border cursor-pointer transition-all hover:bg-slate-50 border-slate-200/80 has-checked:border-[#4EA87D] has-checked:bg-[#EAF5EF]/40 has-checked:ring-2 has-checked:ring-[#4EA87D]/20">
                                 <input type="radio" 
                                        name="icon_name" 
                                        value="{{ $icon['name'] }}" 

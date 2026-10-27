@@ -17,7 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-[#F8FAFC] font-['Poppins',sans-serif] min-h-screen text-slate-800 antialiased flex">
+<body class="bg-[#FAFBF9] font-['Poppins',sans-serif] min-h-screen text-slate-800 antialiased flex">
 
     <!-- 1. Komponen Sidebar Terintegrasi -->
     <x-sidebar :active="$active" />
@@ -26,7 +26,7 @@
     <div class="flex-1 flex flex-col min-w-0 min-h-screen overflow-y-auto">
         
         <!-- Topbar Header -->
-        <header class="bg-white border-b border-slate-100 px-6 py-4.5 lg:px-8 flex items-center justify-between sticky top-0 z-10 shadow-xs">
+        <header class="bg-white border-b border-[#EAEFEA] px-6 py-4.5 lg:px-8 flex items-center justify-between sticky top-0 z-10 shadow-xs">
             <div>
                 <h1 class="text-xl lg:text-2xl font-bold text-slate-800 tracking-tight">{{ $pageTitle }}</h1>
                 <p class="text-xs text-slate-400 mt-0.5">{{ $pageSubtitle }}</p>
@@ -34,14 +34,14 @@
 
             <div class="flex items-center gap-3.5">
                 <!-- Status Badge -->
-                <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-600 font-semibold text-xs border border-emerald-100/80">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EAF5EF] text-[#2E7352] font-semibold text-xs border border-[#D7EDE1]">
+                    <span class="w-2 h-2 rounded-full bg-[#4EA87D] animate-pulse"></span>
                     Portal Aktif
                 </span>
 
-                <!-- Avatar User -->
+                <!-- Avatar User dengan aksen pink lembut -->
                 <div class="flex items-center gap-3 pl-3 border-l border-slate-100">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#1E6BFF] flex items-center justify-center font-bold text-sm">
+                    <div class="w-10 h-10 rounded-xl bg-[#FDF2F4] text-[#E11D48] border border-[#FCE7EC] flex items-center justify-center font-bold text-sm shadow-xs">
                         {{ strtoupper(substr(auth()->user()->name ?? 'G', 0, 1)) }}
                     </div>
                     <div class="hidden sm:block text-left">

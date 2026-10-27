@@ -25,7 +25,7 @@
                     <span class="px-3 py-1 rounded-xl text-xs font-bold {{ $listening->tingkat_kesulitan === 'Beginner' ? 'bg-emerald-100 text-emerald-700' : ($listening->tingkat_kesulitan === 'Intermediate' ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700') }}">
                         Level: {{ $listening->tingkat_kesulitan }}
                     </span>
-                    <span class="px-3 py-1 rounded-xl text-xs font-semibold bg-blue-50 text-[#1E6BFF]">
+                    <span class="px-3 py-1 rounded-xl text-xs font-semibold bg-[#EAF5EF] text-[#4EA87D]">
                         Target: {{ $listening->tingkat_kelas }}
                     </span>
                     <span class="px-3 py-1 rounded-xl text-xs font-semibold bg-purple-50 text-purple-700">
@@ -112,14 +112,14 @@
                         <audio controls class="w-full h-8" src="{{ $audio->audio_url }}"></audio>
 
                         <div class="flex items-center justify-between text-[11px]">
-                            <span class="text-[#1E6BFF] font-semibold flex items-center gap-1">
+                            <span class="text-[#4EA87D] font-semibold flex items-center gap-1">
                                 <span>📝</span> {{ $rentangTeks }}
                             </span>
                         </div>
                     </div>
                 @empty
                     <!-- Fallback audio tunggal jika belum migrasi -->
-                    <div class="p-4 rounded-2xl bg-blue-50 border border-blue-200 space-y-2">
+                    <div class="p-4 rounded-2xl bg-[#EAF5EF] border border-[#D7EDE1] space-y-2">
                         <span class="text-xs font-bold text-slate-800">Audio Utama</span>
                         <audio controls class="w-full h-8" src="{{ $listening->audio_url }}"></audio>
                     </div>
@@ -142,7 +142,7 @@
             <div class="py-10 text-center text-slate-400">
                 <p class="text-sm font-semibold text-slate-700">Belum Ada Soal Latihan</p>
                 <p class="text-xs text-slate-400 mt-1">Tambahkan pertanyaan pemahaman untuk menguji listening siswa.</p>
-                <a href="{{ route('guru.listening.edit', $listening->id) }}" class="inline-flex items-center gap-1.5 mt-3 text-xs font-bold text-[#1E6BFF] hover:underline">
+                <a href="{{ route('guru.listening.edit', $listening->id) }}" class="inline-flex items-center gap-1.5 mt-3 text-xs font-bold text-[#4EA87D] hover:underline">
                     + Tambah Soal via Edit Modul
                 </a>
             </div>
@@ -156,7 +156,7 @@
                     <div class="p-5 rounded-2xl border border-slate-200/80 bg-slate-50/50 space-y-3">
                         <div class="flex items-center justify-between flex-wrap gap-2">
                             <div class="flex items-center gap-2">
-                                <span class="px-3 py-1 rounded-xl bg-[#1E6BFF] text-white font-bold text-xs">
+                                <span class="px-3 py-1 rounded-xl bg-[#4EA87D] text-white font-bold text-xs">
                                     Pertanyaan #{{ $soal->nomor_soal }}
                                 </span>
                                 <span class="px-2.5 py-0.5 rounded-lg bg-purple-100 text-purple-700 font-bold text-[11px] flex items-center gap-1">
@@ -189,7 +189,7 @@
                         </div>
 
                         @if($soal->pembahasan)
-                            <div class="mt-2 p-3 rounded-xl bg-blue-50/60 border border-blue-100 text-[11px] text-blue-900 leading-relaxed">
+                            <div class="mt-2 p-3 rounded-xl bg-[#EAF5EF]/60 border border-[#D7EDE1] text-[11px] text-blue-900 leading-relaxed">
                                 <strong class="font-bold">Pembahasan:</strong> {{ $soal->pembahasan }}
                             </div>
                         @endif

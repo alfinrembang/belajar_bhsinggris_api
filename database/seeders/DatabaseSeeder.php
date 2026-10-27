@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             KategoriMateriSeeder::class,
             ModulListeningSeeder::class,
             QuizSeeder::class,
+            FishingGameSeeder::class,
         ]);
     }
 }

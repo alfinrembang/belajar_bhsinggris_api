@@ -14,12 +14,12 @@
             </svg>
             <input type="text" 
                    placeholder="Cari siswa atau nama game..." 
-                   class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none transition-all">
+                   class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
         </div>
 
         <!-- Filter & Tombol -->
         <div class="flex items-center gap-3">
-            <select class="px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#1E6BFF]">
+            <select class="px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
                 <option value="">Semua Periode</option>
                 <option value="weekly">Minggu Ini</option>
                 <option value="monthly">Bulan Ini</option>
@@ -28,7 +28,7 @@
 
             <!-- Tombol Buat Tantangan -->
             <a href="#" 
-               class="px-5 py-2.5 rounded-2xl bg-[#1E6BFF] hover:bg-[#155BE5] text-white font-semibold text-xs shadow-[0_6px_16px_rgba(30,107,255,0.28)] transition-all flex items-center gap-2 shrink-0">
+               class="px-5 py-2.5 rounded-2xl bg-[#4EA87D] hover:bg-[#43966E] text-white font-semibold text-xs shadow-[0_6px_16px_rgba(78,168,125,0.28)] transition-all flex items-center gap-2 shrink-0">
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -63,7 +63,7 @@
         </div>
 
         <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs flex items-center gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-blue-50 text-[#1E6BFF] flex items-center justify-center font-bold text-lg shrink-0">
+            <div class="w-12 h-12 rounded-2xl bg-[#EAF5EF] text-[#4EA87D] flex items-center justify-center font-bold text-lg shrink-0">
                 ⚡
             </div>
             <div>
@@ -91,9 +91,9 @@
 
                 <div class="space-y-3.5">
                     <!-- Game 1: Word Scramble -->
-                    <div class="p-4.5 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:border-[#1E6BFF]/30 transition-all flex items-center justify-between gap-4">
+                    <div class="p-4.5 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:border-[#4EA87D]/30 transition-all flex items-center justify-between gap-4">
                         <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-2xl bg-blue-100 text-[#1E6BFF] flex items-center justify-center font-bold text-xl shrink-0">
+                            <div class="w-12 h-12 rounded-2xl bg-[#EAF5EF] text-[#4EA87D] flex items-center justify-center font-bold text-xl shrink-0">
                                 🧩
                             </div>
                             <div>
@@ -102,7 +102,7 @@
                                 <div class="flex items-center gap-3 mt-2 text-[11px] text-slate-400">
                                     <span class="font-semibold text-slate-600">🎯 Level: Mudah - Menengah</span>
                                     <span>•</span>
-                                    <span class="text-[#1E6BFF] font-semibold">+50 XP / Kata</span>
+                                    <span class="text-[#4EA87D] font-semibold">+50 XP / Kata</span>
                                 </div>
                             </div>
                         </div>
@@ -112,7 +112,7 @@
                     </div>
 
                     <!-- Game 2: Flashcard Match -->
-                    <div class="p-4.5 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:border-[#1E6BFF]/30 transition-all flex items-center justify-between gap-4">
+                    <div class="p-4.5 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:border-[#4EA87D]/30 transition-all flex items-center justify-between gap-4">
                         <div class="flex items-center gap-4">
                             <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-xl shrink-0">
                                 🃏
@@ -123,7 +123,7 @@
                                 <div class="flex items-center gap-3 mt-2 text-[11px] text-slate-400">
                                     <span class="font-semibold text-slate-600">🎯 Level: Pemula</span>
                                     <span>•</span>
-                                    <span class="text-[#1E6BFF] font-semibold">+30 XP / Pasang</span>
+                                    <span class="text-[#4EA87D] font-semibold">+30 XP / Pasang</span>
                                 </div>
                             </div>
                         </div>
@@ -133,7 +133,7 @@
                     </div>
 
                     <!-- Game 3: Speed Listening Quiz -->
-                    <div class="p-4.5 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:border-[#1E6BFF]/30 transition-all flex items-center justify-between gap-4">
+                    <div class="p-4.5 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:border-[#4EA87D]/30 transition-all flex items-center justify-between gap-4">
                         <div class="flex items-center gap-4">
                             <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-xl shrink-0">
                                 🎧
@@ -144,7 +144,7 @@
                                 <div class="flex items-center gap-3 mt-2 text-[11px] text-slate-400">
                                     <span class="font-semibold text-slate-600">🎯 Level: Menengah</span>
                                     <span>•</span>
-                                    <span class="text-[#1E6BFF] font-semibold">+100 XP / Sesi</span>
+                                    <span class="text-[#4EA87D] font-semibold">+100 XP / Sesi</span>
                                 </div>
                             </div>
                         </div>
@@ -163,7 +163,7 @@
                     <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
                         <span>🏆</span> Papan Peringkat
                     </h3>
-                    <span class="text-xs font-semibold text-[#1E6BFF]">Top Siswa</span>
+                    <span class="text-xs font-semibold text-[#4EA87D]">Top Siswa</span>
                 </div>
 
                 <div class="space-y-3">
@@ -188,7 +188,7 @@
                                 </div>
                             </div>
                             <div class="text-right shrink-0">
-                                <span class="font-mono font-bold text-xs text-[#1E6BFF]">{{ max(150, $score) }}</span>
+                                <span class="font-mono font-bold text-xs text-[#4EA87D]">{{ max(150, $score) }}</span>
                                 <p class="text-[9px] font-semibold text-slate-400">XP</p>
                             </div>
                         </div>

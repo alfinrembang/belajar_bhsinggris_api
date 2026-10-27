@@ -99,4 +99,20 @@ class Siswa extends Authenticatable
     {
         return $this->hasMany(SiswaQuizProgres::class, 'siswa_id');
     }
+
+    /**
+     * Relasi ke riwayat pengerjaan game puzzle kata.
+     */
+    public function puzzleProgres(): HasMany
+    {
+        return $this->hasMany(SiswaPuzzleProgres::class, 'siswa_id');
+    }
+
+    /**
+     * Relasi ke riwayat pengerjaan game word fishing (pancing kata).
+     */
+    public function fishingProgres(): HasMany
+    {
+        return $this->hasMany(SiswaFishingProgres::class, 'siswa_id');
+    }
 }

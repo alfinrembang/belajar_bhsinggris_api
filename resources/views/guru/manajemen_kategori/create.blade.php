@@ -34,7 +34,7 @@
                 <!-- 1. Informasi Dasar -->
                 <div class="bg-white p-6 lg:p-7 rounded-3xl border border-slate-100 shadow-xs space-y-5">
                     <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
-                        <div class="w-10 h-10 rounded-2xl bg-blue-50 text-[#1E6BFF] flex items-center justify-center font-bold text-sm">
+                        <div class="w-10 h-10 rounded-2xl bg-[#EAF5EF] text-[#4EA87D] flex items-center justify-center font-bold text-sm">
                             01
                         </div>
                         <div>
@@ -56,7 +56,7 @@
                                    placeholder="Contoh: Idioms & Expressions, Business English, Pronunciation" 
                                    required
                                    oninput="updatePreview()"
-                                   class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none transition-all">
+                                   class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
                         </div>
 
                         <!-- Deskripsi Kategori -->
@@ -69,7 +69,7 @@
                                       rows="3" 
                                       placeholder="Tuliskan tujuan dan cakupan materi dalam kategori ini..." 
                                       oninput="updatePreview()"
-                                      class="w-full p-4 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] outline-none transition-all leading-relaxed">{{ old('deskripsi') }}</textarea>
+                                      class="w-full p-4 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none transition-all leading-relaxed">{{ old('deskripsi') }}</textarea>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -82,7 +82,7 @@
                                        name="urutan" 
                                        value="{{ old('urutan', 5) }}"
                                        min="1"
-                                       class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] outline-none">
+                                       class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none">
                             </div>
 
                             <!-- Status Aktif -->
@@ -95,7 +95,7 @@
                                            name="is_aktif" 
                                            value="1" 
                                            {{ old('is_aktif', '1') == '1' ? 'checked' : '' }}
-                                           class="w-4 h-4 rounded text-[#1E6BFF] focus:ring-[#1E6BFF]">
+                                           class="w-4 h-4 rounded text-[#4EA87D] focus:ring-[#4EA87D]">
                                     <span class="text-xs font-medium text-slate-700">Tampilkan kategori ini ke siswa</span>
                                 </label>
                             </div>
@@ -117,11 +117,11 @@
 
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         @foreach($presetColors as $color)
-                            <label class="relative flex items-center gap-3 p-3 rounded-2xl border cursor-pointer transition-all hover:bg-slate-50 border-slate-200/80 has-checked:border-[#1E6BFF] has-checked:bg-blue-50/40 has-checked:ring-2 has-checked:ring-[#1E6BFF]/20">
+                            <label class="relative flex items-center gap-3 p-3 rounded-2xl border cursor-pointer transition-all hover:bg-slate-50 border-slate-200/80 has-checked:border-[#4EA87D] has-checked:bg-[#EAF5EF]/40 has-checked:ring-2 has-checked:ring-[#4EA87D]/20">
                                 <input type="radio" 
                                        name="warna_hex" 
                                        value="{{ $color['hex'] }}" 
-                                       {{ old('warna_hex', '#1E6BFF') == $color['hex'] ? 'checked' : '' }}
+                                       {{ old('warna_hex', '#4EA87D') == $color['hex'] ? 'checked' : '' }}
                                        onchange="selectColor('{{ $color['hex'] }}')"
                                        class="sr-only">
                                 <span class="w-7 h-7 rounded-full shrink-0 shadow-xs border border-white" style="background-color: {{ $color['hex'] }};"></span>
@@ -148,7 +148,7 @@
 
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         @foreach($presetIcons as $icon)
-                            <label class="relative flex items-center gap-3 p-3 rounded-2xl border cursor-pointer transition-all hover:bg-slate-50 border-slate-200/80 has-checked:border-[#1E6BFF] has-checked:bg-blue-50/40 has-checked:ring-2 has-checked:ring-[#1E6BFF]/20">
+                            <label class="relative flex items-center gap-3 p-3 rounded-2xl border cursor-pointer transition-all hover:bg-slate-50 border-slate-200/80 has-checked:border-[#4EA87D] has-checked:bg-[#EAF5EF]/40 has-checked:ring-2 has-checked:ring-[#4EA87D]/20">
                                 <input type="radio" 
                                        name="icon_name" 
                                        value="{{ $icon['name'] }}" 
@@ -181,13 +181,13 @@
                     <div class="p-5 rounded-2xl border border-slate-200/80 bg-white shadow-xs space-y-3">
                         <div class="flex items-center gap-3">
                             <!-- Thumbnail Kotak Preview -->
-                            <div id="preview-thumbnail" class="w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl shadow-xs transition-all" style="background-color: #1E6BFF;">
+                            <div id="preview-thumbnail" class="w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl shadow-xs transition-all" style="background-color: #4EA87D;">
                                 <span id="preview-emoji">📚</span>
                             </div>
 
                             <div class="min-w-0 flex-1">
                                 <!-- Badge Preview -->
-                                <span id="preview-badge" class="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-bold text-white transition-all" style="background-color: #1E6BFF;">
+                                <span id="preview-badge" class="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-bold text-white transition-all" style="background-color: #4EA87D;">
                                     Reading
                                 </span>
                                 <h5 id="preview-title" class="font-bold text-slate-800 text-sm mt-1 truncate">
@@ -213,7 +213,7 @@
     </form>
 
     <script>
-        let currentColor = "{{ old('warna_hex', '#1E6BFF') }}";
+        let currentColor = "{{ old('warna_hex', '#4EA87D') }}";
         let currentEmoji = "📚";
 
         function selectColor(hex) {

@@ -19,16 +19,16 @@
             <th colspan="10"></th>
         </tr>
         <tr>
-            <th style="background-color: #1E6BFF; color: #FFFFFF; font-weight: bold; text-align: center; border: 1px solid #9CA3AF; height: 26px;">No</th>
-            <th style="background-color: #1E6BFF; color: #FFFFFF; font-weight: bold; text-align: left; border: 1px solid #9CA3AF;">Nama Lengkap Siswa</th>
-            <th style="background-color: #1E6BFF; color: #FFFFFF; font-weight: bold; text-align: center; border: 1px solid #9CA3AF;">NIS</th>
-            <th style="background-color: #1E6BFF; color: #FFFFFF; font-weight: bold; text-align: center; border: 1px solid #9CA3AF;">NISN</th>
-            <th style="background-color: #1E6BFF; color: #FFFFFF; font-weight: bold; text-align: center; border: 1px solid #9CA3AF;">Rombel Kelas</th>
-            <th style="background-color: #1E6BFF; color: #FFFFFF; font-weight: bold; text-align: center; border: 1px solid #9CA3AF;">Materi (30%)</th>
-            <th style="background-color: #1E6BFF; color: #FFFFFF; font-weight: bold; text-align: center; border: 1px solid #9CA3AF;">Listening (30%)</th>
-            <th style="background-color: #1E6BFF; color: #FFFFFF; font-weight: bold; text-align: center; border: 1px solid #9CA3AF;">Kuis (40%)</th>
-            <th style="background-color: #1E6BFF; color: #FFFFFF; font-weight: bold; text-align: center; border: 1px solid #9CA3AF;">Nilai Akhir</th>
-            <th style="background-color: #1E6BFF; color: #FFFFFF; font-weight: bold; text-align: center; border: 1px solid #9CA3AF;">Status Ketuntasan</th>
+            <th style="background-color: #4EA87D; color: #FFFFFF; font-weight: bold; text-align: center; border: 1px solid #9CA3AF; height: 26px;">No</th>
+            <th style="background-color: #4EA87D; color: #FFFFFF; font-weight: bold; text-align: left; border: 1px solid #9CA3AF;">Nama Lengkap Siswa</th>
+            <th style="background-color: #4EA87D; color: #FFFFFF; font-weight: bold; text-align: center; border: 1px solid #9CA3AF;">NIS</th>
+            <th style="background-color: #4EA87D; color: #FFFFFF; font-weight: bold; text-align: center; border: 1px solid #9CA3AF;">NISN</th>
+            <th style="background-color: #4EA87D; color: #FFFFFF; font-weight: bold; text-align: center; border: 1px solid #9CA3AF;">Rombel Kelas</th>
+            <th style="background-color: #4EA87D; color: #FFFFFF; font-weight: bold; text-align: center; border: 1px solid #9CA3AF;">Materi (30%)</th>
+            <th style="background-color: #4EA87D; color: #FFFFFF; font-weight: bold; text-align: center; border: 1px solid #9CA3AF;">Listening (30%)</th>
+            <th style="background-color: #4EA87D; color: #FFFFFF; font-weight: bold; text-align: center; border: 1px solid #9CA3AF;">Kuis (40%)</th>
+            <th style="background-color: #4EA87D; color: #FFFFFF; font-weight: bold; text-align: center; border: 1px solid #9CA3AF;">Nilai Akhir</th>
+            <th style="background-color: #4EA87D; color: #FFFFFF; font-weight: bold; text-align: center; border: 1px solid #9CA3AF;">Status Ketuntasan</th>
         </tr>
     </thead>
     <tbody>

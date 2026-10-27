@@ -33,7 +33,7 @@
                            value="{{ old('nama_lengkap') }}" 
                            placeholder="Contoh: Budi Pratama" 
                            required 
-                           class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none transition-all">
+                           class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
                 </div>
 
                 <div>
@@ -45,7 +45,7 @@
                            value="{{ old('email') }}" 
                            placeholder="Contoh: budi.pratama@sekolah.sch.id" 
                            required 
-                           class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none transition-all">
+                           class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
                     <p class="text-[11px] text-slate-400 mt-1">Digunakan siswa untuk login ke aplikasi mobile.</p>
                 </div>
             </div>
@@ -60,7 +60,7 @@
                            name="nis" 
                            value="{{ old('nis') }}" 
                            placeholder="Contoh: 102938" 
-                           class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none transition-all">
+                           class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
                 </div>
 
                 <div>
@@ -71,7 +71,7 @@
                            name="nisn" 
                            value="{{ old('nisn') }}" 
                            placeholder="Contoh: 0071829301" 
-                           class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none transition-all">
+                           class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
                 </div>
             </div>
 
@@ -87,7 +87,7 @@
                         <label class="block text-[11px] font-bold text-slate-600 mb-1.5">
                             Tingkat Kelas <span class="text-rose-500">*</span>
                         </label>
-                        <select name="kelas" required class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 outline-none focus:border-[#1E6BFF]">
+                        <select name="kelas" required class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 outline-none focus:border-[#4EA87D]">
                             <option value="">Pilih Tingkat</option>
                             @foreach($daftarTingkat as $t)
                                 <option value="{{ $t }}" {{ old('kelas') == $t ? 'selected' : '' }}>Kelas {{ $t }}</option>
@@ -100,7 +100,7 @@
                         <label class="block text-[11px] font-bold text-slate-600 mb-1.5">
                             Jurusan <span class="text-rose-500">*</span>
                         </label>
-                        <select name="jurusan" required class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 outline-none focus:border-[#1E6BFF]">
+                        <select name="jurusan" required class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 outline-none focus:border-[#4EA87D]">
                             <option value="">Pilih Jurusan</option>
                             @foreach($daftarJurusan as $j)
                                 <option value="{{ $j }}" {{ old('jurusan') == $j ? 'selected' : '' }}>{{ $j }}</option>
@@ -113,7 +113,7 @@
                         <label class="block text-[11px] font-bold text-slate-600 mb-1.5">
                             Nomor Rombel
                         </label>
-                        <select name="no_kelas" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 outline-none focus:border-[#1E6BFF]">
+                        <select name="no_kelas" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 outline-none focus:border-[#4EA87D]">
                             <option value="">Default (1)</option>
                             @foreach($daftarNoKelas as $nk)
                                 <option value="{{ $nk }}" {{ old('no_kelas', '1') == $nk ? 'selected' : '' }}>Rombel {{ $nk }}</option>
@@ -130,7 +130,7 @@
                                name="no_absen" 
                                value="{{ old('no_absen') }}" 
                                placeholder="Contoh: 14" 
-                               class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 outline-none focus:border-[#1E6BFF]">
+                               class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 outline-none focus:border-[#4EA87D]">
                     </div>
                 </div>
             </div>
@@ -143,7 +143,7 @@
                 <input type="password" 
                        name="password" 
                        placeholder="Biarkan kosong untuk menggunakan sandi bawaan: 12345678" 
-                       class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none transition-all">
+                       class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
                 <p class="text-[11px] text-slate-400 mt-1">Siswa dapat memperbarui kata sandi ini sewaktu-waktu melalui menu Profil di aplikasi.</p>
             </div>
 

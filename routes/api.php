@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthSiswaController;
+use App\Http\Controllers\Api\FishingApiController;
 use App\Http\Controllers\Api\KategoriMateriApiController;
 use App\Http\Controllers\Api\LoginSiswaController;
 use App\Http\Controllers\Api\MateriApiController;
@@ -64,6 +65,14 @@ Route::get('/puzzle/progres', [PuzzleApiController::class, 'getProgres']);
 // Menyimpan hasil penyelesaian puzzle siswa (+ koin reward & unlock level berikutnya)
 Route::post('/puzzle/selesai', [PuzzleApiController::class, 'submitSelesai']);
 
+// 2E. MODUL GAME WORD FISHING / PANCING KATA (FLUTTER SISWA)
+// Mengambil daftar soal memancing berbobot edukasi & part of speech (?level=1&difficulty=mudah)
+Route::get('/fishing/soal', [FishingApiController::class, 'getSoal']);
+// Mengambil data progres level, koleksi ikan, & koin siswa (?siswa_id=...&difficulty=mudah)
+Route::get('/fishing/progres', [FishingApiController::class, 'getProgres']);
+// Menyimpan hasil penangkapan ikan & koin reward (One-time reward)
+Route::post('/fishing/selesai', [FishingApiController::class, 'submitSelesai']);
+
 // 3. RUTE TERPROTEKSI SISWA (Wajib Token Siswa)
 Route::middleware('auth.siswa')->group(function () {
     Route::get('/siswa/me', [LoginSiswaController::class, 'me']);
@@ -81,7 +90,7 @@ Route::get('/kelas', function () {
     ]);
 });
 
-// 2. RUTE TERPROTEKSI (Wajib Token Guru / Khusus Guru)
+// 5. RUTE TERPROTEKSI GURU (Wajib Token Guru / Khusus Guru)
 Route::middleware('auth.guru')->group(function () {
     // Kelola Data Siswa (Hanya Guru yang boleh melihat rekap semua siswa)
     Route::get('/siswa', [AuthSiswaController::class, 'index']);

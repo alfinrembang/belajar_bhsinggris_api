@@ -24,40 +24,48 @@
         
         <!-- 1. Manajemen Siswa -->
         <a href="{{ route('guru.siswa.index') }}" 
-           class="p-3 rounded-2xl border border-slate-100 bg-slate-50/60 hover:bg-blue-50/70 hover:border-blue-200 transition-all flex items-center gap-3 group cursor-pointer">
-            <div class="w-8 h-8 rounded-xl bg-blue-100 text-[#1E6BFF] flex items-center justify-center shrink-0">
+           class="p-3 rounded-2xl border border-slate-100 bg-slate-50/60 hover:bg-[#EAF5EF]/70 hover:border-[#D7EDE1] transition-all flex items-center gap-3 group cursor-pointer">
+            <div class="w-8 h-8 rounded-xl bg-[#EAF5EF] text-[#2E7352] flex items-center justify-center shrink-0">
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                     <circle cx="9" cy="7" r="4"></circle>
                 </svg>
             </div>
             <div class="min-w-0">
-                <p class="text-xs font-bold text-slate-800 group-hover:text-[#1E6BFF] transition-colors truncate">Data Siswa</p>
+                <p class="text-xs font-bold text-slate-800 group-hover:text-[#4EA87D] transition-colors truncate">Data Siswa</p>
                 <p class="text-[10px] text-slate-400 truncate">Rombel & Akun</p>
             </div>
         </a>
 
         <!-- 2. Materi Ajar -->
         <a href="{{ route('guru.materi.index') }}" 
-           class="p-3 rounded-2xl border border-slate-100 bg-slate-50/60 hover:bg-blue-50/70 hover:border-blue-200 transition-all flex items-center gap-3 group cursor-pointer">
-            <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+           class="p-3 rounded-2xl border border-slate-100 bg-slate-50/60 hover:bg-[#EAF5EF]/70 hover:border-[#D7EDE1] transition-all flex items-center gap-3 group cursor-pointer">
+            <div class="w-8 h-8 rounded-xl bg-[#EAF5EF] text-[#2E7352] flex items-center justify-center shrink-0">
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
                     <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
                 </svg>
             </div>
             <div class="min-w-0">
-                <p class="text-xs font-bold text-slate-800 group-hover:text-[#1E6BFF] transition-colors truncate">Modul Materi</p>
+                <p class="text-xs font-bold text-slate-800 group-hover:text-[#4EA87D] transition-colors truncate">Modul Materi</p>
                 <p class="text-[10px] text-slate-400 truncate">Teori & Bacaan</p>
             </div>
         </a>
 
-        <!-- 3. Modul Listening -->
+        <!-- 3. Modul Listening (Aksen Pink Lembut) -->
         <a href="{{ route('guru.listening.index') }}" 
-           class="p-3 rounded-2xl border border-slate-100 bg-slate-50/60 hover:bg-purple-50/70 hover:border-purple-200 transition-all flex items-center gap-3 group cursor-pointer">
-            <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+           class="p-3 rounded-2xl border border-slate-100 bg-slate-50/60 hover:bg-[#FDF2F4]/70 hover:border-[#F9C5D1] transition-all flex items-center gap-3 group cursor-pointer">
+            <div class="w-8 h-8 rounded-xl bg-[#FDF2F4] text-[#E11D48] flex items-center justify-center shrink-0">
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                    <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+                </svg>
+            </div>
+            <div class="min-w-0">
+                <p class="text-xs font-bold text-slate-800 group-hover:text-[#E11D48] transition-colors truncate">Listening</p>
+                <p class="text-[10px] text-slate-400 truncate">Audio Percakapan</p>
+            </div>
+        </a>
                     <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
                 </svg>
             </div>

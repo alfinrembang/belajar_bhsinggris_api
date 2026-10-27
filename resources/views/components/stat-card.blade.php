@@ -8,9 +8,19 @@
 @php
     $colorConfig = [
         'blue' => [
-            'bg' => 'bg-blue-50/80',
-            'text' => 'text-[#1E6BFF]',
-            'border' => 'border-blue-100/60',
+            'bg' => 'bg-[#EAF5EF]',
+            'text' => 'text-[#2E7352]',
+            'border' => 'border-[#D7EDE1]',
+        ],
+        'green' => [
+            'bg' => 'bg-[#EAF5EF]',
+            'text' => 'text-[#2E7352]',
+            'border' => 'border-[#D7EDE1]',
+        ],
+        'pink' => [
+            'bg' => 'bg-[#FDF2F4]',
+            'text' => 'text-[#E11D48]',
+            'border' => 'border-[#F9C5D1]',
         ],
         'purple' => [
             'bg' => 'bg-purple-50/80',
@@ -28,14 +38,14 @@
             'border' => 'border-amber-100/60',
         ],
         'rose' => [
-            'bg' => 'bg-rose-50/80',
-            'text' => 'text-rose-600',
-            'border' => 'border-rose-100/60',
+            'bg' => 'bg-[#FDF2F4]',
+            'text' => 'text-[#E11D48]',
+            'border' => 'border-[#F9C5D1]',
         ],
     ][$color] ?? [
-        'bg' => 'bg-blue-50/80',
-        'text' => 'text-[#1E6BFF]',
-        'border' => 'border-blue-100/60',
+        'bg' => 'bg-[#EAF5EF]',
+        'text' => 'text-[#2E7352]',
+        'border' => 'border-[#D7EDE1]',
     ];
 
     $iconName = trim((string)$icon);

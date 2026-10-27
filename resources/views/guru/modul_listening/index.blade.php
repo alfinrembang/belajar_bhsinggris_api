@@ -44,11 +44,11 @@
                        name="q"
                        value="{{ request('q') }}"
                        placeholder="Cari topik atau audio percakapan..." 
-                       class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none transition-all">
+                       class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
             </div>
 
             <!-- Filter Tingkat Kesulitan -->
-            <select name="tingkat" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#1E6BFF]">
+            <select name="tingkat" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
                 <option value="">Semua Tingkat</option>
                 <option value="Beginner" {{ request('tingkat') == 'Beginner' ? 'selected' : '' }}>Beginner (Pemula)</option>
                 <option value="Intermediate" {{ request('tingkat') == 'Intermediate' ? 'selected' : '' }}>Intermediate (Menengah)</option>
@@ -56,7 +56,7 @@
             </select>
 
             <!-- Filter Kelas -->
-            <select name="kelas" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#1E6BFF]">
+            <select name="kelas" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
                 <option value="">Semua Kelas</option>
                 <option value="10" {{ request('kelas') == '10' ? 'selected' : '' }}>Kelas 10</option>
                 <option value="11" {{ request('kelas') == '11' ? 'selected' : '' }}>Kelas 11</option>
@@ -112,12 +112,12 @@
                             $levelColor = match($item->tingkat_kesulitan) {
                                 'Intermediate' => 'bg-purple-50 text-purple-700 border-purple-100',
                                 'Advanced' => 'bg-rose-50 text-rose-700 border-rose-100',
-                                default => 'bg-blue-50 text-[#1E6BFF] border-blue-100',
+                                default => 'bg-[#EAF5EF] text-[#4EA87D] border-[#D7EDE1]',
                             };
                             $iconBg = match($item->tingkat_kesulitan) {
                                 'Intermediate' => 'bg-purple-50 text-purple-600',
                                 'Advanced' => 'bg-rose-50 text-rose-600',
-                                default => 'bg-blue-50 text-[#1E6BFF]',
+                                default => 'bg-[#EAF5EF] text-[#4EA87D]',
                             };
                         @endphp
                         <tr class="hover:bg-slate-50/70 transition-colors">
@@ -130,7 +130,7 @@
                                         </svg>
                                     </div>
                                     <div class="min-w-0 flex-1">
-                                        <a href="{{ route('guru.listening.show', $item->id) }}" class="font-bold text-slate-800 hover:text-blue-600 transition-colors truncate block text-xs" title="{{ $item->judul }}">
+                                        <a href="{{ route('guru.listening.show', $item->id) }}" class="font-bold text-slate-800 hover:text-[#4EA87D] transition-colors truncate block text-xs" title="{{ $item->judul }}">
                                             {{ $item->judul }}
                                         </a>
                                         <p class="text-[11px] text-slate-400 truncate mt-0.5" title="{{ $item->deskripsi }}">

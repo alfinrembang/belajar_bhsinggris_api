@@ -9,18 +9,22 @@
 @php
     $percentageClamped = max(0, min(100, (float) $percentage));
     $barColors = [
-        'blue' => 'bg-[#1E6BFF]',
+        'blue' => 'bg-[#4EA87D]',
+        'green' => 'bg-[#4EA87D]',
+        'pink' => 'bg-[#FB7185]',
         'purple' => 'bg-purple-600',
-        'emerald' => 'bg-emerald-500',
+        'emerald' => 'bg-[#4EA87D]',
         'amber' => 'bg-amber-500',
-    ][$color] ?? 'bg-[#1E6BFF]';
+    ][$color] ?? 'bg-[#4EA87D]';
 
     $textColors = [
-        'blue' => 'text-[#1E6BFF]',
+        'blue' => 'text-[#4EA87D]',
+        'green' => 'text-[#4EA87D]',
+        'pink' => 'text-[#FB7185]',
         'purple' => 'text-purple-600',
-        'emerald' => 'text-emerald-600',
+        'emerald' => 'text-[#4EA87D]',
         'amber' => 'text-amber-600',
-    ][$color] ?? 'text-[#1E6BFF]';
+    ][$color] ?? 'text-[#4EA87D]';
 
     $iconName = trim((string)$icon);
 @endphp

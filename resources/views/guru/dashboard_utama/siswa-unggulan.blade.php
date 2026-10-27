@@ -17,7 +17,7 @@
         </div>
 
         <a href="{{ route('guru.laporan.index') }}" 
-           class="text-xs font-bold text-[#1E6BFF] hover:text-[#155BE5] transition-colors">
+           class="text-xs font-bold text-[#4EA87D] hover:text-[#3E946B] transition-colors">
             Leger Nilai
         </a>
     </div>
@@ -31,26 +31,26 @@
                     $rankColor = match($rank) {
                         1 => 'bg-amber-100 text-amber-800 border-amber-200',
                         2 => 'bg-slate-100 text-slate-700 border-slate-200',
-                        3 => 'bg-orange-100 text-orange-800 border-orange-200',
+                        3 => 'bg-[#FDF2F4] text-[#E11D48] border-[#F9C5D1]',
                         default => 'bg-slate-50 text-slate-500 border-slate-100',
                     };
                 @endphp
                 <a href="{{ route('guru.siswa.show', $item['id']) }}" 
-                   class="p-3 rounded-2xl bg-slate-50/70 hover:bg-blue-50/60 border border-slate-100 hover:border-blue-200/80 transition-all flex items-center justify-between gap-3 group">
+                   class="p-3 rounded-2xl bg-slate-50/70 hover:bg-[#EAF5EF]/80 border border-slate-100 hover:border-[#D7EDE1] transition-all flex items-center justify-between gap-3 group">
                     <div class="flex items-center gap-3 min-w-0">
                         <!-- Rank Badge -->
                         <span class="w-6 h-6 rounded-lg {{ $rankColor }} border text-[11px] font-extrabold flex items-center justify-center shrink-0">
                             {{ $rank }}
                         </span>
 
-                        <!-- Avatar Inisial -->
-                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1E6BFF] to-[#0A56E2] text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-xs">
+                        <!-- Avatar Inisial Hijau Susu -->
+                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#4EA87D] to-[#3E946B] text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-xs">
                             {{ $item['avatar'] }}
                         </div>
 
                         <!-- Data Siswa -->
                         <div class="min-w-0">
-                            <p class="text-xs font-bold text-slate-800 group-hover:text-[#1E6BFF] truncate transition-colors">
+                            <p class="text-xs font-bold text-slate-800 group-hover:text-[#4EA87D] truncate transition-colors">
                                 {{ $item['nama_lengkap'] }}
                             </p>
                             <p class="text-[11px] text-slate-400 font-medium truncate">
@@ -81,7 +81,7 @@
                 <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
             </svg>
             <p class="text-xs font-medium">Belum ada progres siswa yang tercatat</p>
-            <a href="{{ route('guru.siswa.index') }}" class="text-xs font-bold text-[#1E6BFF] hover:underline mt-1 inline-block">Lihat Data Siswa</a>
+            <a href="{{ route('guru.siswa.index') }}" class="text-xs font-bold text-[#4EA87D] hover:underline mt-1 inline-block">Lihat Data Siswa</a>
         </div>
     @endif
 

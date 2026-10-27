@@ -17,11 +17,11 @@
                        name="q" 
                        value="{{ request('q') }}" 
                        placeholder="Cari siswa / NIS..." 
-                       class="w-full pl-9 pr-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] outline-none transition-all">
+                       class="w-full pl-9 pr-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none transition-all">
             </div>
 
             <!-- Filter Tingkat Kelas -->
-            <select name="kelas" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#1E6BFF]">
+            <select name="kelas" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
                 <option value="">Semua Tingkat</option>
                 <option value="10" {{ request('kelas') == '10' ? 'selected' : '' }}>Kelas 10</option>
                 <option value="11" {{ request('kelas') == '11' ? 'selected' : '' }}>Kelas 11</option>
@@ -29,7 +29,7 @@
             </select>
 
             <!-- Filter Jurusan -->
-            <select name="jurusan" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#1E6BFF]">
+            <select name="jurusan" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
                 <option value="">Semua Jurusan</option>
                 @foreach($daftarJurusan as $jur)
                     <option value="{{ $jur }}" {{ request('jurusan') == $jur ? 'selected' : '' }}>{{ $jur }}</option>
@@ -37,7 +37,7 @@
             </select>
 
             <!-- Filter Status KKM -->
-            <select name="status" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#1E6BFF]">
+            <select name="status" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
                 <option value="">Semua Status</option>
                 <option value="tuntas" {{ request('status') == 'tuntas' ? 'selected' : '' }}>Tuntas (≥75)</option>
                 <option value="remedial" {{ request('status') == 'remedial' ? 'selected' : '' }}>Remedial (<75)</option>
@@ -67,7 +67,7 @@
 
             <a href="{{ route('guru.laporan.cetak', request()->query()) }}" 
                target="_blank"
-               class="px-5 py-2.5 rounded-2xl bg-[#1E6BFF] hover:bg-[#155BE5] text-white font-bold text-xs shadow-[0_6px_16px_rgba(30,107,255,0.28)] transition-all flex items-center gap-2 cursor-pointer">
+               class="px-5 py-2.5 rounded-2xl bg-[#4EA87D] hover:bg-[#43966E] text-white font-bold text-xs shadow-[0_6px_16px_rgba(78,168,125,0.28)] transition-all flex items-center gap-2 cursor-pointer">
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="6 9 6 2 18 2 18 9"></polyline>
                     <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
@@ -113,7 +113,7 @@
         <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-5 flex flex-col justify-between">
             <div>
                 <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
-                    <span class="w-6 h-6 rounded-lg bg-blue-50 text-[#1E6BFF] flex items-center justify-center shrink-0">
+                    <span class="w-6 h-6 rounded-lg bg-[#EAF5EF] text-[#4EA87D] flex items-center justify-center shrink-0">
                         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
                             <polyline points="17 6 23 6 23 12"></polyline>
@@ -151,7 +151,7 @@
             </div>
 
             <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-[11px] text-slate-500 leading-relaxed mt-4 flex items-start gap-2.5">
-                <svg class="w-4 h-4 text-blue-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="w-4 h-4 text-[#4EA87D] shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <line x1="12" y1="16" x2="12" y2="12"></line>
                     <line x1="12" y1="8" x2="12.01" y2="8"></line>
@@ -188,17 +188,17 @@
                     @forelse($komparasiRombel as $rombel)
                         <a href="{{ route('guru.laporan.index', array_merge(request()->except(['page', 'kelas', 'jurusan']), ['kelas' => $rombel['kelas'], 'jurusan' => $rombel['jurusan']])) }}#tabel-leger"
                            title="Klik untuk filter tabel ke kelas {{ $rombel['nama_kelas'] }}"
-                           class="group block p-3 rounded-2xl bg-slate-50 hover:bg-blue-50/50 border border-slate-100 hover:border-blue-100 transition-all cursor-pointer">
+                           class="group block p-3 rounded-2xl bg-slate-50 hover:bg-[#EAF5EF]/50 border border-slate-100 hover:border-[#D7EDE1] transition-all cursor-pointer">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <div class="flex items-center gap-1.5">
-                                        <h4 class="font-bold text-slate-800 group-hover:text-[#1E6BFF] text-xs transition-colors">{{ $rombel['nama_kelas'] }}</h4>
+                                        <h4 class="font-bold text-slate-800 group-hover:text-[#4EA87D] text-xs transition-colors">{{ $rombel['nama_kelas'] }}</h4>
                                         <span class="text-[10px] text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">↗</span>
                                     </div>
                                     <p class="text-[11px] text-slate-400 mt-0.5">{{ $rombel['total_siswa'] }} Siswa ({{ $rombel['total_tuntas'] }} Tuntas)</p>
                                 </div>
                                 <div class="text-right">
-                                    <span class="font-mono font-extrabold text-xs text-[#1E6BFF]">{{ $rombel['rata_nilai'] }}</span>
+                                    <span class="font-mono font-extrabold text-xs text-[#4EA87D]">{{ $rombel['rata_nilai'] }}</span>
                                     <span class="block text-[10px] text-slate-400">Rerata</span>
                                 </div>
                             </div>
@@ -345,11 +345,11 @@
                             </td>
                             <td class="py-4 px-6">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-9 h-9 rounded-xl bg-blue-50 text-[#1E6BFF] flex items-center justify-center font-bold text-xs shrink-0">
+                                    <div class="w-9 h-9 rounded-xl bg-[#EAF5EF] text-[#4EA87D] flex items-center justify-center font-bold text-xs shrink-0">
                                         {{ strtoupper(substr($item['nama_lengkap'] ?? 'S', 0, 1)) }}
                                     </div>
                                     <div>
-                                        <a href="{{ route('guru.siswa.show', $item['id']) }}" class="font-bold text-slate-800 text-sm hover:text-[#1E6BFF] transition-colors">
+                                        <a href="{{ route('guru.siswa.show', $item['id']) }}" class="font-bold text-slate-800 text-sm hover:text-[#4EA87D] transition-colors">
                                             {{ $item['nama_lengkap'] }}
                                         </a>
                                         <p class="text-[11px] text-slate-400 font-mono mt-0.5">NIS: {{ $item['nis'] ?: '-' }}</p>
@@ -357,7 +357,7 @@
                                 </div>
                             </td>
                             <td class="py-3.5 px-6 whitespace-nowrap">
-                                <span class="whitespace-nowrap px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 font-semibold text-xs border border-blue-100/70 inline-flex items-center">
+                                <span class="whitespace-nowrap px-2.5 py-0.5 rounded-md bg-[#EAF5EF] text-[#2E7352] font-semibold text-xs border border-[#D7EDE1]/70 inline-flex items-center">
                                     {{ $item['kelas_lengkap'] ?: 'Belum diatur' }}
                                 </span>
                             </td>
@@ -380,7 +380,7 @@
                             </td>
                             <td class="py-4 px-6 text-center">
                                 <a href="{{ route('guru.siswa.show', $item['id']) }}" 
-                                   class="px-3.5 py-1.5 rounded-xl bg-slate-50 hover:bg-blue-50 text-slate-600 hover:text-[#1E6BFF] text-xs font-bold transition-colors inline-flex items-center gap-1.5">
+                                   class="px-3.5 py-1.5 rounded-xl bg-slate-50 hover:bg-[#EAF5EF] text-slate-600 hover:text-[#4EA87D] text-xs font-bold transition-colors inline-flex items-center gap-1.5">
                                     <span>Detail Rapor</span>
                                     <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                 </a>

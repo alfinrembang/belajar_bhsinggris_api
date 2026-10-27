@@ -4,7 +4,7 @@
     <!-- Header Kartu -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-2xl bg-blue-50 text-[#1E6BFF] flex items-center justify-center shrink-0">
+            <div class="w-10 h-10 rounded-2xl bg-[#EAF5EF] text-[#2E7352] flex items-center justify-center shrink-0">
                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="20" x2="18" y2="10"></line>
                     <line x1="12" y1="20" x2="12" y2="4"></line>
@@ -15,8 +15,8 @@
                 <div class="flex flex-wrap items-center gap-2">
                     <h3 class="font-bold text-slate-900 text-base">Ketuntasan & Rerata Nilai Siswa</h3>
                     @if ($isFilterKelas)
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-[#1E6BFF] border border-blue-100">
-                            <span class="w-1.5 h-1.5 rounded-full bg-[#1E6BFF] animate-pulse"></span>
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EAF5EF] text-[#2E7352] border border-[#D7EDE1]">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#4EA87D] animate-pulse"></span>
                             Kelas Diampu: {{ $labelKelasDiampu }}
                         </span>
                     @else
@@ -31,7 +31,7 @@
         </div>
 
         <a href="{{ route('guru.laporan.index') }}" 
-           class="inline-flex items-center gap-1.5 text-xs font-bold text-[#1E6BFF] hover:text-[#155BE5] self-start sm:self-auto transition-colors group">
+           class="inline-flex items-center gap-1.5 text-xs font-bold text-[#4EA87D] hover:text-[#3E946B] self-start sm:self-auto transition-colors group">
             <span>Buka Laporan Lengkap</span>
             <svg class="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="9 18 15 12 9 6"></polyline>
@@ -68,20 +68,20 @@
         <!-- Bagian Rincian Metrik Vertikal (7 Kolom di Desktop) -->
         <div class="md:col-span-7 flex flex-col justify-center space-y-3">
             
-            <!-- 1. Latihan Teori Materi (Royal Blue) -->
+            <!-- 1. Latihan Teori Materi (Hijau Susu) -->
             <x-donut-metric-row 
                 label="Latihan Teori Materi"
                 :value="$rataMateri"
-                color="blue"
+                color="green"
                 subtext="{{ $totalMateriSelesai }} Selesai"
                 :max="100"
             />
 
-            <!-- 2. Listening Audio (Emerald Green) -->
+            <!-- 2. Listening Audio (Aksen Pink Lembut) -->
             <x-donut-metric-row 
                 label="Listening Audio"
                 :value="$rataListening"
-                color="emerald"
+                color="pink"
                 subtext="{{ $totalListeningSelesai }} Selesai"
                 :max="100"
             />

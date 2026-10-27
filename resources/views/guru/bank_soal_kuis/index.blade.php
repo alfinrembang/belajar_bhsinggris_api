@@ -38,11 +38,11 @@
                        name="q" 
                        value="{{ request('q') }}"
                        placeholder="Cari judul kuis atau kode room..." 
-                       class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none transition-all">
+                       class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
             </div>
 
             <!-- Filter Kategori -->
-            <select name="kategori" onchange="this.form.submit()" class="px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#1E6BFF]">
+            <select name="kategori" onchange="this.form.submit()" class="px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
                 <option value="">Semua Kategori</option>
                 <option value="Grammar" {{ request('kategori') == 'Grammar' ? 'selected' : '' }}>Grammar Test</option>
                 <option value="Vocabulary" {{ request('kategori') == 'Vocabulary' ? 'selected' : '' }}>Vocabulary Challenge</option>
@@ -52,7 +52,7 @@
             </select>
 
             <!-- Filter Kelas -->
-            <select name="kelas" onchange="this.form.submit()" class="px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#1E6BFF]">
+            <select name="kelas" onchange="this.form.submit()" class="px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
                 <option value="">Semua Kelas</option>
                 <option value="10" {{ request('kelas') == '10' ? 'selected' : '' }}>Kelas 10</option>
                 <option value="11" {{ request('kelas') == '11' ? 'selected' : '' }}>Kelas 11</option>
@@ -103,20 +103,20 @@
                         <tr class="hover:bg-slate-50/60 transition-colors">
                             <td class="py-3 px-4">
                                 <div class="flex items-center gap-3 min-w-0">
-                                    <div class="w-9 h-9 rounded-xl bg-blue-50 text-[#1E6BFF] flex items-center justify-center font-bold text-xs shrink-0">
+                                    <div class="w-9 h-9 rounded-xl bg-[#EAF5EF] text-[#4EA87D] flex items-center justify-center font-bold text-xs shrink-0">
                                         {{ $quiz->kategori_inisial }}
                                     </div>
                                     <div class="min-w-0 flex-1">
-                                        <a href="{{ route('guru.quiz.show', $quiz) }}" class="font-bold text-slate-800 hover:text-[#1E6BFF] transition-colors truncate block" title="{{ $quiz->judul }}">
+                                        <a href="{{ route('guru.quiz.show', $quiz) }}" class="font-bold text-slate-800 hover:text-[#4EA87D] transition-colors truncate block" title="{{ $quiz->judul }}">
                                             {{ $quiz->judul }}
                                         </a>
                                         <div class="flex items-center gap-2 mt-0.5">
-                                            <span class="inline-flex items-center gap-1 font-mono text-[11px] font-bold text-[#1E6BFF] bg-blue-50 px-2 py-0.5 rounded-md whitespace-nowrap">
+                                            <span class="inline-flex items-center gap-1 font-mono text-[11px] font-bold text-[#4EA87D] bg-[#EAF5EF] px-2 py-0.5 rounded-md whitespace-nowrap">
                                                 ROOM: {{ $quiz->kode_room }}
                                             </span>
                                             <button type="button" 
                                                     onclick="salinKodeRoom('{{ $quiz->kode_room }}', this)" 
-                                                    class="text-slate-400 hover:text-[#1E6BFF] transition-colors p-0.5" 
+                                                    class="text-slate-400 hover:text-[#4EA87D] transition-colors p-0.5" 
                                                     title="Salin Kode Room">
                                                 <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
@@ -160,7 +160,7 @@
 
                                     <!-- Edit -->
                                     <a href="{{ route('guru.quiz.edit', $quiz) }}" 
-                                       class="p-1.5 rounded-lg text-slate-400 hover:text-[#1E6BFF] hover:bg-blue-50 transition-colors" 
+                                       class="p-1.5 rounded-lg text-slate-400 hover:text-[#4EA87D] hover:bg-[#EAF5EF] transition-colors" 
                                        title="Edit Paket Kuis">
                                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>

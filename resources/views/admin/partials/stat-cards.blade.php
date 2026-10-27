@@ -2,15 +2,15 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
     
     <!-- Kartu 1: Total Guru -->
-    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-slate-300 transition-all flex items-center justify-between">
+    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-[#D7EDE1] transition-all flex items-center justify-between">
         <div>
             <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Guru Pengajar</p>
             <h3 class="text-3xl font-bold text-slate-900 mt-1 tracking-tight">{{ $totalGuru ?? 0 }}</h3>
-            <p class="text-[11px] text-blue-600 font-medium mt-1 flex items-center gap-1">
+            <p class="text-[11px] text-[#2E7352] font-medium mt-1 flex items-center gap-1">
                 <span>Aktif di Portal Guru</span>
             </p>
         </div>
-        <div class="w-11 h-11 rounded-xl bg-slate-50 border border-slate-100 text-blue-600 flex items-center justify-center shrink-0">
+        <div class="w-11 h-11 rounded-xl bg-[#EAF5EF] border border-[#D7EDE1] text-[#2E7352] flex items-center justify-center shrink-0">
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                 <circle cx="9" cy="7" r="4"></circle>

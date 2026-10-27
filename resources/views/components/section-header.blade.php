@@ -7,11 +7,13 @@
 
 @php
     $colorClass = [
-        'blue' => 'bg-blue-50 text-[#1E6BFF]',
+        'blue' => 'bg-[#EAF5EF] text-[#2E7352]',
+        'green' => 'bg-[#EAF5EF] text-[#2E7352]',
+        'pink' => 'bg-[#FDF2F4] text-[#E11D48]',
         'purple' => 'bg-purple-50 text-purple-600',
-        'emerald' => 'bg-emerald-50 text-emerald-600',
+        'emerald' => 'bg-[#EAF5EF] text-[#2E7352]',
         'amber' => 'bg-amber-50 text-amber-600',
-    ][$color] ?? 'bg-blue-50 text-[#1E6BFF]';
+    ][$color] ?? 'bg-[#EAF5EF] text-[#2E7352]';
 @endphp
 
 <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3">

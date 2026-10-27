@@ -12,6 +12,11 @@
     $progressWidth = min(100, max(0, $percentage !== null ? (float) $percentage : $score));
 
     $colorScheme = match ($color) {
+        'pink', 'rose' => [
+            'bar' => 'bg-[#FB7185]',
+            'dot' => 'bg-[#FB7185]',
+            'text' => 'text-[#FB7185]',
+        ],
         'emerald', 'green' => [
             'bar' => 'bg-[#10B981]',
             'dot' => 'bg-[#10B981]',
@@ -23,9 +28,9 @@
             'text' => 'text-[#F59E0B]',
         ],
         default => [
-            'bar' => 'bg-[#1E6BFF]',
-            'dot' => 'bg-[#1E6BFF]',
-            'text' => 'text-[#1E6BFF]',
+            'bar' => 'bg-[#4EA87D]',
+            'dot' => 'bg-[#4EA87D]',
+            'text' => 'text-[#4EA87D]',
         ],
     };
 @endphp

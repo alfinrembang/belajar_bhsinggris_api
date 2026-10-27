@@ -11,7 +11,7 @@
         </x-button>
 
         <a href="{{ route('guru.quiz.edit', $quiz) }}" 
-           class="px-4 py-2 rounded-2xl bg-[#1E6BFF] hover:bg-[#155BE5] text-white font-semibold text-xs shadow-xs transition-all flex items-center gap-2">
+           class="px-4 py-2 rounded-2xl bg-[#4EA87D] hover:bg-[#43966E] text-white font-semibold text-xs shadow-xs transition-all flex items-center gap-2">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
@@ -46,14 +46,14 @@
             </div>
 
             <!-- Kartu Kode Room Besar -->
-            <div class="p-5 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50/60 border border-blue-100 flex flex-col items-center justify-center shrink-0 min-w-[200px]">
-                <span class="text-[11px] font-bold text-[#1E6BFF] uppercase tracking-wider">KODE ROOM SISWA</span>
+            <div class="p-5 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50/60 border border-[#D7EDE1] flex flex-col items-center justify-center shrink-0 min-w-[200px]">
+                <span class="text-[11px] font-bold text-[#4EA87D] uppercase tracking-wider">KODE ROOM SISWA</span>
                 <span class="text-3xl font-mono font-extrabold text-slate-900 tracking-widest mt-1">
                     {{ $quiz->kode_room }}
                 </span>
                 <button type="button" 
                         onclick="salinKode('{{ $quiz->kode_room }}', this)"
-                        class="mt-2.5 px-3 py-1 rounded-lg bg-white shadow-xs border border-blue-200 text-[#1E6BFF] text-[11px] font-bold hover:bg-blue-50 transition-all flex items-center gap-1.5 cursor-pointer">
+                        class="mt-2.5 px-3 py-1 rounded-lg bg-white shadow-xs border border-[#D7EDE1] text-[#4EA87D] text-[11px] font-bold hover:bg-[#EAF5EF] transition-all flex items-center gap-1.5 cursor-pointer">
                     <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -165,7 +165,7 @@
                     </div>
 
                     @if($soal->pembahasan)
-                        <div class="p-2.5 rounded-xl bg-blue-50/60 border border-blue-100 text-[11px] text-blue-900">
+                        <div class="p-2.5 rounded-xl bg-[#EAF5EF]/60 border border-[#D7EDE1] text-[11px] text-blue-900">
                             <span class="font-bold">💡 Pembahasan:</span> {{ $soal->pembahasan }}
                         </div>
                     @endif
@@ -183,7 +183,7 @@
                 <h3 class="font-bold text-slate-800 text-sm">Hasil & Peringkat Siswa</h3>
                 <p class="text-xs text-slate-400">Riwayat pengerjaan siswa melalui aplikasi mobile</p>
             </div>
-            <span class="text-xs font-semibold px-3 py-1 rounded-full bg-blue-50 text-[#1E6BFF]">
+            <span class="text-xs font-semibold px-3 py-1 rounded-full bg-[#EAF5EF] text-[#4EA87D]">
                 {{ $quiz->progresSiswa->count() }} Percobaan
             </span>
         </div>
@@ -248,7 +248,7 @@
                                 <div class="flex flex-col items-center justify-center">
                                     <span class="text-3xl mb-2">🎯</span>
                                     <p class="font-bold text-slate-600 text-xs">Belum ada siswa yang mengerjakan kuis ini</p>
-                                    <p class="text-[11px] text-slate-400 mt-0.5">Bagikan kode room <span class="font-mono font-bold text-[#1E6BFF]">{{ $quiz->kode_room }}</span> kepada siswa Anda.</p>
+                                    <p class="text-[11px] text-slate-400 mt-0.5">Bagikan kode room <span class="font-mono font-bold text-[#4EA87D]">{{ $quiz->kode_room }}</span> kepada siswa Anda.</p>
                                 </div>
                             </td>
                         </tr>

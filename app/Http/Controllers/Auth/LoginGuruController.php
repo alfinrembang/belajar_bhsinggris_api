@@ -33,9 +33,9 @@ class LoginGuruController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
         ], [
-            'email.required' => 'Email wajib diisi!',
-            'email.email' => 'Format email tidak valid!',
-            'password.required' => 'Kata sandi wajib diisi!',
+            'email.required' => 'Email belum diisi! Silakan masukkan alamat email akun Anda.',
+            'email.email' => 'Format penulisan email tidak valid (contoh: guru@gmail.com)!',
+            'password.required' => 'Kata sandi belum diisi! Silakan masukkan kata sandi Anda.',
         ]);
 
         $remember = $request->boolean('remember');
@@ -62,7 +62,7 @@ class LoginGuruController extends Controller
         }
 
         return back()->withErrors([
-            'email' => 'Email atau kata sandi tidak cocok!',
+            'email' => 'Email atau kata sandi tidak cocok! Silakan periksa kembali data Anda.',
         ])->onlyInput('email');
     }
 

@@ -19,7 +19,7 @@
     <div class="bg-white rounded-3xl p-6 lg:p-8 border border-slate-100 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div class="flex items-center gap-4 lg:gap-5">
             <!-- Avatar Inisial Besar -->
-            <div class="w-16 h-16 lg:w-20 lg:h-20 rounded-2xl bg-gradient-to-br from-[#1E6BFF] to-[#0A56E2] text-white flex items-center justify-center font-extrabold text-2xl lg:text-3xl shadow-[0_8px_20px_rgba(30,107,255,0.25)] shrink-0">
+            <div class="w-16 h-16 lg:w-20 lg:h-20 rounded-2xl bg-gradient-to-br from-[#4EA87D] to-[#3E946B] text-white flex items-center justify-center font-extrabold text-2xl lg:text-3xl shadow-[0_8px_20px_rgba(78,168,125,0.25)] shrink-0">
                 {{ strtoupper(substr($siswa->nama_lengkap ?? 'S', 0, 1)) }}
             </div>
 
@@ -28,7 +28,7 @@
                     <h2 class="text-xl lg:text-2xl font-bold text-slate-800 tracking-tight">
                         {{ $siswa->nama_lengkap }}
                     </h2>
-                    <span class="px-3 py-1 rounded-full bg-blue-50 text-[#1E6BFF] font-semibold text-xs">
+                    <span class="px-3 py-1 rounded-full bg-[#EAF5EF] text-[#4EA87D] font-semibold text-xs">
                         {{ $siswa->kelas_lengkap ?: 'Rombel belum diatur' }}
                     </span>
                     @if($siswa->no_absen)
@@ -115,9 +115,9 @@
                 <button type="button" 
                         onclick="switchTab('materi')" 
                         id="tab-btn-materi"
-                        class="tab-btn px-4 py-3 rounded-t-2xl font-bold text-xs border-b-2 border-[#1E6BFF] text-[#1E6BFF] bg-white transition-all flex items-center gap-2">
+                        class="tab-btn px-4 py-3 rounded-t-2xl font-bold text-xs border-b-2 border-[#4EA87D] text-[#4EA87D] bg-white transition-all flex items-center gap-2">
                     <span>📚</span> Nilai Modul Materi
-                    <span class="px-2 py-0.5 rounded-full bg-blue-100 text-[#1E6BFF] text-[10px] font-bold">
+                    <span class="px-2 py-0.5 rounded-full bg-[#EAF5EF] text-[#4EA87D] text-[10px] font-bold">
                         {{ $siswa->materiProgres->count() }}/{{ $semuaMateri->count() }}
                     </span>
                 </button>
@@ -150,7 +150,7 @@
 
         <!-- ==================== TAB 1: NILAI MODUL MATERI ==================== -->
         <div id="tab-content-materi" class="tab-content">
-            <div class="p-5 lg:p-6 bg-blue-50/30 border-b border-slate-100 flex items-center justify-between">
+            <div class="p-5 lg:p-6 bg-[#EAF5EF]/30 border-b border-slate-100 flex items-center justify-between">
                 <div>
                     <h4 class="font-bold text-slate-800 text-sm">Transkrip Nilai Pemahaman Materi</h4>
                     <p class="text-xs text-slate-500 mt-0.5">Nilai dievaluasi dari latihan soal interaktif di Step 4 pada masing-masing modul materi.</p>
@@ -342,7 +342,7 @@
                                 <td class="py-4 px-6 text-slate-400 font-semibold">{{ $idx + 1 }}</td>
                                 <td class="py-4 px-6">
                                     <p class="font-bold text-slate-800 text-sm">{{ $quiz->judul }}</p>
-                                    <span class="inline-flex items-center gap-1 font-mono text-[10px] font-bold text-[#1E6BFF] bg-blue-50 px-2 py-0.5 rounded-md mt-1">
+                                    <span class="inline-flex items-center gap-1 font-mono text-[10px] font-bold text-[#4EA87D] bg-[#EAF5EF] px-2 py-0.5 rounded-md mt-1">
                                         ROOM: {{ $quiz->kode_room }}
                                     </span>
                                 </td>
@@ -401,7 +401,7 @@
 
             // Reset styling tab button
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('border-[#1E6BFF]', 'text-[#1E6BFF]', 'bg-white');
+                btn.classList.remove('border-[#4EA87D]', 'text-[#4EA87D]', 'bg-white');
                 btn.classList.add('border-transparent', 'text-slate-500');
             });
 
@@ -415,7 +415,7 @@
             const targetBtn = document.getElementById('tab-btn-' + tabName);
             if (targetBtn) {
                 targetBtn.classList.remove('border-transparent', 'text-slate-500');
-                targetBtn.classList.add('border-[#1E6BFF]', 'text-[#1E6BFF]', 'bg-white');
+                targetBtn.classList.add('border-[#4EA87D]', 'text-[#4EA87D]', 'bg-white');
             }
         }
     </script>

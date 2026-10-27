@@ -43,7 +43,7 @@
                        name="q"
                        value="{{ request('q') }}"
                        placeholder="Cari nama atau deskripsi kategori..." 
-                       class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none transition-all">
+                       class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
             </div>
 
             @if(request()->filled('q'))
@@ -93,7 +93,7 @@
                                         {{ $emoji }}
                                     </div>
                                     <div>
-                                        <a href="{{ route('guru.kategori.show', $kategori->id) }}" class="font-bold text-slate-800 hover:text-blue-600 text-xs transition-colors">
+                                        <a href="{{ route('guru.kategori.show', $kategori->id) }}" class="font-bold text-slate-800 hover:text-[#4EA87D] text-xs transition-colors">
                                             {{ $kategori->nama }}
                                         </a>
                                         <p class="text-[10px] text-slate-400 font-mono mt-0.5">{{ $kategori->warna_hex }}</p>
@@ -111,7 +111,7 @@
                                 </p>
                             </td>
                             <td class="py-3 px-3.5 whitespace-nowrap">
-                                <a href="{{ route('guru.kategori.show', $kategori->id) }}" class="whitespace-nowrap inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 font-semibold text-[11px] border border-blue-100 hover:bg-blue-100 transition-colors">
+                                <a href="{{ route('guru.kategori.show', $kategori->id) }}" class="whitespace-nowrap inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#EAF5EF] text-[#2E7352] font-semibold text-[11px] border border-[#D7EDE1] hover:bg-[#EAF5EF] transition-colors">
                                     📘 {{ $kategori->materis_count }} Materi
                                 </a>
                             </td>

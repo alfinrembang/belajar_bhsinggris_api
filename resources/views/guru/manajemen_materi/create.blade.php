@@ -37,7 +37,7 @@
                            value="{{ old('judul') }}"
                            placeholder="Contoh: Descriptive Text - Describing Historical Places" 
                            required
-                           class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none transition-all">
+                           class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
                 </div>
 
                 <!-- Kategori Materi -->
@@ -45,7 +45,7 @@
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">
                         Kategori Pembelajaran <span class="text-rose-500">*</span>
                     </label>
-                    <select name="kategori" required class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#1E6BFF] outline-none">
+                    <select name="kategori" required class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#4EA87D] outline-none">
                         <option value="">Pilih Kategori...</option>
                         @if(isset($kategoriList) && $kategoriList->isNotEmpty())
                             @foreach($kategoriList as $kat)
@@ -67,7 +67,7 @@
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">
                         Target Tingkat Kelas <span class="text-rose-500">*</span>
                     </label>
-                    <select name="tingkat_kelas" required class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#1E6BFF] outline-none">
+                    <select name="tingkat_kelas" required class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#4EA87D] outline-none">
                         <option value="">Pilih Tingkat Kelas...</option>
                         <option value="10" {{ old('tingkat_kelas') == '10' ? 'selected' : '' }}>Khusus Kelas 10</option>
                         <option value="11" {{ old('tingkat_kelas') == '11' ? 'selected' : '' }}>Khusus Kelas 11</option>
@@ -82,7 +82,7 @@
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">
                         Target Rombel Spesifik <span class="text-slate-400 font-normal">(Opsional)</span>
                     </label>
-                    <select name="target_rombel" class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#1E6BFF] outline-none">
+                    <select name="target_rombel" class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#4EA87D] outline-none">
                         <option value="">Semua Rombel yang Saya Ajar</option>
                         @foreach($kelasDiampu as $rombel)
                             <option value="{{ $rombel }}" {{ old('target_rombel') == $rombel ? 'selected' : '' }}>
@@ -102,7 +102,7 @@
                            name="xp_reward" 
                            value="{{ old('xp_reward', 50) }}"
                            min="0"
-                           class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] outline-none">
+                           class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none">
                 </div>
 
                 <!-- Status Publikasi -->
@@ -110,7 +110,7 @@
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">
                         Status Tayang
                     </label>
-                    <select name="status" class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#1E6BFF] outline-none">
+                    <select name="status" class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#4EA87D] outline-none">
                         <option value="aktif" {{ old('status', 'aktif') == 'aktif' ? 'selected' : '' }}>Aktif (Langsung Tayang di Flutter)</option>
                         <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft (Simpan Sementara)</option>
                     </select>
@@ -125,7 +125,7 @@
                            name="deskripsi_singkat" 
                            value="{{ old('deskripsi_singkat') }}"
                            placeholder="Contoh: Mempelajari struktur teks deskriptif dan tata bahasa adjective clause" 
-                           class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] outline-none">
+                           class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none">
                 </div>
 
                 <!-- Penjelasan Teori Lengkap -->
@@ -137,7 +137,7 @@
                               rows="6" 
                               required
                               placeholder="Tuliskan materi penjelasan teori, rumus kalimat, aturan tata bahasa, dan tips belajar di sini..." 
-                              class="w-full p-4 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none transition-all leading-relaxed">{{ old('penjelasan') }}</textarea>
+                              class="w-full p-4 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all leading-relaxed">{{ old('penjelasan') }}</textarea>
                 </div>
             </div>
         </div>
@@ -160,7 +160,7 @@
                     <textarea name="contoh_teks" 
                               rows="6" 
                               placeholder="Tuliskan contoh teks cerita atau bacaan bahasa Inggris yang berkaitan dengan materi ini..." 
-                              class="w-full p-4 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none transition-all leading-relaxed">{{ old('contoh_teks') }}</textarea>
+                              class="w-full p-4 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all leading-relaxed">{{ old('contoh_teks') }}</textarea>
                 </div>
 
                 <!-- Upload Gambar Ilustrasi Cerita -->
@@ -173,7 +173,7 @@
                            name="gambar_materi" 
                            accept="image/*"
                            onchange="previewImage(this)"
-                           class="text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-[#1E6BFF] hover:file:bg-blue-100 cursor-pointer">
+                           class="text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#EAF5EF] file:text-[#4EA87D] hover:file:bg-[#EAF5EF] cursor-pointer">
                     <div id="image-preview-container" class="hidden mt-3">
                         <img id="image-preview" src="#" alt="Preview Gambar" class="h-32 rounded-xl object-cover border border-slate-200">
                     </div>

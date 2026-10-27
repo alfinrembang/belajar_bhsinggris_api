@@ -11,7 +11,7 @@
         <!-- Modal Header -->
         <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-blue-50 text-[#1E6BFF] flex items-center justify-center font-bold">
+                <div class="w-10 h-10 rounded-2xl bg-[#EAF5EF] text-[#2E7352] flex items-center justify-center font-bold">
                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
                         <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -38,7 +38,7 @@
                        name="name" 
                        required 
                        placeholder="Contoh: Budi Santoso, S.Pd" 
-                       class="w-full px-4 py-2.5 rounded-xl text-xs bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1E6BFF] focus:bg-white transition-all">
+                       class="w-full px-4 py-2.5 rounded-xl text-xs bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#4EA87D] focus:bg-white transition-all">
             </div>
 
             <!-- Input Email -->
@@ -48,7 +48,7 @@
                        name="email" 
                        required 
                        placeholder="Contoh: budi.santoso@sekolah.sch.id" 
-                       class="w-full px-4 py-2.5 rounded-xl text-xs bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1E6BFF] focus:bg-white transition-all">
+                       class="w-full px-4 py-2.5 rounded-xl text-xs bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#4EA87D] focus:bg-white transition-all">
             </div>
 
             <!-- Input NIP (Opsional) -->
@@ -57,7 +57,7 @@
                 <input type="text" 
                        name="nip" 
                        placeholder="Contoh: 198501152010011002" 
-                       class="w-full px-4 py-2.5 rounded-xl text-xs bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1E6BFF] focus:bg-white transition-all">
+                       class="w-full px-4 py-2.5 rounded-xl text-xs bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#4EA87D] focus:bg-white transition-all">
             </div>
 
             <!-- Input Kelas & Rombel yang Diampu -->
@@ -69,7 +69,7 @@
                     @if(isset($daftarRombel))
                         @foreach($daftarRombel as $rombel)
                             <label class="flex items-center gap-2 p-1.5 rounded-xl hover:bg-white text-xs text-slate-700 cursor-pointer transition-colors">
-                                <input type="checkbox" name="kelas_diampu[]" value="{{ $rombel }}" class="rounded text-[#1E6BFF] focus:ring-[#1E6BFF]">
+                                <input type="checkbox" name="kelas_diampu[]" value="{{ $rombel }}" class="rounded text-[#4EA87D] focus:ring-[#4EA87D]">
                                 <span class="font-medium text-[11px]">{{ $rombel }}</span>
                             </label>
                         @endforeach
@@ -86,7 +86,7 @@
                        required 
                        minlength="6" 
                        placeholder="Minimal 6 karakter" 
-                       class="w-full px-4 py-2.5 rounded-xl text-xs bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1E6BFF] focus:bg-white transition-all">
+                       class="w-full px-4 py-2.5 rounded-xl text-xs bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#4EA87D] focus:bg-white transition-all">
                 <p class="text-[11px] text-slate-400 mt-1">Beritahukan kata sandi ini kepada guru bersangkutan untuk login pertama kali.</p>
             </div>
 
@@ -98,7 +98,7 @@
                     Batal
                 </button>
                 <button type="submit" 
-                        class="px-5 py-2.5 rounded-xl bg-[#1E6BFF] hover:bg-[#155BE5] text-white text-xs font-semibold shadow-sm transition-all">
+                        class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#4EA87D] to-[#3E946B] hover:from-[#43966E] hover:to-[#35825D] text-white text-xs font-semibold shadow-sm transition-all">
                     Simpan Akun Guru
                 </button>
             </div>
@@ -119,7 +119,7 @@
         <!-- Modal Header -->
         <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-blue-50 text-[#1E6BFF] flex items-center justify-center font-bold">
+                <div class="w-10 h-10 rounded-2xl bg-[#EAF5EF] text-[#2E7352] flex items-center justify-center font-bold">
                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
@@ -146,7 +146,7 @@
                        id="editGuruName" 
                        name="name" 
                        required 
-                       class="w-full px-4 py-2.5 rounded-xl text-xs bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1E6BFF] focus:bg-white transition-all">
+                       class="w-full px-4 py-2.5 rounded-xl text-xs bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#4EA87D] focus:bg-white transition-all">
             </div>
 
             <!-- Input Email -->
@@ -156,7 +156,7 @@
                        id="editGuruEmail" 
                        name="email" 
                        required 
-                       class="w-full px-4 py-2.5 rounded-xl text-xs bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1E6BFF] focus:bg-white transition-all">
+                       class="w-full px-4 py-2.5 rounded-xl text-xs bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#4EA87D] focus:bg-white transition-all">
             </div>
 
             <!-- Input NIP -->
@@ -165,7 +165,7 @@
                 <input type="text" 
                        id="editGuruNip" 
                        name="nip" 
-                       class="w-full px-4 py-2.5 rounded-xl text-xs bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1E6BFF] focus:bg-white transition-all">
+                       class="w-full px-4 py-2.5 rounded-xl text-xs bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#4EA87D] focus:bg-white transition-all">
             </div>
 
             <!-- Input Kelas & Rombel yang Diampu -->
@@ -177,7 +177,7 @@
                     @if(isset($daftarRombel))
                         @foreach($daftarRombel as $rombel)
                             <label class="flex items-center gap-2 p-1.5 rounded-xl hover:bg-white text-xs text-slate-700 cursor-pointer transition-colors">
-                                <input type="checkbox" name="kelas_diampu[]" value="{{ $rombel }}" class="edit-kelas-checkbox rounded text-[#1E6BFF] focus:ring-[#1E6BFF]">
+                                <input type="checkbox" name="kelas_diampu[]" value="{{ $rombel }}" class="edit-kelas-checkbox rounded text-[#4EA87D] focus:ring-[#4EA87D]">
                                 <span class="font-medium text-[11px]">{{ $rombel }}</span>
                             </label>
                         @endforeach
@@ -194,7 +194,7 @@
                     Batal
                 </button>
                 <button type="submit" 
-                        class="px-5 py-2.5 rounded-xl bg-[#1E6BFF] hover:bg-[#155BE5] text-white text-xs font-semibold shadow-sm transition-all">
+                        class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#4EA87D] to-[#3E946B] hover:from-[#43966E] hover:to-[#35825D] text-white text-xs font-semibold shadow-sm transition-all">
                     Simpan Perubahan
                 </button>
             </div>

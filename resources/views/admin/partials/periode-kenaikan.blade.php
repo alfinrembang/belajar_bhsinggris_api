@@ -20,7 +20,7 @@
             <div>
                 <div class="flex flex-wrap items-center gap-2.5">
                     <h2 class="font-bold text-slate-800 text-base">
-                        Periode Kenaikan Kelas — Tahun Ajaran <span class="text-blue-600 font-semibold">{{ $pengaturanAkademik->tahun_ajaran }}</span>
+                        Periode Kenaikan Kelas — Tahun Ajaran <span class="text-[#4EA87D] font-semibold">{{ $pengaturanAkademik->tahun_ajaran }}</span>
                     </h2>
                     @if($pengaturanAkademik->is_periode_kenaikan_aktif)
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/70">
@@ -173,7 +173,7 @@
                         <span>Seluruh riwayat nilai, kuis, dan XP siswa tetap aman 100%.</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-blue-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg class="w-4 h-4 text-[#4EA87D] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                         </svg>
                         <span>Hanya Administrator yang berwenang membuka/menutup sakelar ini.</span>
@@ -189,7 +189,7 @@
                            id="adminPromotionKeterangan" 
                            name="keterangan" 
                            placeholder="{{ $pengaturanAkademik->is_periode_kenaikan_aktif ? 'Misal: Ditutup setelah pendaftaran rombel selesai' : 'Misal: Dibuka untuk periode semester genap' }}" 
-                           class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all bg-white"
+                           class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-[#4EA87D]/20 focus:border-[#4EA87D] transition-all bg-white"
                            maxlength="255">
                 </div>
             </div>

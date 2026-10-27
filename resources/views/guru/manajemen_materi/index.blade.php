@@ -31,11 +31,11 @@
                        name="q"
                        value="{{ request('q') }}"
                        placeholder="Cari materi pembelajaran..." 
-                       class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none transition-all">
+                       class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
             </div>
 
             <!-- Filter Kelas -->
-            <select name="kelas" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#1E6BFF]">
+            <select name="kelas" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
                 <option value="">Semua Tingkat Kelas</option>
                 <option value="10" {{ request('kelas') == '10' ? 'selected' : '' }}>Kelas 10</option>
                 <option value="11" {{ request('kelas') == '11' ? 'selected' : '' }}>Kelas 11</option>
@@ -43,7 +43,7 @@
             </select>
 
             <!-- Filter Kategori -->
-            <select name="kategori" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#1E6BFF]">
+            <select name="kategori" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
                 <option value="">Semua Kategori</option>
                 @if(isset($kategoriList) && $kategoriList->isNotEmpty())
                     @foreach($kategoriList as $kat)
@@ -104,7 +104,7 @@
                         <tr class="hover:bg-slate-50/70 transition-colors">
                             <td class="py-3 px-4">
                                 <div class="flex items-center gap-2.5 min-w-0">
-                                    <div class="w-8 h-8 rounded-lg bg-blue-50 text-[#1E6BFF] flex items-center justify-center font-bold text-xs shrink-0 border border-blue-100">
+                                    <div class="w-8 h-8 rounded-lg bg-[#EAF5EF] text-[#4EA87D] flex items-center justify-center font-bold text-xs shrink-0 border border-[#D7EDE1]">
                                         {{ str_pad($materis->firstItem() + $index, 2, '0', STR_PAD_LEFT) }}
                                     </div>
                                     <div class="min-w-0 flex-1">
@@ -122,7 +122,7 @@
                             <td class="py-3 px-2.5 whitespace-nowrap">
                                 <div class="flex flex-col gap-0.5 text-[11px]">
                                     <span class="whitespace-nowrap inline-flex items-center gap-1 font-semibold text-slate-700">
-                                        <svg class="w-3.5 h-3.5 text-blue-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
+                                        <svg class="w-3.5 h-3.5 text-[#4EA87D] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
                                         {{ $materi->soals_count }} Soal Latihan
                                     </span>
                                     @if($materi->audio_materi)

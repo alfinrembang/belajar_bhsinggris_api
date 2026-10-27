@@ -14,9 +14,9 @@
 
 <div class="relative {{ $size }} rounded-full p-4 flex items-center justify-center shrink-0 shadow-xs transition-transform duration-300 hover:scale-[1.02]"
      style="background: conic-gradient(
-         #1E6BFF 0deg calc({{ $d1 }}deg - 2deg),
+         #4EA87D 0deg calc({{ $d1 }}deg - 2deg),
          transparent calc({{ $d1 }}deg - 2deg) {{ $d1 }}deg,
-         #10B981 {{ $d1 }}deg calc({{ $d2 }}deg - 2deg),
+         #FB7185 {{ $d1 }}deg calc({{ $d2 }}deg - 2deg),
          transparent calc({{ $d2 }}deg - 2deg) {{ $d2 }}deg,
          #F59E0B {{ $d2 }}deg 358deg,
          transparent 358deg 360deg

@@ -158,7 +158,7 @@
                name="soals[{{ $index }}][pertanyaan]" 
                value="{{ $currentPertanyaan }}"
                placeholder="Ketikkan kalimat pertanyaan kuis di sini..." 
-               class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200/80 text-xs text-slate-800 focus:border-[#1E6BFF] outline-none">
+               class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200/80 text-xs text-slate-800 focus:border-[#4EA87D] outline-none">
     </div>
 
     <!-- 4 Pilihan Jawaban A, B, C, D -->
@@ -185,7 +185,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
         <div>
             <label class="block text-[11px] font-semibold text-slate-600 mb-1">Kunci Jawaban Benar:</label>
-            <select name="soals[{{ $index }}][kunci_jawaban]" class="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-[#1E6BFF] outline-none">
+            <select name="soals[{{ $index }}][kunci_jawaban]" class="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-[#4EA87D] outline-none">
                 <option value="A" {{ $currentKunci === 'A' ? 'selected' : '' }}>Kunci Jawaban: A</option>
                 <option value="B" {{ $currentKunci === 'B' ? 'selected' : '' }}>Kunci Jawaban: B</option>
                 <option value="C" {{ $currentKunci === 'C' ? 'selected' : '' }}>Kunci Jawaban: C</option>

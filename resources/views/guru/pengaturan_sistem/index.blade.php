@@ -34,7 +34,7 @@
         <div class="space-y-6">
             <!-- Kartu Profil Guru -->
             <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs text-center">
-                <div class="w-24 h-24 mx-auto rounded-3xl bg-gradient-to-br from-[#1E6BFF] to-[#0A56E2] text-white flex items-center justify-center font-bold text-3xl shadow-[0_8px_20px_rgba(30,107,255,0.3)] mb-4">
+                <div class="w-24 h-24 mx-auto rounded-3xl bg-gradient-to-br from-[#4EA87D] to-[#3E946B] text-white flex items-center justify-center font-bold text-3xl shadow-[0_8px_20px_rgba(78,168,125,0.3)] mb-4">
                     {{ strtoupper(substr($guru->name ?? 'G', 0, 1)) }}
                 </div>
                 <h3 class="font-extrabold text-slate-800 text-base">{{ $guru->name ?? 'Guru Pengajar' }}</h3>
@@ -46,8 +46,8 @@
                 @endif
 
                 <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-center gap-2">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 text-[#1E6BFF] text-xs font-semibold capitalize">
-                        <svg class="w-3.5 h-3.5 text-[#1E6BFF]" viewBox="0 0 24 24" fill="currentColor">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EAF5EF] text-[#4EA87D] text-xs font-semibold capitalize">
+                        <svg class="w-3.5 h-3.5 text-[#4EA87D]" viewBox="0 0 24 24" fill="currentColor">
                             <path fill-rule="evenodd" d="M12.516 2.17a.75.75 0 0 0-1.032 0 11.209 11.209 0 0 1-7.877 3.08.75.75 0 0 0-.722.515A12.74 12.74 0 0 0 2.25 9.75c0 5.942 4.064 10.933 9.563 12.348a.749.749 0 0 0 .374 0c5.499-1.415 9.563-6.406 9.563-12.348 0-1.39-.223-2.73-.635-3.985a.75.75 0 0 0-.722-.516l-.143.001c-2.996 0-5.717-1.17-7.734-3.08Zm3.094 8.016a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
                         </svg>
                         Role: {{ $guru->role ?? 'guru' }}
@@ -79,7 +79,7 @@
                 </div>
                 <div class="flex items-center justify-between text-xs py-2">
                     <span class="text-slate-500">Aplikasi Siswa (Flutter)</span>
-                    <span class="font-bold text-blue-600">REST API v1</span>
+                    <span class="font-bold text-[#4EA87D]">REST API v1</span>
                 </div>
             </div>
         </div>
@@ -94,7 +94,7 @@
                         <h3 class="font-extrabold text-slate-800 text-sm">Informasi Akun Pengajar</h3>
                         <p class="text-xs text-slate-400 mt-0.5">Perbarui nama lengkap, email login, dan NIP Anda</p>
                     </div>
-                    <span class="p-2.5 rounded-2xl bg-blue-50 text-[#1E6BFF] text-base">👤</span>
+                    <span class="p-2.5 rounded-2xl bg-[#EAF5EF] text-[#4EA87D] text-base">👤</span>
                 </div>
 
                 <form action="{{ route('guru.pengaturan.update_profil') }}" method="POST" class="space-y-4">
@@ -106,7 +106,7 @@
                                    name="name"
                                    required
                                    value="{{ old('name', $guru->name) }}" 
-                                   class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none transition-all">
+                                   class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
                         </div>
 
                         <div>
@@ -115,7 +115,7 @@
                                    name="email"
                                    required
                                    value="{{ old('email', $guru->email) }}" 
-                                   class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none transition-all">
+                                   class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
                         </div>
                     </div>
 
@@ -125,12 +125,12 @@
                                name="nip"
                                placeholder="Contoh: 198507202010011012"
                                value="{{ old('nip', $guru->nip) }}" 
-                               class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none transition-all">
+                               class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
                     </div>
 
                     <div class="pt-2 flex justify-end">
                         <button type="submit" 
-                                class="px-5 py-2.5 rounded-2xl bg-[#1E6BFF] hover:bg-[#155BE5] text-white font-bold text-xs shadow-[0_6px_16px_rgba(30,107,255,0.28)] transition-all cursor-pointer">
+                                class="px-5 py-2.5 rounded-2xl bg-[#4EA87D] hover:bg-[#43966E] text-white font-bold text-xs shadow-[0_6px_16px_rgba(78,168,125,0.28)] transition-all cursor-pointer">
                             Simpan Perubahan Profil
                         </button>
                     </div>
@@ -157,7 +157,7 @@
                                    required
                                    placeholder="2026/2027"
                                    value="{{ old('tahun_ajaran', $pengaturanAkademik->tahun_ajaran) }}" 
-                                   class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#1E6BFF] outline-none">
+                                   class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#4EA87D] outline-none">
                             <span class="text-[10px] text-slate-400 mt-1 block">Format: YYYY/YYYY</span>
                         </div>
 
@@ -169,7 +169,7 @@
                                    min="0"
                                    max="100"
                                    value="{{ old('kkm_default', $pengaturanAkademik->kkm_default ?? 75) }}" 
-                                   class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#1E6BFF] outline-none">
+                                   class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#4EA87D] outline-none">
                             <span class="text-[10px] text-slate-400 mt-1 block">Batas tuntas evaluasi</span>
                         </div>
 
@@ -181,7 +181,7 @@
                                    min="5"
                                    max="180"
                                    value="{{ old('durasi_kuis_default', $pengaturanAkademik->durasi_kuis_default ?? 20) }}" 
-                                   class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#1E6BFF] outline-none">
+                                   class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#4EA87D] outline-none">
                             <span class="text-[10px] text-slate-400 mt-1 block">Dalam satuan menit</span>
                         </div>
                     </div>
@@ -192,16 +192,16 @@
                                name="keterangan"
                                placeholder="Contoh: Semester Ganjil TA 2026/2027"
                                value="{{ old('keterangan', $pengaturanAkademik->keterangan) }}" 
-                               class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#1E6BFF] outline-none">
+                               class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#4EA87D] outline-none">
                     </div>
 
                     <!-- Sakelar 1: Kenaikan Kelas Siswa -->
-                    <div class="flex items-center justify-between p-4 rounded-2xl {{ $pengaturanAkademik->is_periode_kenaikan_aktif ? 'bg-blue-50/70 border border-blue-200' : 'bg-slate-50 border border-slate-200/70' }} transition-colors">
+                    <div class="flex items-center justify-between p-4 rounded-2xl {{ $pengaturanAkademik->is_periode_kenaikan_aktif ? 'bg-[#EAF5EF]/70 border border-[#D7EDE1]' : 'bg-slate-50 border border-slate-200/70' }} transition-colors">
                         <div class="pr-4">
                             <div class="flex items-center gap-2">
                                 <span class="font-bold text-slate-800 text-xs">Periode Kenaikan Kelas & Kelulusan Siswa</span>
                                 @if($pengaturanAkademik->is_periode_kenaikan_aktif)
-                                    <span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-extrabold">DIBUKA</span>
+                                    <span class="px-2 py-0.5 rounded-full bg-[#EAF5EF] text-[#2E7352] text-[10px] font-extrabold">DIBUKA</span>
                                 @else
                                     <span class="px-2 py-0.5 rounded-full bg-slate-200 text-slate-600 text-[10px] font-extrabold">TERKUNCI</span>
                                 @endif
@@ -214,7 +214,7 @@
                                name="is_periode_kenaikan_aktif" 
                                value="1" 
                                {{ old('is_periode_kenaikan_aktif', $pengaturanAkademik->is_periode_kenaikan_aktif) ? 'checked' : '' }} 
-                               class="w-5 h-5 text-[#1E6BFF] rounded accent-[#1E6BFF] cursor-pointer shrink-0">
+                               class="w-5 h-5 text-[#4EA87D] rounded accent-[#4EA87D] cursor-pointer shrink-0">
                     </div>
 
                     <!-- Sakelar 2: Papan Peringkat (Leaderboard) -->
@@ -241,7 +241,7 @@
 
                     <div class="pt-2 flex justify-end">
                         <button type="submit" 
-                                class="px-5 py-2.5 rounded-2xl bg-[#1E6BFF] hover:bg-[#155BE5] text-white font-bold text-xs shadow-[0_4px_14px_rgba(30,107,255,0.25)] transition-all cursor-pointer">
+                                class="px-5 py-2.5 rounded-2xl bg-[#4EA87D] hover:bg-[#43966E] text-white font-bold text-xs shadow-[0_4px_14px_rgba(78,168,125,0.25)] transition-all cursor-pointer">
                             Simpan Pengaturan Akademik
                         </button>
                     </div>
@@ -271,7 +271,7 @@
                                name="current_password"
                                required
                                placeholder="Masukkan kata sandi lama Anda..." 
-                               class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#1E6BFF] outline-none">
+                               class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] outline-none">
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -281,7 +281,7 @@
                                    name="password"
                                    required
                                    placeholder="Minimal 8 karakter..." 
-                                   class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#1E6BFF] outline-none">
+                                   class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] outline-none">
                         </div>
 
                         <div>
@@ -290,7 +290,7 @@
                                    name="password_confirmation"
                                    required
                                    placeholder="Ulangi kata sandi baru..." 
-                                   class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#1E6BFF] outline-none">
+                                   class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] outline-none">
                         </div>
                     </div>
 

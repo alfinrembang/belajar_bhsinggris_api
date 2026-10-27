@@ -39,7 +39,7 @@
                            value="{{ old('judul', $listening->judul) }}"
                            placeholder="Contoh: Conversation at the Airport: Booking a Ticket" 
                            required
-                           class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] outline-none transition-all">
+                           class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none transition-all">
                 </div>
 
                 <div class="md:col-span-2">
@@ -49,14 +49,14 @@
                     <textarea name="deskripsi" 
                               rows="2" 
                               placeholder="Deskripsi singkat materi listening..." 
-                              class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] outline-none transition-all">{{ old('deskripsi', $listening->deskripsi) }}</textarea>
+                              class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none transition-all">{{ old('deskripsi', $listening->deskripsi) }}</textarea>
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">
                         Tingkat Kesulitan <span class="text-rose-500">*</span>
                     </label>
-                    <select name="tingkat_kesulitan" required class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] outline-none">
+                    <select name="tingkat_kesulitan" required class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none">
                         <option value="Beginner" {{ old('tingkat_kesulitan', $listening->tingkat_kesulitan) == 'Beginner' ? 'selected' : '' }}>🟢 Beginner (Mudah - Pemula)</option>
                         <option value="Intermediate" {{ old('tingkat_kesulitan', $listening->tingkat_kesulitan) == 'Intermediate' ? 'selected' : '' }}>🟡 Intermediate (Menengah)</option>
                         <option value="Advanced" {{ old('tingkat_kesulitan', $listening->tingkat_kesulitan) == 'Advanced' ? 'selected' : '' }}>🔴 Advanced (Tingkat Lanjut)</option>
@@ -67,7 +67,7 @@
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">
                         Target Kelas <span class="text-rose-500">*</span>
                     </label>
-                    <select name="tingkat_kelas" required class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] outline-none">
+                    <select name="tingkat_kelas" required class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none">
                         <option value="Semua Kelas" {{ old('tingkat_kelas', $listening->tingkat_kelas) == 'Semua Kelas' ? 'selected' : '' }}>Semua Kelas (Umum)</option>
                         <option value="Kelas 10" {{ old('tingkat_kelas', $listening->tingkat_kelas) == 'Kelas 10' ? 'selected' : '' }}>Kelas 10 SMA/SMK</option>
                         <option value="Kelas 11" {{ old('tingkat_kelas', $listening->tingkat_kelas) == 'Kelas 11' ? 'selected' : '' }}>Kelas 11 SMA/SMK</option>
@@ -81,7 +81,7 @@
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">
                         Target Rombel Spesifik <span class="text-slate-400 font-normal">(Opsional)</span>
                     </label>
-                    <select name="target_rombel" class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] outline-none">
+                    <select name="target_rombel" class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none">
                         <option value="">Semua Rombel yang Saya Ajar</option>
                         @foreach($kelasDiampu as $rombel)
                             <option value="{{ $rombel }}" {{ old('target_rombel', $listening->target_rombel) == $rombel ? 'selected' : '' }}>
@@ -101,14 +101,14 @@
                            value="{{ old('xp_reward', $listening->xp_reward) }}" 
                            min="10" 
                            step="5"
-                           class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] outline-none">
+                           class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none">
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">
                         Status Publikasi <span class="text-rose-500">*</span>
                     </label>
-                    <select name="status" required class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] outline-none font-semibold">
+                    <select name="status" required class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none font-semibold">
                         <option value="aktif" {{ old('status', $listening->status) == 'aktif' ? 'selected' : '' }}>Aktif (Tampil di Aplikasi Siswa)</option>
                         <option value="draft" {{ old('status', $listening->status) == 'draft' ? 'selected' : '' }}>Draft (Simpan Sementara)</option>
                     </select>
@@ -158,7 +158,7 @@
                                        value="{{ old('audios.'.$idx.'.judul_audio', $audio->judul_audio) }}"
                                        placeholder="Contoh: Percakapan 1: Di Bandara" 
                                        oninput="syncAudioDropdowns()"
-                                       class="track-title-input w-full px-4 py-2.5 rounded-2xl bg-white border border-slate-200/80 text-xs text-slate-800 focus:border-[#1E6BFF] outline-none">
+                                       class="track-title-input w-full px-4 py-2.5 rounded-2xl bg-white border border-slate-200/80 text-xs text-slate-800 focus:border-[#4EA87D] outline-none">
                             </div>
 
                             <div>
@@ -169,7 +169,7 @@
                                        name="audios[{{ $idx }}][durasi]" 
                                        value="{{ old('audios.'.$idx.'.durasi', $audio->durasi) }}"
                                        placeholder="Contoh: 01:45" 
-                                       class="track-durasi-input w-full px-4 py-2.5 rounded-2xl bg-white border border-slate-200/80 text-xs text-slate-800 focus:border-[#1E6BFF] outline-none">
+                                       class="track-durasi-input w-full px-4 py-2.5 rounded-2xl bg-white border border-slate-200/80 text-xs text-slate-800 focus:border-[#4EA87D] outline-none">
                             </div>
 
                             <!-- Pemutar Audio Saat Ini -->
@@ -194,9 +194,9 @@
                             </div>
                         </div>
 
-                        <div class="track-preview-container hidden p-3 rounded-2xl bg-blue-50 border border-blue-200">
+                        <div class="track-preview-container hidden p-3 rounded-2xl bg-[#EAF5EF] border border-[#D7EDE1]">
                             <div class="flex items-center justify-between mb-1.5">
-                                <p class="text-[11px] font-bold text-blue-700 flex items-center gap-1.5">
+                                <p class="text-[11px] font-bold text-[#2E7352] flex items-center gap-1.5">
                                     <span>🔊</span> File Audio Baru Pengganti:
                                 </p>
                                 <button type="button" onclick="batalPilihTrackAudio(this)" class="text-rose-600 hover:text-rose-700 text-[11px] font-bold cursor-pointer">
@@ -270,7 +270,7 @@
             >
                 <button type="button" 
                         onclick="tambahSoal()" 
-                        class="px-4 py-2 rounded-2xl bg-blue-50 text-[#1E6BFF] hover:bg-blue-100 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs">
+                        class="px-4 py-2 rounded-2xl bg-[#EAF5EF] text-[#4EA87D] hover:bg-[#EAF5EF] text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs">
                     <span>+</span> Tambah Pertanyaan
                 </button>
             </x-section-header>
@@ -286,7 +286,7 @@
                     @endphp
                     <div class="soal-card p-5 lg:p-6 rounded-3xl border border-slate-200/80 bg-slate-50/40 space-y-4 relative">
                         <div class="flex items-center justify-between">
-                            <span class="px-3 py-1 rounded-xl bg-[#1E6BFF] text-white font-bold text-xs nomor-label">
+                            <span class="px-3 py-1 rounded-xl bg-[#4EA87D] text-white font-bold text-xs nomor-label">
                                 Pertanyaan #{{ $soal->nomor_soal }}
                             </span>
                             <button type="button" onclick="hapusSoal(this)" class="text-slate-400 hover:text-rose-600 font-semibold text-xs transition-colors p-1 cursor-pointer">
@@ -295,7 +295,7 @@
                         </div>
 
                         <!-- Dropdown Pemilihan Track Audio -->
-                        <div class="p-3.5 rounded-2xl bg-blue-50/60 border border-blue-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="p-3.5 rounded-2xl bg-[#EAF5EF]/60 border border-[#D7EDE1] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <div class="flex items-center gap-2.5">
                                 <span class="text-xl">🎧</span>
                                 <div>
@@ -304,7 +304,7 @@
                                 </div>
                             </div>
                             <div class="w-full sm:w-72">
-                                <select name="soals[{{ $index }}][audio_track_nomor]" data-selected="{{ $selectedTrackNo }}" onchange="updateAudioMappingSummary()" class="select-audio-track w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-800 outline-none focus:border-[#1E6BFF]">
+                                <select name="soals[{{ $index }}][audio_track_nomor]" data-selected="{{ $selectedTrackNo }}" onchange="updateAudioMappingSummary()" class="select-audio-track w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-800 outline-none focus:border-[#4EA87D]">
                                     @foreach($listening->audios as $aud)
                                         <option value="{{ $aud->nomor_track }}" {{ $selectedTrackNo == $aud->nomor_track ? 'selected' : '' }}>
                                             🎧 Track #{{ $aud->nomor_track }}: {{ $aud->judul_audio ?: 'Audio Track #'.$aud->nomor_track }}
@@ -323,7 +323,7 @@
                                    value="{{ old('soals.'.$index.'.pertanyaan', $soal->pertanyaan) }}"
                                    placeholder="Contoh: What is the main topic of the conversation?" 
                                    required
-                                   class="w-full px-4 py-2.5 rounded-2xl bg-white border border-slate-200/80 text-xs text-slate-800 outline-none focus:border-[#1E6BFF]">
+                                   class="w-full px-4 py-2.5 rounded-2xl bg-white border border-slate-200/80 text-xs text-slate-800 outline-none focus:border-[#4EA87D]">
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -357,7 +357,7 @@
                                                    name="soals[{{ $index }}][jawaban_benar]" 
                                                    value="{{ $opt }}" 
                                                    {{ old('soals.'.$index.'.jawaban_benar', $soal->jawaban_benar) == $opt ? 'checked' : '' }} 
-                                                   class="text-[#1E6BFF]">
+                                                   class="text-[#4EA87D]">
                                             {{ $opt }}
                                         </label>
                                     @endforeach
@@ -380,7 +380,7 @@
                     <!-- Default jika belum ada soal -->
                     <div class="soal-card p-5 lg:p-6 rounded-3xl border border-slate-200/80 bg-slate-50/40 space-y-4 relative">
                         <div class="flex items-center justify-between">
-                            <span class="px-3 py-1 rounded-xl bg-[#1E6BFF] text-white font-bold text-xs nomor-label">
+                            <span class="px-3 py-1 rounded-xl bg-[#4EA87D] text-white font-bold text-xs nomor-label">
                                 Pertanyaan #1
                             </span>
                         </div>
@@ -470,7 +470,7 @@
                                value="Audio ${newTrackNomor}: Sesi ${newTrackNomor}"
                                placeholder="Contoh: Percakapan 2: Pengumuman Stasiun" 
                                oninput="syncAudioDropdowns()"
-                               class="track-title-input w-full px-4 py-2.5 rounded-2xl bg-white border border-slate-200/80 text-xs text-slate-800 focus:border-[#1E6BFF] outline-none">
+                               class="track-title-input w-full px-4 py-2.5 rounded-2xl bg-white border border-slate-200/80 text-xs text-slate-800 focus:border-[#4EA87D] outline-none">
                     </div>
 
                     <div>
@@ -480,7 +480,7 @@
                         <input type="text" 
                                name="audios[${newIndex}][durasi]" 
                                placeholder="Otomatis saat file dipilih" 
-                               class="track-durasi-input w-full px-4 py-2.5 rounded-2xl bg-white border border-slate-200/80 text-xs text-slate-800 focus:border-[#1E6BFF] outline-none">
+                               class="track-durasi-input w-full px-4 py-2.5 rounded-2xl bg-white border border-slate-200/80 text-xs text-slate-800 focus:border-[#4EA87D] outline-none">
                     </div>
 
                     <div class="md:col-span-2">
@@ -599,7 +599,7 @@
             div.className = 'soal-card p-5 lg:p-6 rounded-3xl border border-slate-200/80 bg-slate-50/40 space-y-4 relative';
             div.innerHTML = `
                 <div class="flex items-center justify-between">
-                    <span class="px-3 py-1 rounded-xl bg-[#1E6BFF] text-white font-bold text-xs nomor-label">
+                    <span class="px-3 py-1 rounded-xl bg-[#4EA87D] text-white font-bold text-xs nomor-label">
                         Pertanyaan #${currentTotal}
                     </span>
                     <button type="button" onclick="hapusSoal(this)" class="text-slate-400 hover:text-rose-600 font-semibold text-xs transition-colors p-1 cursor-pointer">
@@ -608,7 +608,7 @@
                 </div>
 
                 <!-- Dropdown Pemilihan Track Audio -->
-                <div class="p-3.5 rounded-2xl bg-blue-50/60 border border-blue-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="p-3.5 rounded-2xl bg-[#EAF5EF]/60 border border-[#D7EDE1] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div class="flex items-center gap-2.5">
                         <span class="text-xl">🎧</span>
                         <div>
@@ -617,7 +617,7 @@
                         </div>
                     </div>
                     <div class="w-full sm:w-72">
-                        <select name="soals[${currentIndex}][audio_track_nomor]" onchange="updateAudioMappingSummary()" class="select-audio-track w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-800 outline-none focus:border-[#1E6BFF]">
+                        <select name="soals[${currentIndex}][audio_track_nomor]" onchange="updateAudioMappingSummary()" class="select-audio-track w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-800 outline-none focus:border-[#4EA87D]">
                             ${optionsHtml}
                         </select>
                     </div>
@@ -631,7 +631,7 @@
                            name="soals[${currentIndex}][pertanyaan]" 
                            required 
                            placeholder="Contoh: What does the woman imply about the schedule?" 
-                           class="w-full px-4 py-2.5 rounded-2xl bg-white border border-slate-200/80 text-xs text-slate-800 outline-none focus:border-[#1E6BFF]">
+                           class="w-full px-4 py-2.5 rounded-2xl bg-white border border-slate-200/80 text-xs text-slate-800 outline-none focus:border-[#4EA87D]">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -660,19 +660,19 @@
                         </label>
                         <div class="flex items-center gap-3">
                             <label class="flex items-center gap-1.5 text-xs font-bold text-slate-700 cursor-pointer">
-                                <input type="radio" name="soals[${currentIndex}][jawaban_benar]" value="A" checked class="text-[#1E6BFF]">
+                                <input type="radio" name="soals[${currentIndex}][jawaban_benar]" value="A" checked class="text-[#4EA87D]">
                                 A
                             </label>
                             <label class="flex items-center gap-1.5 text-xs font-bold text-slate-700 cursor-pointer">
-                                <input type="radio" name="soals[${currentIndex}][jawaban_benar]" value="B" class="text-[#1E6BFF]">
+                                <input type="radio" name="soals[${currentIndex}][jawaban_benar]" value="B" class="text-[#4EA87D]">
                                 B
                             </label>
                             <label class="flex items-center gap-1.5 text-xs font-bold text-slate-700 cursor-pointer">
-                                <input type="radio" name="soals[${currentIndex}][jawaban_benar]" value="C" class="text-[#1E6BFF]">
+                                <input type="radio" name="soals[${currentIndex}][jawaban_benar]" value="C" class="text-[#4EA87D]">
                                 C
                             </label>
                             <label class="flex items-center gap-1.5 text-xs font-bold text-slate-700 cursor-pointer">
-                                <input type="radio" name="soals[${currentIndex}][jawaban_benar]" value="D" class="text-[#1E6BFF]">
+                                <input type="radio" name="soals[${currentIndex}][jawaban_benar]" value="D" class="text-[#4EA87D]">
                                 D
                             </label>
                         </div>
@@ -768,7 +768,7 @@
                     <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 shadow-2xs">
                         <span class="w-2 h-2 rounded-full bg-purple-600"></span>
                         <span class="font-bold text-slate-800">Track #${t.nomor}:</span>
-                        <span class="text-[#1E6BFF] font-bold">${rangeText}</span>
+                        <span class="text-[#4EA87D] font-bold">${rangeText}</span>
                         <span class="text-[10px] text-slate-400">(${nomors.length} soal)</span>
                     </div>
                 `;

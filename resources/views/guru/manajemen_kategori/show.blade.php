@@ -91,7 +91,7 @@
             </div>
 
             <a href="{{ route('guru.materi.create') }}" 
-               class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#1E6BFF] hover:bg-blue-600 text-white font-semibold text-xs transition-all shadow-xs">
+               class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#4EA87D] hover:bg-[#4EA87D] text-white font-semibold text-xs transition-all shadow-xs">
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -102,7 +102,7 @@
 
         @if($kategori->materis->isEmpty())
             <div class="bg-white p-12 rounded-3xl border border-slate-100 shadow-xs text-center">
-                <div class="w-12 h-12 rounded-2xl bg-blue-50 text-[#1E6BFF] flex items-center justify-center mx-auto mb-3 text-xl">
+                <div class="w-12 h-12 rounded-2xl bg-[#EAF5EF] text-[#4EA87D] flex items-center justify-center mx-auto mb-3 text-xl">
                     📖
                 </div>
                 <h4 class="text-sm font-bold text-slate-800">Belum Ada Materi</h4>
@@ -123,7 +123,7 @@
                                 <span class="text-[11px] font-semibold text-slate-400">Kelas {{ $materi->kelas }} &bull; {{ $materi->level }}</span>
                             </div>
 
-                            <h4 class="font-bold text-slate-800 text-sm group-hover:text-[#1E6BFF] transition-colors line-clamp-1">
+                            <h4 class="font-bold text-slate-800 text-sm group-hover:text-[#4EA87D] transition-colors line-clamp-1">
                                 {{ $materi->judul }}
                             </h4>
 
@@ -139,7 +139,7 @@
                                 <span>⭐ +{{ $materi->xp_reward ?? 50 }} XP</span>
                             </div>
 
-                            <a href="{{ route('guru.materi.show', $materi->id) }}" class="text-xs font-bold text-[#1E6BFF] hover:underline flex items-center gap-1">
+                            <a href="{{ route('guru.materi.show', $materi->id) }}" class="text-xs font-bold text-[#4EA87D] hover:underline flex items-center gap-1">
                                 Detail
                                 <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                     <path d="M5 12h14M12 5l7 7-7 7"/>

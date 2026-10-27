@@ -38,7 +38,7 @@
                            value="{{ old('judul', $quiz->judul) }}"
                            placeholder="Contoh: Comprehensive Grammar & Reading Quiz Chapter 1" 
                            required
-                           class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none transition-all">
+                           class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
                 </div>
 
                 <!-- Kategori Kuis -->
@@ -46,7 +46,7 @@
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">
                         Kategori Soal <span class="text-rose-500">*</span>
                     </label>
-                    <select name="kategori" required class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#1E6BFF] outline-none">
+                    <select name="kategori" required class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#4EA87D] outline-none">
                         <option value="Grammar" {{ old('kategori', $quiz->kategori) == 'Grammar' ? 'selected' : '' }}>Grammar Test</option>
                         <option value="Vocabulary" {{ old('kategori', $quiz->kategori) == 'Vocabulary' ? 'selected' : '' }}>Vocabulary Challenge</option>
                         <option value="Reading" {{ old('kategori', $quiz->kategori) == 'Reading' ? 'selected' : '' }}>Reading Comprehension</option>
@@ -60,7 +60,7 @@
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">
                         Target Tingkat Kelas <span class="text-rose-500">*</span>
                     </label>
-                    <select name="tingkat_kelas" required class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#1E6BFF] outline-none">
+                    <select name="tingkat_kelas" required class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#4EA87D] outline-none">
                         <option value="Semua Kelas" {{ old('tingkat_kelas', $quiz->tingkat_kelas) == 'Semua Kelas' ? 'selected' : '' }}>Semua Kelas (Umum)</option>
                         <option value="10" {{ old('tingkat_kelas', $quiz->tingkat_kelas) == '10' ? 'selected' : '' }}>Khusus Kelas 10</option>
                         <option value="11" {{ old('tingkat_kelas', $quiz->tingkat_kelas) == '11' ? 'selected' : '' }}>Khusus Kelas 11</option>
@@ -74,7 +74,7 @@
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">
                         Target Rombel Spesifik <span class="text-slate-400 font-normal">(Opsional)</span>
                     </label>
-                    <select name="target_rombel" class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#1E6BFF] outline-none">
+                    <select name="target_rombel" class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#4EA87D] outline-none">
                         <option value="">Semua Rombel yang Saya Ajar</option>
                         @foreach($kelasDiampu as $rombel)
                             <option value="{{ $rombel }}" {{ old('target_rombel', $quiz->target_rombel) == $rombel ? 'selected' : '' }}>
@@ -91,7 +91,7 @@
                         <label class="block text-xs font-semibold text-slate-700">
                             Kode Room Siswa <span class="text-rose-500">*</span>
                         </label>
-                        <button type="button" onclick="acakKodeRoom()" class="text-[11px] text-[#1E6BFF] hover:underline font-semibold cursor-pointer">
+                        <button type="button" onclick="acakKodeRoom()" class="text-[11px] text-[#4EA87D] hover:underline font-semibold cursor-pointer">
                             🔄 Acak Kode
                         </button>
                     </div>
@@ -103,7 +103,7 @@
                                maxlength="10"
                                placeholder="ENG10A" 
                                required
-                               class="w-full px-4 py-2.5 font-mono tracking-wider font-bold rounded-2xl bg-blue-50/50 border border-blue-200 text-xs text-[#1E6BFF] focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none uppercase transition-all">
+                               class="w-full px-4 py-2.5 font-mono tracking-wider font-bold rounded-2xl bg-[#EAF5EF]/50 border border-[#D7EDE1] text-xs text-[#4EA87D] focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none uppercase transition-all">
                     </div>
                     <span class="text-[10px] text-slate-400 mt-1 block">Kode 6 digit room ujian live untuk bergabung dari aplikasi</span>
                 </div>
@@ -119,7 +119,7 @@
                            min="1"
                            max="180"
                            required
-                           class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] outline-none">
+                           class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none">
                 </div>
 
                 <!-- Hadiah XP -->
@@ -132,7 +132,7 @@
                            value="{{ old('xp_reward', $quiz->xp_reward) }}"
                            min="0"
                            max="1000"
-                           class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] outline-none">
+                           class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none">
                 </div>
 
                 <!-- Status Publikasi -->
@@ -140,7 +140,7 @@
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">
                         Status Kuis <span class="text-rose-500">*</span>
                     </label>
-                    <select name="status" required class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#1E6BFF] outline-none">
+                    <select name="status" required class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#4EA87D] outline-none">
                         <option value="aktif" {{ old('status', $quiz->status) == 'aktif' ? 'selected' : '' }}>🟢 Aktif (Siswa Dapat Mengerjakan)</option>
                         <option value="draft" {{ old('status', $quiz->status) == 'draft' ? 'selected' : '' }}>⚪ Draft (Simpan Sementara)</option>
                     </select>
@@ -154,7 +154,7 @@
                     <textarea name="deskripsi" 
                               rows="3" 
                               placeholder="Tuliskan petunjuk kuis atau aturan pengerjaan untuk siswa..."
-                              class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#1E6BFF] focus:ring-2 focus:ring-[#1E6BFF]/15 outline-none transition-all resize-y">{{ old('deskripsi', $quiz->deskripsi) }}</textarea>
+                              class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all resize-y">{{ old('deskripsi', $quiz->deskripsi) }}</textarea>
                 </div>
             </div>
         </div>

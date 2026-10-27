@@ -32,11 +32,11 @@
                        name="q"
                        value="{{ request('q') }}"
                        placeholder="Cari nama siswa, NIS, NISN, email..." 
-                       class="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 outline-none transition-all">
+                       class="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
             </div>
 
             <!-- Filter Tingkat Kelas -->
-            <select name="kelas" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-blue-500">
+            <select name="kelas" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
                 <option value="">Semua Tingkat</option>
                 <option value="10" {{ request('kelas') == '10' ? 'selected' : '' }}>Kelas 10</option>
                 <option value="11" {{ request('kelas') == '11' ? 'selected' : '' }}>Kelas 11</option>
@@ -44,7 +44,7 @@
             </select>
 
             <!-- Filter Jurusan -->
-            <select name="jurusan" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-blue-500">
+            <select name="jurusan" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
                 <option value="">Semua Jurusan</option>
                 @foreach($daftarJurusan as $jur)
                     <option value="{{ $jur }}" {{ request('jurusan') == $jur ? 'selected' : '' }}>{{ $jur }}</option>
@@ -61,7 +61,7 @@
 
         <!-- Tombol Tambah Siswa Baru -->
         <a href="{{ route('guru.siswa.create') }}" 
-           class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-xs transition-all flex items-center gap-2 shrink-0 self-start sm:self-auto cursor-pointer active:scale-95">
+           class="px-4 py-2.5 rounded-xl bg-[#4EA87D] hover:bg-[#43966E] text-white font-semibold text-xs shadow-xs transition-all flex items-center gap-2 shrink-0 self-start sm:self-auto cursor-pointer active:scale-95">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -76,9 +76,9 @@
             <div>
                 <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Siswa Terdaftar</p>
                 <h3 class="text-2xl font-bold text-slate-900 mt-1 tracking-tight">{{ $totalSiswa }} Siswa</h3>
-                <p class="text-[11px] text-blue-600 font-medium mt-1">Siswa Aktif</p>
+                <p class="text-[11px] text-[#4EA87D] font-medium mt-1">Siswa Aktif</p>
             </div>
-            <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 text-blue-600 flex items-center justify-center shrink-0">
+            <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 text-[#4EA87D] flex items-center justify-center shrink-0">
                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                     <circle cx="9" cy="7" r="4"></circle>
@@ -151,7 +151,7 @@
                                         {{ strtoupper(substr($siswa->nama_lengkap ?? 'S', 0, 1)) }}
                                     </div>
                                     <div class="min-w-0">
-                                        <a href="{{ route('guru.siswa.show', $siswa) }}" class="font-semibold text-slate-900 text-xs hover:text-blue-600 transition-colors">
+                                        <a href="{{ route('guru.siswa.show', $siswa) }}" class="font-semibold text-slate-900 text-xs hover:text-[#4EA87D] transition-colors">
                                             {{ $siswa->nama_lengkap }}
                                         </a>
                                         <p class="text-[11px] text-slate-400 mt-0.5 font-normal">{{ $siswa->email }}</p>
@@ -169,8 +169,8 @@
                             <!-- Kolom Rombel Kelas (Dipastikan Full Lurus Tanpa Wrapping) -->
                             <td class="py-3.5 px-4 whitespace-nowrap">
                                 <div class="space-y-1">
-                                    <span class="whitespace-nowrap px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 font-semibold text-xs inline-flex items-center gap-1.5 border border-blue-100/70">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+                                    <span class="whitespace-nowrap px-2.5 py-0.5 rounded-md bg-[#EAF5EF] text-[#2E7352] font-semibold text-xs inline-flex items-center gap-1.5 border border-[#D7EDE1]/70">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-[#4EA87D]"></span>
                                         {{ $siswa->kelas_lengkap ?: 'Belum diatur' }}
                                     </span>
                                     <div class="text-[10px] text-slate-400 font-mono">
@@ -227,7 +227,7 @@
 
                                     <!-- 3. Tombol Edit -->
                                     <a href="{{ route('guru.siswa.edit', $siswa) }}" 
-                                       class="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-slate-100 transition-colors" 
+                                       class="p-1.5 rounded-lg text-slate-400 hover:text-[#4EA87D] hover:bg-slate-100 transition-colors" 
                                        title="Edit Data Siswa">
                                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -263,7 +263,7 @@
                                     <p class="text-sm font-semibold text-slate-700">Belum ada data siswa ditemukan</p>
                                     <p class="text-xs text-slate-400 mt-1 max-w-sm">Daftarkan akun siswa baru atau ubah kata kunci filter pencarian Anda.</p>
                                     <a href="{{ route('guru.siswa.create') }}" 
-                                       class="mt-4 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs transition-all shadow-xs inline-flex items-center gap-1.5">
+                                       class="mt-4 px-4 py-2 rounded-xl bg-[#4EA87D] hover:bg-[#43966E] text-white font-semibold text-xs transition-all shadow-xs inline-flex items-center gap-1.5">
                                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                             <line x1="12" y1="5" x2="12" y2="19"></line>
                                             <line x1="5" y1="12" x2="19" y2="12"></line>

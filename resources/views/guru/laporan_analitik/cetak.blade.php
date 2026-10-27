@@ -32,7 +32,7 @@
     <!-- Bar Navigasi Khusus Layar (Tidak Tercetak di Kertas) -->
     <div class="no-print max-w-5xl mx-auto mb-6 bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
         <div class="flex items-center gap-3">
-            <span class="w-10 h-10 rounded-xl bg-blue-50 text-[#1E6BFF] flex items-center justify-center font-bold text-lg">🖨️</span>
+            <span class="w-10 h-10 rounded-xl bg-[#EAF5EF] text-[#4EA87D] flex items-center justify-center font-bold text-lg">🖨️</span>
             <div>
                 <h3 class="font-bold text-slate-800 text-sm">Pratinjau Lembar Rapor Leger Nilai</h3>
                 <p class="text-xs text-slate-400">Pastikan opsi layout printer diatur ke <strong>Landscape</strong> untuk hasil terbaik.</p>
@@ -42,7 +42,7 @@
             <button onclick="window.close()" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-bold transition-colors cursor-pointer">
                 Tutup
             </button>
-            <button onclick="window.print()" class="px-5 py-2 rounded-xl bg-[#1E6BFF] hover:bg-[#155BE5] text-white text-xs font-bold shadow-md transition-all flex items-center gap-2 cursor-pointer">
+            <button onclick="window.print()" class="px-5 py-2 rounded-xl bg-[#4EA87D] hover:bg-[#43966E] text-white text-xs font-bold shadow-md transition-all flex items-center gap-2 cursor-pointer">
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
                 Cetak Sekarang (Ctrl + P)
             </button>

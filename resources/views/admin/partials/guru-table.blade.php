@@ -22,7 +22,7 @@
                        name="q" 
                        value="{{ $search ?? '' }}" 
                        placeholder="Cari nama, email, NIP..." 
-                       class="w-64 pl-9 pr-4 py-2 rounded-xl text-xs bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
+                       class="w-64 pl-9 pr-4 py-2 rounded-xl text-xs bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#4EA87D] focus:bg-white transition-all">
                 <svg class="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -39,7 +39,7 @@
             <!-- Tombol Tambah Guru Baru -->
             <button type="button" 
                     onclick="openTambahGuruModal()" 
-                    class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition-all inline-flex items-center gap-1.5 cursor-pointer active:scale-95">
+                    class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#4EA87D] to-[#3E946B] hover:from-[#43966E] hover:to-[#35825D] text-white text-xs font-semibold shadow-xs transition-all inline-flex items-center gap-1.5 cursor-pointer active:scale-95">
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -102,7 +102,7 @@
 
                         <!-- Email Login -->
                         <td class="py-3.5 px-4 text-slate-600 whitespace-nowrap">
-                            <a href="mailto:{{ $guru->email }}" class="hover:text-blue-600 transition-colors">
+                            <a href="mailto:{{ $guru->email }}" class="hover:text-[#4EA87D] transition-colors">
                                 {{ $guru->email }}
                             </a>
                         </td>
@@ -137,7 +137,7 @@
                                 <!-- 1. Tombol Edit Guru -->
                                 <button type="button" 
                                         onclick='openEditGuruModal(@json($guru))' 
-                                        class="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-slate-100 transition-colors cursor-pointer" 
+                                        class="p-1.5 rounded-lg text-slate-400 hover:text-[#4EA87D] hover:bg-slate-100 transition-colors cursor-pointer" 
                                         title="Edit Data Guru">
                                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -185,7 +185,7 @@
                                 <p class="text-xs text-slate-400 mt-1 max-w-sm">Tambahkan akun guru baru untuk memberikan akses ke portal pembelajaran.</p>
                                 <button type="button" 
                                         onclick="openTambahGuruModal()" 
-                                        class="mt-4 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs transition-all shadow-xs cursor-pointer">
+                                        class="mt-4 px-4 py-2 rounded-xl bg-gradient-to-r from-[#4EA87D] to-[#3E946B] hover:from-[#43966E] hover:to-[#35825D] text-white font-semibold text-xs transition-all shadow-xs cursor-pointer">
                                     + Tambah Guru Baru
                                 </button>
                             </div>

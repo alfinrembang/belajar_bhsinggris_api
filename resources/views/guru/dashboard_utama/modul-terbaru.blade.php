@@ -17,7 +17,7 @@
         </div>
 
         <a href="{{ route('guru.materi.index') }}" 
-           class="text-xs font-bold text-[#1E6BFF] hover:text-[#155BE5] transition-colors">
+           class="text-xs font-bold text-[#4EA87D] hover:text-[#3E946B] transition-colors">
             Lihat Semua
         </a>
     </div>
@@ -29,13 +29,13 @@
                 @php
                     $kat = strtolower(trim((string) $materi->kategori));
                     $iconStyle = match($kat) {
-                        'reading' => 'bg-blue-50 text-[#1E6BFF] border-blue-100/80 group-hover:bg-[#1E6BFF] group-hover:text-white',
+                        'reading' => 'bg-[#EAF5EF] text-[#2E7352] border-[#D7EDE1] group-hover:bg-[#4EA87D] group-hover:text-white',
                         'grammar' => 'bg-emerald-50 text-emerald-600 border-emerald-100/80 group-hover:bg-emerald-600 group-hover:text-white',
                         'conversation' => 'bg-purple-50 text-purple-600 border-purple-100/80 group-hover:bg-purple-600 group-hover:text-white',
                         'vocabulary' => 'bg-amber-50 text-amber-600 border-amber-100/80 group-hover:bg-amber-600 group-hover:text-white',
                         'writing' => 'bg-slate-100 text-slate-700 border-slate-200/80 group-hover:bg-slate-700 group-hover:text-white',
-                        'listening' => 'bg-indigo-50 text-indigo-600 border-indigo-100/80 group-hover:bg-indigo-600 group-hover:text-white',
-                        default => 'bg-blue-50 text-[#1E6BFF] border-blue-100/80 group-hover:bg-[#1E6BFF] group-hover:text-white',
+                        'listening' => 'bg-[#FDF2F4] text-[#E11D48] border-[#F9C5D1] group-hover:bg-[#FB7185] group-hover:text-white',
+                        default => 'bg-[#EAF5EF] text-[#2E7352] border-[#D7EDE1] group-hover:bg-[#4EA87D] group-hover:text-white',
                     };
                 @endphp
                 <div class="py-3.5 first:pt-0 last:pb-0 flex items-center justify-between gap-3 group">
@@ -47,7 +47,7 @@
                             </svg>
                         </div>
                         <div class="min-w-0">
-                            <a href="{{ route('guru.materi.show', $materi) }}" class="text-xs font-bold text-slate-800 group-hover:text-[#1E6BFF] truncate block transition-colors">
+                            <a href="{{ route('guru.materi.show', $materi) }}" class="text-xs font-bold text-slate-800 group-hover:text-[#4EA87D] truncate block transition-colors">
                                 {{ $materi->judul }}
                             </a>
                             <div class="flex items-center gap-2 mt-0.5 text-[11px] text-slate-400">
@@ -60,7 +60,7 @@
                     </div>
 
                     <a href="{{ route('guru.materi.show', $materi) }}" 
-                       class="p-2 rounded-xl text-slate-400 group-hover:text-[#1E6BFF] group-hover:bg-blue-50 transition-colors shrink-0"
+                       class="p-2 rounded-xl text-slate-400 group-hover:text-[#4EA87D] group-hover:bg-[#EAF5EF] transition-colors shrink-0"
                        title="Buka Detail">
                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="9 18 15 12 9 6"></polyline>
@@ -79,7 +79,7 @@
                 <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
             </svg>
             <p class="text-xs font-medium">Belum ada modul yang ditambahkan</p>
-            <a href="{{ route('guru.materi.create') }}" class="text-xs font-bold text-[#1E6BFF] hover:underline mt-1 inline-block">Tambah Modul Pertama</a>
+            <a href="{{ route('guru.materi.create') }}" class="text-xs font-bold text-[#4EA87D] hover:underline mt-1 inline-block">Tambah Modul Pertama</a>
         </div>
     @endif
 
