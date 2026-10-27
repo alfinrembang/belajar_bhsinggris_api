@@ -43,10 +43,8 @@
                             {{ $rank }}
                         </span>
 
-                        <!-- Avatar Inisial Hijau Susu -->
-                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#4EA87D] to-[#3E946B] text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-xs">
-                            {{ $item['avatar'] }}
-                        </div>
+                        <!-- Avatar Inisial -->
+                        <x-avatar-initial :initials="$item['avatar']" :name="$item['nama_lengkap']" size="sm" class="!from-[#4EA87D] !to-[#3E946B]" />
 
                         <!-- Data Siswa -->
                         <div class="min-w-0">

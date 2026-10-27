@@ -25,11 +25,11 @@
         </div>
     @endif
 
-    <!-- Bar Aksi Atas: Pencarian, Filter & Tombol Buat Paket Kuis -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 lg:p-6 rounded-3xl border border-slate-100 shadow-xs">
-        <form method="GET" action="{{ route('guru.quiz.index') }}" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto flex-1">
+    <!-- Bar Aksi Atas: Pencarian, Filter & Tombol Aksi -->
+    <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 bg-white p-4 lg:p-5 rounded-3xl border border-slate-100 shadow-xs">
+        <form method="GET" action="{{ route('guru.quiz.index') }}" class="flex flex-wrap items-center gap-2.5 w-full xl:w-auto flex-1 min-w-0">
             <!-- Pencarian Kuis -->
-            <div class="relative flex-1 max-w-md">
+            <div class="relative w-full sm:w-56 md:w-60">
                 <svg class="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -60,16 +60,20 @@
             </select>
 
             @if(request('q') || request('kategori') || request('kelas'))
-                <a href="{{ route('guru.quiz.index') }}" class="px-3 py-2 text-xs font-semibold text-slate-500 hover:text-rose-600 transition-colors flex items-center gap-1">
+                <a href="{{ route('guru.quiz.index') }}" class="text-xs text-rose-600 hover:underline font-semibold py-2 px-1">
                     Reset
                 </a>
             @endif
         </form>
 
-        <!-- Tombol Tambah Kuis -->
-        <x-button variant="create" href="{{ route('guru.quiz.create') }}">
-            Buat Paket Kuis
-        </x-button>
+        <!-- Tombol Aksi: Import via AI & Buat Paket Kuis -->
+        <div class="flex items-center gap-2.5 shrink-0 self-start xl:self-auto">
+            <x-button-ai-import target="quiz" />
+
+            <x-button variant="create" href="{{ route('guru.quiz.create') }}">
+                Buat Paket Kuis
+            </x-button>
+        </div>
     </div>
 
     <!-- Ringkasan Statistik Kuis -->
@@ -216,4 +220,7 @@
             });
         }
     </script>
+
+    <!-- Modal Reusable Import Dokumen AI -->
+    <x-ai-import-modal />
 </x-layout>

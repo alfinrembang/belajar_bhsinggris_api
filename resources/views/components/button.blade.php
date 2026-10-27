@@ -40,6 +40,10 @@
         
         'cancel' => 'px-5 py-2.5 rounded-2xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-xs gap-1.5',
         
+        'ai' => $isIconOnly 
+            ? 'p-2 rounded-xl text-indigo-600 hover:bg-indigo-50' 
+            : 'px-4.5 py-2.5 rounded-2xl bg-white hover:bg-indigo-50/60 text-indigo-600 hover:text-indigo-700 border border-indigo-200/90 hover:border-indigo-300 font-bold text-xs shadow-xs gap-2',
+            
         default => 'px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold gap-2'
     };
 
@@ -57,6 +61,7 @@
         'submit' => 'Simpan Perubahan',
         'back' => 'Kembali',
         'cancel' => 'Batal',
+        'ai' => 'Import via AI',
         default => 'Tombol'
     };
 @endphp
@@ -94,6 +99,10 @@
                 <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
                     <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            @elseif($variant === 'ai')
+                <svg class="w-4 h-4 shrink-0 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"></path>
                 </svg>
             @endif
         @endif
@@ -135,6 +144,10 @@
                 <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
                     <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            @elseif($variant === 'ai')
+                <svg class="w-4 h-4 shrink-0 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"></path>
                 </svg>
             @endif
         @endif
