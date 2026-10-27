@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\LoginSiswaRequest;
+use App\Http\Requests\Api\LupaSandiSiswaRequest;
+use App\Http\Requests\Api\MasukSiswaRequest;
+use App\Http\Requests\Api\ResetSandiSiswaRequest;
 use App\Models\Siswa;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,15 +19,9 @@ class LoginSiswaController extends Controller
     /**
      * Login Siswa Menggunakan Email atau NISN beserta Kata Sandi.
      */
-    public function login(Request $request): JsonResponse
+    public function login(LoginSiswaRequest $request): JsonResponse
     {
-        $request->validate([
-            'email' => 'nullable|string',
-            'nisn' => 'nullable|string',
-            'sandi' => 'sometimes|required|string',
-            'password' => 'sometimes|required|string',
-        ]);
-
+        $validated = $request->validated();
         $rawPassword = $request->sandi ?? $request->password;
 
         if (empty($rawPassword)) {
@@ -76,13 +74,10 @@ class LoginSiswaController extends Controller
     /**
      * Permintaan Lupa Sandi: Memverifikasi Email dan Menghasilkan Token Reset.
      */
-    public function lupaSandi(Request $request): JsonResponse
+    public function lupaSandi(LupaSandiSiswaRequest $request): JsonResponse
     {
-        $request->validate([
-            'email' => 'required|email',
-        ]);
-
-        $siswa = Siswa::where('email', $request->email)->first();
+        $validated = $request->validated();
+        $siswa = Siswa::where('email', $validated['email'])->first();
 
         if (! $siswa) {
             return response()->json([
@@ -115,19 +110,13 @@ class LoginSiswaController extends Controller
     /**
      * Eksekusi Perubahan Kata Sandi Baru Menggunakan Token Reset.
      */
-    public function resetSandi(Request $request): JsonResponse
+    public function resetSandi(ResetSandiSiswaRequest $request): JsonResponse
     {
-        $request->validate([
-            'email' => 'required|email',
-            'token' => 'required|string',
-            'sandi_baru' => 'sometimes|required|string|min:6',
-            'password' => 'sometimes|required|string|min:6',
-        ]);
-
-        $newPassword = $request->sandi_baru ?? $request->password;
+        $validated = $request->validated();
+        $newPassword = $validated['sandi_baru'] ?? $validated['password'] ?? $request->sandi_baru ?? $request->password;
 
         $record = DB::table('password_reset_tokens')
-            ->where('email', $request->email)
+            ->where('email', $validated['email'])
             ->first();
 
         if (! $record || ! Hash::check($request->token, $record->token)) {
@@ -218,15 +207,9 @@ class LoginSiswaController extends Controller
     /**
      * Masuk untuk Siswa (Metode Kompatibilitas Tanpa Password Berbasis NIS).
      */
-    public function masuk(Request $request): JsonResponse
+    public function masuk(MasukSiswaRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'nis' => 'required|string|max:50',
-            'nama_lengkap' => 'required|string|max:100',
-            'email' => 'nullable|email|max:100',
-            'kelas' => 'required|string|max:50',
-            'no_absen' => 'required|string|max:10',
-        ]);
+        $validated = $request->validated();
 
         $siswa = Siswa::updateOrCreate(
             ['nis' => $validated['nis']],

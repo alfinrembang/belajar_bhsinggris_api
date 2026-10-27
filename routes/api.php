@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\Route;
 
 // 1. RUTE PUBLIK SISWA
 // Autentikasi Siswa
-Route::post('/siswa/register', [AuthSiswaController::class, 'register']);
-Route::post('/siswa/login', [LoginSiswaController::class, 'login']);
+Route::post('/siswa/register', [AuthSiswaController::class, 'register'])->middleware('throttle:10,1');
+Route::post('/siswa/login', [LoginSiswaController::class, 'login'])->middleware('throttle:15,1');
 Route::post('/siswa/lupa-sandi', [LoginSiswaController::class, 'lupaSandi']);
 Route::post('/siswa/reset-sandi', [LoginSiswaController::class, 'resetSandi']);
 

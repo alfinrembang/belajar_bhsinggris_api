@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\SubmitPuzzleRequest;
 use App\Models\Siswa;
 use App\Models\SiswaPuzzleProgres;
 use Illuminate\Http\Request;
@@ -69,16 +70,9 @@ class PuzzleApiController extends Controller
     /**
      * Menyimpan hasil penyelesaian puzzle siswa (+ koin reward & unlock level berikutnya)
      */
-    public function submitSelesai(Request $request)
+    public function submitSelesai(SubmitPuzzleRequest $request)
     {
-        $validated = $request->validate([
-            'siswa_id' => 'nullable|integer',
-            'difficulty' => 'required|string',
-            'level' => 'required|integer',
-            'stars' => 'required|integer|min:1|max:3',
-            'time_spent' => 'required|string',
-            'coins_earned' => 'required|integer',
-        ]);
+        $validated = $request->validated();
 
         $siswaId = $validated['siswa_id'] ?? null;
         $difficulty = strtolower($validated['difficulty']);

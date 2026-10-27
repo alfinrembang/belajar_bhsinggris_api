@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\SelesaikanListeningRequest;
 use App\Models\ModulListening;
 use App\Models\Siswa;
 use App\Models\SiswaListeningProgres;
@@ -232,7 +233,7 @@ class ModulListeningApiController extends Controller
     /**
      * Menyimpan penyelesaian modul listening siswa (+ reward XP).
      */
-    public function selesaikan(Request $request, int $id): JsonResponse
+    public function selesaikan(SelesaikanListeningRequest $request, int $id): JsonResponse
     {
         $listening = ModulListening::with('soals')->find($id);
 
@@ -243,13 +244,7 @@ class ModulListeningApiController extends Controller
             ], 404);
         }
 
-        $request->validate([
-            'siswa_id' => 'nullable|integer',
-            'skor' => 'nullable|numeric|min:0|max:100',
-            'jawaban' => 'nullable|array',
-            'jawaban.*' => 'nullable|string|max:10',
-        ]);
-
+        $validated = $request->validated();
         $totalSoal = $listening->soals->count();
 
         // Anti-Cheat: Jika modul listening memiliki latihan soal, seluruh butir soal wajib dikerjakan

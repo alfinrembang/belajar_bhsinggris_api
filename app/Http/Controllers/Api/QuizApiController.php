@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\JoinRoomQuizRequest;
+use App\Http\Requests\Api\SubmitQuizRequest;
 use App\Models\Quiz;
 use App\Models\Siswa;
 use App\Models\SiswaQuizProgres;
@@ -135,15 +137,10 @@ class QuizApiController extends Controller
     /**
      * Bergabung ke room kuis menggunakan kode unik 6 digit.
      */
-    public function joinRoom(Request $request): JsonResponse
+    public function joinRoom(JoinRoomQuizRequest $request): JsonResponse
     {
-        $request->validate([
-            'kode_room' => 'required|string|max:20',
-        ], [
-            'kode_room.required' => 'Kode room wajib dimasukkan!',
-        ]);
-
-        $code = strtoupper(trim($request->kode_room));
+        $validated = $request->validated();
+        $code = strtoupper(trim($validated['kode_room']));
 
         $quiz = Quiz::where('kode_room', $code)
             ->where('status', 'aktif')
@@ -226,7 +223,7 @@ class QuizApiController extends Controller
     /**
      * Memproses pengiriman lembar jawaban kuis siswa secara aman (Anti-Cheat Server-Side Evaluation).
      */
-    public function submit(Request $request, int $id): JsonResponse
+    public function submit(SubmitQuizRequest $request, int $id): JsonResponse
     {
         $quiz = Quiz::with('soals')->find($id);
 
@@ -237,14 +234,7 @@ class QuizApiController extends Controller
             ], 404);
         }
 
-        $request->validate([
-            'siswa_id' => 'nullable|integer',
-            'jawaban' => 'required|array',
-            'waktu_pengerjaan_detik' => 'nullable|integer|min:0',
-        ], [
-            'jawaban.required' => 'Lembar jawaban tidak boleh kosong!',
-        ]);
-
+        $validated = $request->validated();
         $totalSoal = $quiz->soals->count();
 
         if ($totalSoal === 0) {

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\RegisterSiswaRequest;
+use App\Http\Requests\Api\UpdateProfilSiswaRequest;
 use App\Models\PengaturanAkademik;
 use App\Models\Siswa;
 use Illuminate\Http\JsonResponse;
@@ -15,20 +17,9 @@ class AuthSiswaController extends Controller
     /**
      * Registrasi Akun Siswa Baru.
      */
-    public function register(Request $request): JsonResponse
+    public function register(RegisterSiswaRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'nama' => 'sometimes|required|string|max:100',
-            'nama_lengkap' => 'sometimes|required|string|max:100',
-            'email' => 'required|email|unique:siswas,email|max:100',
-            'nisn' => 'required|string|unique:siswas,nisn|max:30',
-            'kelas' => 'required|string|max:20',
-            'jurusan' => 'nullable|string|max:30',
-            'no_kelas' => 'nullable|string|max:10',
-            'no_absen' => 'nullable|integer|between:1,50',
-            'sandi' => 'sometimes|required|string|min:6',
-            'password' => 'sometimes|required|string|min:6',
-        ]);
+        $validated = $request->validated();
 
         $namaLengkap = $validated['nama'] ?? $validated['nama_lengkap'] ?? '';
         $rawPassword = $validated['sandi'] ?? $validated['password'] ?? '';
@@ -147,8 +138,9 @@ class AuthSiswaController extends Controller
     /**
      * Memperbarui profil siswa (Nama, Kelas/Rombel, No Absen, Sandi) dari aplikasi Flutter.
      */
-    public function updateProfil(Request $request): JsonResponse
+    public function updateProfil(UpdateProfilSiswaRequest $request): JsonResponse
     {
+        $validated = $request->validated();
         $siswa = null;
         if ($request->filled('siswa_id')) {
             $siswa = Siswa::find($request->input('siswa_id'));

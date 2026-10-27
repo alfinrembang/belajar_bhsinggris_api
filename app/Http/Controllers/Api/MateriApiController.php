@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\SelesaikanMateriRequest;
 use App\Models\Materi;
 use App\Models\Siswa;
 use App\Models\SiswaMateriProgres;
@@ -177,7 +178,7 @@ class MateriApiController extends Controller
     /**
      * Menyimpan status penyelesaian modul materi oleh siswa dengan kalkulasi skor & anti-cheat XP di sisi server.
      */
-    public function selesaikan(Request $request, int $id): JsonResponse
+    public function selesaikan(SelesaikanMateriRequest $request, int $id): JsonResponse
     {
         $materi = Materi::with('soals')->where('status', 'aktif')->find($id);
 
@@ -188,14 +189,8 @@ class MateriApiController extends Controller
             ], 404);
         }
 
-        $request->validate([
-            'siswa_id' => 'nullable|integer',
-            'skor' => 'nullable|numeric|min:0|max:100',
-            'jawaban' => 'nullable|array',
-            'jawaban.*' => 'nullable|string|max:10',
-        ]);
-
-        $siswaId = $request->input('siswa_id');
+        $validated = $request->validated();
+        $siswaId = $validated['siswa_id'] ?? null;
         $validSiswa = $siswaId ? Siswa::find($siswaId) : null;
         $effectiveSiswaId = $validSiswa?->id;
 
