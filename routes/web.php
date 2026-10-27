@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Auth\LoginGuruController;
+use App\Http\Controllers\Guru\AiImportController;
 use App\Http\Controllers\Guru\DashboardController;
 use App\Http\Controllers\Guru\KategoriMateriController;
 use App\Http\Controllers\Guru\LaporanAnalitikController;
@@ -23,7 +24,7 @@ Route::get('/', function () {
 
 // AUTENTIKASI WEB GURU & ADMINISTRATOR
 Route::get('/login', [LoginGuruController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginGuruController::class, 'login'])->name('login.post');
+Route::post('/login', [LoginGuruController::class, 'login'])->middleware('throttle:10,1')->name('login.post');
 Route::post('/logout', [LoginGuruController::class, 'logout'])->name('logout');
 
 // AREA TERPROTEKSI WEB GURU / ADMIN (WAJIB LOGIN)
@@ -95,6 +96,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/pengaturan/profil', [PengaturanSistemController::class, 'updateProfil'])->name('guru.pengaturan.update_profil');
     Route::post('/pengaturan/password', [PengaturanSistemController::class, 'updatePassword'])->name('guru.pengaturan.update_password');
     Route::post('/pengaturan/akademik', [PengaturanSistemController::class, 'updateAkademik'])->name('guru.pengaturan.update_akademik');
+    // MODUL 7: AI DOCUMENT IMPORTER (BACKGROUND PROCESSING VIA REDIS & GEMINI)
+    Route::post('/ai-import/upload', [AiImportController::class, 'upload'])->middleware('throttle:15,1')->name('guru.ai-import.upload');
+    Route::get('/ai-import/{aiImport}/status', [AiImportController::class, 'status'])->name('guru.ai-import.status');
+    Route::get('/ai-import/{aiImport}/review', [AiImportController::class, 'review'])->name('guru.ai-import.review');
+    Route::post('/ai-import/{aiImport}/confirm-materi', [AiImportController::class, 'confirmMateri'])->name('guru.ai-import.confirm-materi');
+    Route::post('/ai-import/{aiImport}/confirm-quiz', [AiImportController::class, 'confirmQuiz'])->name('guru.ai-import.confirm-quiz');
 });
 
 // AREA KHUSUS ADMINISTRATOR UTAMA (HANYA ROLE ADMIN)

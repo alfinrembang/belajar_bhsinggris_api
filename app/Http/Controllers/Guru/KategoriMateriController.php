@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Guru\StoreKategoriMateriRequest;
+use App\Http\Requests\Guru\UpdateKategoriMateriRequest;
 use App\Models\KategoriMateri;
 use App\Models\Materi;
 use Illuminate\Http\RedirectResponse;
@@ -66,28 +68,9 @@ class KategoriMateriController extends Controller
     /**
      * Menyimpan kategori materi baru ke database.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(StoreKategoriMateriRequest $request): RedirectResponse
     {
-        $request->validate([
-            'nama' => 'required|string|max:100|unique:kategori_materis,nama',
-            'deskripsi' => 'nullable|string',
-            'warna_hex' => 'required|string|max:20',
-            'icon_name' => 'required|string|max:50',
-            'urutan' => 'nullable|integer|min:0',
-        ], [
-            'nama.required' => 'Nama kategori wajib diisi!',
-            'nama.unique' => 'Nama kategori ini sudah terdaftar!',
-            'warna_hex.required' => 'Silakan pilih warna tema untuk kategori ini!',
-            'icon_name.required' => 'Silakan pilih ikon penanda kategori!',
-        ]);
-
-        $data = $request->only([
-            'nama',
-            'deskripsi',
-            'warna_hex',
-            'icon_name',
-            'urutan',
-        ]);
+        $data = $request->validated();
 
         $data['slug'] = Str::slug($data['nama']);
         $data['urutan'] = $data['urutan'] ?? (KategoriMateri::max('urutan') + 1);
@@ -143,30 +126,10 @@ class KategoriMateriController extends Controller
     /**
      * Memperbarui data kategori materi.
      */
-    public function update(Request $request, KategoriMateri $kategori): RedirectResponse
+    public function update(UpdateKategoriMateriRequest $request, KategoriMateri $kategori): RedirectResponse
     {
-        $request->validate([
-            'nama' => 'required|string|max:100|unique:kategori_materis,nama,'.$kategori->id,
-            'deskripsi' => 'nullable|string',
-            'warna_hex' => 'required|string|max:20',
-            'icon_name' => 'required|string|max:50',
-            'urutan' => 'nullable|integer|min:0',
-        ], [
-            'nama.required' => 'Nama kategori wajib diisi!',
-            'nama.unique' => 'Nama kategori ini sudah terdaftar!',
-            'warna_hex.required' => 'Silakan pilih warna tema untuk kategori ini!',
-            'icon_name.required' => 'Silakan pilih ikon penanda kategori!',
-        ]);
-
         $namaLama = $kategori->nama;
-
-        $data = $request->only([
-            'nama',
-            'deskripsi',
-            'warna_hex',
-            'icon_name',
-            'urutan',
-        ]);
+        $data = $request->validated();
 
         $data['slug'] = Str::slug($data['nama']);
         $data['urutan'] = $data['urutan'] ?? $kategori->urutan;

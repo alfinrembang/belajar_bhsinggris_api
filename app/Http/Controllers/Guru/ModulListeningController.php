@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Guru\StoreModulListeningRequest;
+use App\Http\Requests\Guru\UpdateModulListeningRequest;
 use App\Models\ListeningAudio;
 use App\Models\ListeningSoal;
 use App\Models\ModulListening;
@@ -93,36 +95,9 @@ class ModulListeningController extends Controller
     /**
      * Menyimpan modul listening baru beserta daftar audio track dan butir soal.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(StoreModulListeningRequest $request): RedirectResponse
     {
-        $request->validate([
-            'judul' => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
-            'tingkat_kesulitan' => 'required|in:Beginner,Intermediate,Advanced',
-            'tingkat_kelas' => 'required|string|max:50',
-            'target_rombel' => 'nullable|string|max:50',
-            'xp_reward' => 'nullable|integer|min:0',
-            'status' => 'required|in:aktif,draft',
-            'tujuan_belajar' => 'nullable|array',
-            'tujuan_belajar.*' => 'nullable|string',
-            'audios' => 'nullable|array',
-            'audios.*.judul_audio' => 'nullable|string|max:100',
-            'audios.*.audio_file' => 'nullable|file|mimes:mp3,wav,ogg,m4a,aac|max:25600',
-            'audios.*.audio_url_input' => 'nullable|url|max:500',
-            'audios.*.durasi' => 'nullable|string|max:20',
-            'soals' => 'nullable|array',
-            'soals.*.pertanyaan' => 'required_with:soals|string',
-            'soals.*.audio_track_nomor' => 'nullable|integer',
-            'soals.*.pilihan_a' => 'required_with:soals|string',
-            'soals.*.pilihan_b' => 'required_with:soals|string',
-            'soals.*.pilihan_c' => 'required_with:soals|string',
-            'soals.*.pilihan_d' => 'required_with:soals|string',
-            'soals.*.jawaban_benar' => 'required_with:soals|in:A,B,C,D',
-            'soals.*.pembahasan' => 'nullable|string',
-        ], [
-            'judul.required' => 'Judul percakapan listening wajib diisi!',
-            'tingkat_kesulitan.required' => 'Silakan pilih tingkat kesulitan!',
-        ]);
+        $validated = $request->validated();
 
         $data = $request->only([
             'judul',
@@ -269,38 +244,9 @@ class ModulListeningController extends Controller
     /**
      * Memperbarui data modul listening beserta daftar audio track dan butir soal latihannya.
      */
-    public function update(Request $request, ModulListening $listening): RedirectResponse
+    public function update(UpdateModulListeningRequest $request, ModulListening $listening): RedirectResponse
     {
-        $user = auth()->user();
-        if ($user && $user->role === 'guru' && $listening->user_id && $listening->user_id !== $user->id) {
-            abort(403, 'Anda tidak memiliki hak akses untuk memperbarui modul listening guru lain.');
-        }
-
-        $request->validate([
-            'judul' => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
-            'tingkat_kesulitan' => 'required|in:Beginner,Intermediate,Advanced',
-            'tingkat_kelas' => 'required|string|max:50',
-            'target_rombel' => 'nullable|string|max:50',
-            'xp_reward' => 'nullable|integer|min:0',
-            'status' => 'required|in:aktif,draft',
-            'tujuan_belajar' => 'nullable|array',
-            'tujuan_belajar.*' => 'nullable|string',
-            'audios' => 'nullable|array',
-            'audios.*.judul_audio' => 'nullable|string|max:100',
-            'audios.*.audio_file' => 'nullable|file|mimes:mp3,wav,ogg,m4a,aac|max:25600',
-            'audios.*.audio_url_input' => 'nullable|url|max:500',
-            'audios.*.durasi' => 'nullable|string|max:20',
-            'soals' => 'nullable|array',
-            'soals.*.pertanyaan' => 'required_with:soals|string',
-            'soals.*.audio_track_nomor' => 'nullable|integer',
-            'soals.*.pilihan_a' => 'required_with:soals|string',
-            'soals.*.pilihan_b' => 'required_with:soals|string',
-            'soals.*.pilihan_c' => 'required_with:soals|string',
-            'soals.*.pilihan_d' => 'required_with:soals|string',
-            'soals.*.jawaban_benar' => 'required_with:soals|in:A,B,C,D',
-            'soals.*.pembahasan' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         $data = $request->only([
             'judul',

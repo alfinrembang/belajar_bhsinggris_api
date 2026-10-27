@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Guru\UpdateAkademikRequest;
+use App\Http\Requests\Guru\UpdatePasswordGuruRequest;
+use App\Http\Requests\Guru\UpdateProfilGuruRequest;
 use App\Models\PengaturanAkademik;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class PengaturanSistemController extends Controller
@@ -26,20 +28,10 @@ class PengaturanSistemController extends Controller
     /**
      * Memperbarui informasi profil pengajar (nama, email, dan NIP).
      */
-    public function updateProfil(Request $request): RedirectResponse
+    public function updateProfil(UpdateProfilGuruRequest $request): RedirectResponse
     {
         $guru = $request->user();
-
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:100'],
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($guru->id)],
-            'nip' => ['nullable', 'string', 'max:50'],
-        ], [
-            'name.required' => 'Nama lengkap guru wajib diisi.',
-            'email.required' => 'Alamat email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'email.unique' => 'Email ini sudah terdaftar oleh akun lain.',
-        ]);
+        $validated = $request->validated();
 
         $guru->update($validated);
 
@@ -49,18 +41,9 @@ class PengaturanSistemController extends Controller
     /**
      * Mengubah kata sandi akun login guru dengan verifikasi kata sandi saat ini.
      */
-    public function updatePassword(Request $request): RedirectResponse
+    public function updatePassword(UpdatePasswordGuruRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'current_password' => ['required', 'current_password'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ], [
-            'current_password.required' => 'Kata sandi saat ini wajib diisi.',
-            'current_password.current_password' => 'Kata sandi saat ini tidak cocok dengan catatan sistem.',
-            'password.required' => 'Kata sandi baru wajib diisi.',
-            'password.min' => 'Kata sandi baru minimal harus 8 karakter.',
-            'password.confirmed' => 'Konfirmasi kata sandi baru tidak cocok.',
-        ]);
+        $validated = $request->validated();
 
         $request->user()->update([
             'password' => Hash::make($validated['password']),
@@ -72,24 +55,9 @@ class PengaturanSistemController extends Controller
     /**
      * Memperbarui konfigurasi akademik, periode kenaikan kelas siswa, dan standar penilaian.
      */
-    public function updateAkademik(Request $request): RedirectResponse
+    public function updateAkademik(UpdateAkademikRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'tahun_ajaran' => ['required', 'string', 'max:20', 'regex:/^\d{4}\/\d{4}$/'],
-            'is_periode_kenaikan_aktif' => ['nullable', 'boolean'],
-            'kkm_default' => ['required', 'integer', 'min:0', 'max:100'],
-            'durasi_kuis_default' => ['required', 'integer', 'min:5', 'max:180'],
-            'is_leaderboard_aktif' => ['nullable', 'boolean'],
-            'keterangan' => ['nullable', 'string', 'max:255'],
-        ], [
-            'tahun_ajaran.required' => 'Tahun ajaran wajib diisi.',
-            'tahun_ajaran.regex' => 'Format tahun ajaran harus berupa format Tahun/Tahun (contoh: 2026/2027).',
-            'kkm_default.required' => 'Standar KKM kuis wajib ditentukan.',
-            'kkm_default.min' => 'Nilai KKM minimal 0.',
-            'kkm_default.max' => 'Nilai KKM maksimal 100.',
-            'durasi_kuis_default.required' => 'Durasi kuis default wajib diisi.',
-        ]);
-
+        $validated = $request->validated();
         $setting = PengaturanAkademik::getActiveSetting();
 
         $setting->update([
