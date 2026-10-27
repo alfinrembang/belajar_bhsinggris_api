@@ -54,4 +54,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Quiz::class, 'user_id');
     }
+
+    /**
+     * Relasi ke riwayat import dokumen AI yang diunggah oleh guru.
+     */
+    public function aiImports(): HasMany
+    {
+        return $this->hasMany(AiImport::class, 'user_id');
+    }
 }
