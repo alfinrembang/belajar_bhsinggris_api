@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Auth\LoginGuruController;
 use App\Http\Controllers\Guru\AiImportController;
 use App\Http\Controllers\Guru\DashboardController;
+use App\Http\Controllers\Guru\GameController;
 use App\Http\Controllers\Guru\KategoriMateriController;
 use App\Http\Controllers\Guru\LaporanAnalitikController;
 use App\Http\Controllers\Guru\MateriController;
@@ -78,12 +79,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/siswa/{siswa}/reset-password', [SiswaController::class, 'resetPassword'])->name('guru.siswa.reset_password');
     Route::post('/siswa/{siswa}/destroy', [SiswaController::class, 'destroy'])->name('guru.siswa.destroy');
 
-    // Mini Games & Leaderboard Guru
-    Route::get('/games', function () {
-        $daftarSiswa = Siswa::latest()->get();
-
-        return view('guru.mini_game_leaderboard.index', compact('daftarSiswa'));
-    })->name('guru.game.index');
+    // Mini Games & Leaderboard Guru (Dinamis Sesuai Game Mobile)
+    Route::get('/games', [GameController::class, 'index'])->name('guru.game.index');
+    Route::post('/games/fishing/soal', [GameController::class, 'storeFishingSoal'])->name('guru.game.fishing.store');
+    Route::post('/games/fishing/soal/{id}/delete', [GameController::class, 'destroyFishingSoal'])->name('guru.game.fishing.destroy');
 
     // MODUL 5: LAPORAN & ANALITIK GURU
     Route::get('/laporan', [LaporanAnalitikController::class, 'index'])->name('guru.laporan.index');

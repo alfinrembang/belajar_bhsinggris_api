@@ -73,6 +73,9 @@ Route::get('/fishing/progres', [FishingApiController::class, 'getProgres']);
 // Menyimpan hasil penangkapan ikan & koin reward (One-time reward)
 Route::post('/fishing/selesai', [FishingApiController::class, 'submitSelesai']);
 
+// 2F. LEADERBOARD GAME SISWA (TOP SKOR DINAMIS)
+Route::get('/game/leaderboard', [FishingApiController::class, 'getLeaderboard']);
+
 // 3. RUTE TERPROTEKSI SISWA (Wajib Token Siswa)
 Route::middleware('auth.siswa')->group(function () {
     Route::get('/siswa/me', [LoginSiswaController::class, 'me']);
