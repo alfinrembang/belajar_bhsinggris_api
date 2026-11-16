@@ -1,7 +1,7 @@
 <x-layout 
     title="Mini Games & Leaderboard - Study English Prima" 
     pageTitle="Mini Games & Leaderboard" 
-    pageSubtitle="Kelola konten soal game edukasi, pantau performa permainan, dan papan peringkat siswa." 
+    pageSubtitle="Kelola konten soal game edukasi Tangkap Ikan, pantau performa permainan, dan papan peringkat siswa." 
     active="game"
 >
     <!-- Notifikasi Flash Message Sukses / Error -->
@@ -28,7 +28,7 @@
         </div>
     @endif
 
-    <!-- Bar Aksi Atas: Pencarian, Filter & Tombol Aksi Game -->
+    <!-- Bar Aksi Atas: Pencarian, Filter & Tombol Tambah Soal -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 lg:p-6 rounded-3xl border border-slate-100 shadow-xs">
         <!-- Pencarian -->
         <form method="GET" action="{{ route('guru.game.index') }}" class="relative w-full md:w-80">
@@ -43,16 +43,8 @@
                    class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
         </form>
 
-        <!-- Aksi Guru: Rekap Puzzle & Tambah Soal Tangkap Ikan -->
+        <!-- Aksi Guru: Tombol Tambah Soal Kosakata Game Tangkap Ikan -->
         <div class="flex items-center gap-3">
-            <button type="button"
-                    onclick="openModal('modalPuzzleRekap')"
-                    class="px-4 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition-all flex items-center gap-2 shrink-0 cursor-pointer">
-                <span>🧩</span>
-                Rekap Puzzle
-            </button>
-
-            <!-- Tombol Tambah Soal Kosakata Game Tangkap Ikan -->
             <button type="button"
                     onclick="openModal('modalTambahSoalIkan')"
                     class="px-5 py-2.5 rounded-2xl bg-[#4EA87D] hover:bg-[#43966E] text-white font-semibold text-xs shadow-[0_6px_16px_rgba(78,168,125,0.28)] transition-all flex items-center gap-2 shrink-0 cursor-pointer">
@@ -69,12 +61,12 @@
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-5">
         <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs flex items-center gap-4">
             <div class="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center font-bold text-xl shrink-0">
-                🎮
+                🐠
             </div>
             <div>
-                <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Mini Game Tersedia</p>
+                <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Game Edukasi Aktif</p>
                 <h4 class="text-xl font-bold text-slate-800 mt-0.5">2 Mode Game</h4>
-                <p class="text-[11px] text-slate-400">Puzzle Master & Tangkap Ikan</p>
+                <p class="text-[11px] text-slate-400">Tangkap Ikan & Tebak Serigala</p>
             </div>
         </div>
 
@@ -115,15 +107,15 @@
                 <div class="flex items-center justify-between mb-5">
                     <div>
                         <h3 class="font-bold text-slate-800 text-sm">Mode Permainan Edukasi Siswa</h3>
-                        <p class="text-xs text-slate-400 mt-0.5">Sesuai dengan 2 permainan interaktif di aplikasi mobile Flutter</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Sesuai dengan permainan interaktif kosakata di aplikasi mobile Flutter</p>
                     </div>
                     <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 font-bold text-xs">
-                        2 Game Aktif
+                        Game Aktif
                     </span>
                 </div>
 
                 <div class="space-y-4">
-                    <!-- Game 1: Tangkap Ikan (Word Fishing) dengan Panel Bank Soal Collapsible di Bawahnya -->
+                    <!-- Game: Tangkap Ikan (Word Fishing) dengan Panel Bank Soal Collapsible di Bawahnya -->
                     <div class="rounded-2xl border border-sky-100 bg-sky-50/40 hover:border-sky-300 transition-all overflow-hidden">
                         
                         <!-- Header & Info Game Tangkap Ikan -->
@@ -138,7 +130,7 @@
                                         <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 text-[10px] font-bold">Vocabulary</span>
                                     </div>
                                     <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                                        Siswa menangkap ikan chibi berenang di akuarium realistis dengan timer 1 menit, dan menjawab tantangan kosakata (arti kata, jenis kata / part of speech).
+                                        Siswa menangkap ikan berenang di akuarium realistis dengan timer 1 menit, dan menjawab tantangan kosakata (arti kata, jenis kata / part of speech).
                                     </p>
                                     <div class="flex flex-wrap items-center gap-3 mt-2.5 text-[11px] text-slate-500">
                                         <span class="font-semibold text-slate-700">🌊 9 Level Akuarium</span>
@@ -301,35 +293,33 @@
 
                     </div>
 
-                    <!-- Game 2: Puzzle Master -->
-                    <div class="p-5 rounded-2xl border border-amber-100 bg-amber-50/40 hover:bg-white hover:border-amber-300 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <!-- Game 2: Tebak Serigala (Wolf vs Sheep) -->
+                    <div class="rounded-2xl border border-indigo-100 bg-indigo-50/40 hover:border-indigo-300 transition-all overflow-hidden p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div class="flex items-start gap-4">
-                            <div class="w-13 h-13 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-2xl shadow-sm shrink-0">
-                                🧩
+                            <div class="w-13 h-13 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-2xl shadow-sm shrink-0">
+                                🐺
                             </div>
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <h4 class="font-bold text-slate-800 text-sm">Puzzle Master</h4>
-                                    <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold">Visual & Spatial</span>
+                                    <h4 class="font-bold text-slate-800 text-sm">Tebak Serigala (Wolf vs Sheep)</h4>
+                                    <span class="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-bold">Party & Deductive</span>
                                 </div>
                                 <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                                    Siswa menyusun kepingan puzzle gambar objek dan landmark dunia untuk melatih daya ingat visual, ketelitian, dan pengenalan kosakata bahasa Inggris.
+                                    5 pemain (4 Domba vs 1 Serigala). Siswa berlatih mendeskripsikan ciri-ciri kosakata (descriptive text) dalam bahasa Inggris dan mengungkap serigala yang menyamar lewat voting.
                                 </p>
                                 <div class="flex flex-wrap items-center gap-3 mt-2.5 text-[11px] text-slate-500">
-                                    <span class="font-semibold text-slate-700">🧩 9 Level Puzzle</span>
+                                    <span class="font-semibold text-slate-700">🐑 4 Domba vs 1 Serigala</span>
                                     <span>•</span>
-                                    <span class="font-semibold text-slate-700">Mudah (3x3), Sedang (4x4), Sulit (5x5)</span>
+                                    <span class="font-semibold text-slate-700">🤖 AI Bot & 👥 Room Mabar</span>
                                     <span>•</span>
-                                    <span class="text-amber-600 font-bold">🏆 {{ $totalPuzzleSelesai }} Sesi Tuntas</span>
+                                    <span class="text-indigo-600 font-bold">⭐ 15+ Pasangan Kata Edukatif</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="flex sm:flex-col gap-2 shrink-0">
-                            <button type="button"
-                                    onclick="openModal('modalPuzzleRekap')"
-                                    class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold shadow-xs transition-all text-center cursor-pointer">
-                                Rekap Capaian
-                            </button>
+                        <div class="shrink-0">
+                            <span class="px-3.5 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold text-xs">
+                                Aktif di Mobile
+                            </span>
                         </div>
                     </div>
 
@@ -375,8 +365,6 @@
                                     <p class="text-[10px] text-slate-400 truncate">{{ $item['kelas'] }} • No. {{ $item['no_absen'] }}</p>
                                     <div class="flex items-center gap-2 mt-1 text-[10px] text-slate-500">
                                         <span>🐠 {{ $item['skor_memancing'] }} pts</span>
-                                        <span>•</span>
-                                        <span>🧩 {{ $item['puzzle_selesai'] }} lvl</span>
                                     </div>
                                 </div>
                             </div>
@@ -396,7 +384,7 @@
 
     </div>
 
-    <!-- MODAL 1: Tambah Soal Kosakata Game Tangkap Ikan (Pop-up Form) -->
+    <!-- MODAL: Tambah Soal Kosakata Game Tangkap Ikan (Pop-up Form) -->
     <div id="modalTambahSoalIkan" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg rounded-3xl p-6 shadow-xl max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
@@ -506,74 +494,6 @@
                     </button>
                 </div>
             </form>
-        </div>
-    </div>
-
-    <!-- MODAL 2: Rekap Capaian & Best Time Game Puzzle Siswa -->
-    <div id="modalPuzzleRekap" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-2xl rounded-3xl p-6 shadow-xl max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
-                <div class="flex items-center gap-2">
-                    <span class="text-xl">🧩</span>
-                    <div>
-                        <h3 class="font-bold text-slate-800 text-sm">Rekap Progres Puzzle Master</h3>
-                        <p class="text-[11px] text-slate-400">Daftar siswa yang telah menuntaskan level puzzle beserta waktu terbaiknya</p>
-                    </div>
-                </div>
-                <button type="button" onclick="closeModal('modalPuzzleRekap')" class="text-slate-400 hover:text-slate-600 text-lg font-bold cursor-pointer">&times;</button>
-            </div>
-
-            <div class="overflow-x-auto rounded-2xl border border-slate-100">
-                <table class="w-full text-left border-collapse text-xs">
-                    <thead>
-                        <tr class="bg-slate-50 border-b border-slate-100 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                            <th class="py-3 px-4">Nama Siswa</th>
-                            <th class="py-3 px-4">Level</th>
-                            <th class="py-3 px-4">Tingkat</th>
-                            <th class="py-3 px-4 text-center">Bintang</th>
-                            <th class="py-3 px-4 text-right">Waktu Terbaik</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100 text-slate-700">
-                        @forelse($puzzleProgresList as $prog)
-                            <tr class="hover:bg-slate-50/50">
-                                <td class="py-3 px-4 font-bold text-slate-800">
-                                    {{ $prog->siswa->nama_lengkap ?? 'Siswa' }}
-                                    <span class="block font-normal text-[10px] text-slate-400">{{ $prog->siswa->kelas_lengkap ?? '' }}</span>
-                                </td>
-                                <td class="py-3 px-4">
-                                    <span class="px-2 py-0.5 rounded bg-amber-50 text-amber-700 font-bold text-[10px]">
-                                        Level {{ $prog->level }}
-                                    </span>
-                                </td>
-                                <td class="py-3 px-4 capitalize font-medium">
-                                    {{ $prog->difficulty }}
-                                </td>
-                                <td class="py-3 px-4 text-center text-amber-500 font-bold">
-                                    {{ str_repeat('⭐', $prog->stars) }}
-                                </td>
-                                <td class="py-3 px-4 text-right font-mono font-bold text-slate-800">
-                                    {{ $prog->best_time ?? '-' }}
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="py-8 text-center text-slate-400">
-                                    Belum ada catatan penyelesaian puzzle oleh siswa.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="mt-4 flex justify-end">
-                <button type="button" 
-                        onclick="closeModal('modalPuzzleRekap')" 
-                        class="px-5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer">
-                    Tutup
-                </button>
-            </div>
         </div>
     </div>
 

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\FishingSoal;
 use App\Models\Siswa;
 use App\Models\SiswaFishingProgres;
-use App\Models\SiswaPuzzleProgres;
 use Illuminate\Http\Request;
 
 class FishingApiController extends Controller
@@ -219,21 +218,14 @@ class FishingApiController extends Controller
             ->groupBy('siswa_id')
             ->pluck('total_fishing_score', 'siswa_id');
 
-        $puzzleCompleted = SiswaPuzzleProgres::selectRaw('siswa_id, COUNT(id) as total_puzzle, SUM(stars) as total_stars')
-            ->whereNotNull('siswa_id')
-            ->where('is_completed', true)
-            ->groupBy('siswa_id')
-            ->pluck('total_puzzle', 'siswa_id');
-
         $siswas = Siswa::all();
         $leaderboard = [];
 
         foreach ($siswas as $s) {
             $fScore = (int) ($fishingScores[$s->id] ?? 0);
-            $pCount = (int) ($puzzleCompleted[$s->id] ?? 0);
             $koin = (int) ($s->koin ?? 120);
 
-            $totalScore = $fScore + ($pCount * 120) + ($koin * 5);
+            $totalScore = $fScore + ($koin * 5);
 
             $kelasLengkap = $s->kelas;
             if (!empty($s->jurusan)) {
@@ -250,7 +242,6 @@ class FishingApiController extends Controller
                 'no_absen' => (string) ($s->no_absen ?? '-'),
                 'total_skor' => $totalScore,
                 'skor_memancing' => $fScore,
-                'puzzle_selesai' => $pCount,
                 'koin' => $koin,
                 'status' => 'Pemain Aktif ⭐',
             ];
@@ -271,9 +262,8 @@ class FishingApiController extends Controller
                     'no_absen' => '14',
                     'total_skor' => 2450,
                     'skor_memancing' => 1250,
-                    'puzzle_selesai' => 8,
                     'koin' => 240,
-                    'status' => 'Ocean Master & Puzzle Solver 🌟',
+                    'status' => 'Master Tangkap Ikan 👑',
                 ],
                 [
                     'id' => 102,
@@ -282,7 +272,6 @@ class FishingApiController extends Controller
                     'no_absen' => '28',
                     'total_skor' => 2100,
                     'skor_memancing' => 1050,
-                    'puzzle_selesai' => 7,
                     'koin' => 210,
                     'status' => 'Vocab Hunter Tangguh 🐠',
                 ],
@@ -293,7 +282,6 @@ class FishingApiController extends Controller
                     'no_absen' => '05',
                     'total_skor' => 1890,
                     'skor_memancing' => 950,
-                    'puzzle_selesai' => 6,
                     'koin' => 180,
                     'status' => 'Penjelajah Samudra 🌊',
                 ],

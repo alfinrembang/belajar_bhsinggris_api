@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\FishingSoal;
 use App\Models\Siswa;
 use App\Models\SiswaFishingProgres;
-use App\Models\SiswaPuzzleProgres;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -15,7 +14,7 @@ class GameController extends Controller
 {
     /**
      * Menampilkan dashboard utama Mini Games & Leaderboard untuk Guru.
-     * Mengintegrasikan data dinamis dari kedua game mobile: Puzzle Master & Tangkap Ikan.
+     * Mengintegrasikan data dinamis dari game mobile Tangkap Ikan (Word Fishing).
      */
     public function index(Request $request): View
     {
@@ -30,14 +29,6 @@ class GameController extends Controller
             ->get()
             ->keyBy('siswa_id');
 
-        // 2. Ambil Progres Puzzle per Siswa
-        $puzzleScores = SiswaPuzzleProgres::selectRaw('siswa_id, COUNT(id) as total_puzzle, SUM(stars) as total_stars')
-            ->whereNotNull('siswa_id')
-            ->where('is_completed', true)
-            ->groupBy('siswa_id')
-            ->get()
-            ->keyBy('siswa_id');
-
         // 3. Ambil Seluruh Data Siswa & Hitung Leaderboard Aktual
         $siswas = Siswa::latest()->get();
         $leaderboard = [];
@@ -45,12 +36,10 @@ class GameController extends Controller
         foreach ($siswas as $s) {
             $fScore = isset($fishingScores[$s->id]) ? (int) $fishingScores[$s->id]->total_fishing_score : 0;
             $fCount = isset($fishingScores[$s->id]) ? (int) $fishingScores[$s->id]->total_fish_caught : 0;
-            $pCount = isset($puzzleScores[$s->id]) ? (int) $puzzleScores[$s->id]->total_puzzle : 0;
-            $pStars = isset($puzzleScores[$s->id]) ? (int) $puzzleScores[$s->id]->total_stars : 0;
             $koin = (int) ($s->koin ?? 120);
 
             // Perhitungan Akumulasi Total Poin Game
-            $totalPoin = $fScore + ($pCount * 120) + ($koin * 5);
+            $totalPoin = $fScore + ($koin * 5);
 
             $kelasLengkap = $s->kelas;
             if (!empty($s->jurusan)) {
@@ -68,8 +57,6 @@ class GameController extends Controller
                 'total_skor' => $totalPoin,
                 'skor_memancing' => $fScore,
                 'ikan_tertangkap' => $fCount,
-                'puzzle_selesai' => $pCount,
-                'puzzle_stars' => $pStars,
                 'koin' => $koin,
             ];
         }
@@ -90,8 +77,6 @@ class GameController extends Controller
                     'total_skor' => 2450,
                     'skor_memancing' => 1250,
                     'ikan_tertangkap' => 8,
-                    'puzzle_selesai' => 8,
-                    'puzzle_stars' => 24,
                     'koin' => 240,
                 ],
                 [
@@ -102,8 +87,6 @@ class GameController extends Controller
                     'total_skor' => 2100,
                     'skor_memancing' => 1050,
                     'ikan_tertangkap' => 7,
-                    'puzzle_selesai' => 7,
-                    'puzzle_stars' => 20,
                     'koin' => 210,
                 ],
                 [
@@ -114,8 +97,6 @@ class GameController extends Controller
                     'total_skor' => 1890,
                     'skor_memancing' => 950,
                     'ikan_tertangkap' => 6,
-                    'puzzle_selesai' => 6,
-                    'puzzle_stars' => 16,
                     'koin' => 180,
                 ],
             ];
@@ -158,8 +139,7 @@ class GameController extends Controller
         $topPlayer = $rankedLeaderboard[0] ?? null;
         $totalPesertaAktif = count($siswas);
         $totalSoalIkan = FishingSoal::count();
-        $totalPuzzleSelesai = SiswaPuzzleProgres::where('is_completed', true)->count();
-
+        
         // 5. Query Bank Soal Tangkap Ikan
         $soalQuery = FishingSoal::query()->latest();
         if (!empty($search)) {
@@ -177,21 +157,12 @@ class GameController extends Controller
         }
         $daftarSoalIkan = $soalQuery->paginate(10)->withQueryString();
 
-        // 6. Rekap Progres Puzzle Siswa
-        $puzzleProgresList = SiswaPuzzleProgres::with('siswa')
-            ->where('is_completed', true)
-            ->latest('updated_at')
-            ->take(10)
-            ->get();
-
         return view('guru.mini_game_leaderboard.index', compact(
             'rankedLeaderboard',
             'topPlayer',
             'totalPesertaAktif',
             'totalSoalIkan',
-            'totalPuzzleSelesai',
             'daftarSoalIkan',
-            'puzzleProgresList',
             'search',
             'levelFilter',
             'diffFilter'

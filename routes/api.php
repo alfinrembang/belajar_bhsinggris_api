@@ -6,7 +6,6 @@ use App\Http\Controllers\Api\KategoriMateriApiController;
 use App\Http\Controllers\Api\LoginSiswaController;
 use App\Http\Controllers\Api\MateriApiController;
 use App\Http\Controllers\Api\ModulListeningApiController;
-use App\Http\Controllers\Api\PuzzleApiController;
 use App\Http\Controllers\Api\QuizApiController;
 use Illuminate\Support\Facades\Route;
 
@@ -59,13 +58,8 @@ Route::get('/quiz/{id}', [QuizApiController::class, 'show']);
 // Mengirim lembar jawaban kuis siswa (+ evaluasi nilai & XP reward server-side)
 Route::post('/quiz/{id}/submit', [QuizApiController::class, 'submit']);
 
-// 2D. MODUL GAME PUZZLE MASTER (FLUTTER SISWA)
-// Mengambil data progres level & koin siswa (?siswa_id=...&difficulty=mudah/sedang/sulit)
-Route::get('/puzzle/progres', [PuzzleApiController::class, 'getProgres']);
-// Menyimpan hasil penyelesaian puzzle siswa (+ koin reward & unlock level berikutnya)
-Route::post('/puzzle/selesai', [PuzzleApiController::class, 'submitSelesai']);
 
-// 2E. MODUL GAME WORD FISHING / PANCING KATA (FLUTTER SISWA)
+// 2D. MODUL GAME WORD FISHING / PANCING KATA (FLUTTER SISWA)
 // Mengambil daftar soal memancing berbobot edukasi & part of speech (?level=1&difficulty=mudah)
 Route::get('/fishing/soal', [FishingApiController::class, 'getSoal']);
 // Mengambil data progres level, koleksi ikan, & koin siswa (?siswa_id=...&difficulty=mudah)
@@ -73,7 +67,7 @@ Route::get('/fishing/progres', [FishingApiController::class, 'getProgres']);
 // Menyimpan hasil penangkapan ikan & koin reward (One-time reward)
 Route::post('/fishing/selesai', [FishingApiController::class, 'submitSelesai']);
 
-// 2F. LEADERBOARD GAME SISWA (TOP SKOR DINAMIS)
+// 2E. LEADERBOARD GAME SISWA (TOP SKOR DINAMIS)
 Route::get('/game/leaderboard', [FishingApiController::class, 'getLeaderboard']);
 
 // 3. RUTE TERPROTEKSI SISWA (Wajib Token Siswa)
