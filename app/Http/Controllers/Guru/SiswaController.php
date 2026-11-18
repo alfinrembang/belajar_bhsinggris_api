@@ -10,6 +10,10 @@ use App\Models\ModulListening;
 use App\Models\PengaturanAkademik;
 use App\Models\Quiz;
 use App\Models\Siswa;
+use App\Models\SiswaFishingProgres;
+use App\Models\SiswaListeningProgres;
+use App\Models\SiswaMateriProgres;
+use App\Models\SiswaQuizProgres;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -223,10 +227,36 @@ class SiswaController extends Controller
             $siswa->materiProgres()->delete();
             $siswa->listeningProgres()->delete();
             $siswa->quizProgres()->delete();
+            $siswa->fishingProgres()->delete();
             $siswa->delete();
         });
 
         return redirect()->route('guru.siswa.index')
             ->with('success', "Akun siswa {$namaSiswa} beserta seluruh riwayat belajarnya berhasil dihapus.");
+    }
+
+    /**
+     * Menghapus beberapa akun siswa sekaligus beserta riwayat progres belajarnya (Bulk Delete).
+     */
+    public function bulkDestroy(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'siswa_ids' => ['required', 'array', 'min:1'],
+            'siswa_ids.*' => ['required', 'integer', 'exists:siswas,id'],
+        ]);
+
+        $siswaIds = $validated['siswa_ids'];
+        $count = count($siswaIds);
+
+        DB::transaction(function () use ($siswaIds) {
+            SiswaMateriProgres::whereIn('siswa_id', $siswaIds)->delete();
+            SiswaListeningProgres::whereIn('siswa_id', $siswaIds)->delete();
+            SiswaQuizProgres::whereIn('siswa_id', $siswaIds)->delete();
+            SiswaFishingProgres::whereIn('siswa_id', $siswaIds)->delete();
+            Siswa::whereIn('id', $siswaIds)->delete();
+        });
+
+        return redirect()->route('guru.siswa.index')
+            ->with('success', "Berhasil menghapus {$count} akun siswa terpilih beserta seluruh riwayat belajarnya.");
     }
 }

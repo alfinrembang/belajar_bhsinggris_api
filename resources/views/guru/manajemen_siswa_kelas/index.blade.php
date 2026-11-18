@@ -130,6 +130,15 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-50/75 border-b border-slate-200/70 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                        <th class="py-3 px-3.5 w-10 text-center whitespace-nowrap">
+                            <div class="flex items-center justify-center">
+                                <input type="checkbox" 
+                                       id="selectAllCheckbox" 
+                                       onchange="togglePilihSemua(this)" 
+                                       title="Centang untuk memilih seluruh siswa di halaman ini"
+                                       class="w-4 h-4 rounded text-[#4EA87D] focus:ring-[#4EA87D]/20 border-slate-300 cursor-pointer transition-all">
+                            </div>
+                        </th>
                         <th class="py-3 px-4 w-12 text-center whitespace-nowrap">No</th>
                         <th class="py-3 px-4 whitespace-nowrap">Nama Siswa & Email</th>
                         <th class="py-3 px-4 whitespace-nowrap">NIS / NISN</th>
@@ -141,7 +150,17 @@
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-xs font-medium text-slate-700">
                     @forelse($daftarSiswa as $index => $siswa)
-                        <tr class="hover:bg-slate-50/70 transition-colors">
+                        <tr class="hover:bg-slate-50/70 transition-colors" id="row-siswa-{{ $siswa->id }}">
+                            <td class="py-3.5 px-3.5 text-center whitespace-nowrap">
+                                <div class="flex items-center justify-center">
+                                    <input type="checkbox" 
+                                           name="siswa_ids[]" 
+                                           value="{{ $siswa->id }}" 
+                                           data-nama="{{ $siswa->nama_lengkap }}"
+                                           onchange="onSiswaCheckboxChange()"
+                                           class="siswa-item-checkbox w-4 h-4 rounded text-[#4EA87D] focus:ring-[#4EA87D]/20 border-slate-300 cursor-pointer transition-all">
+                                </div>
+                            </td>
                             <td class="py-3.5 px-4 text-slate-400 font-semibold text-center whitespace-nowrap">
                                 {{ $daftarSiswa->firstItem() + $index }}
                             </td>
@@ -250,7 +269,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="py-12 px-6 text-center text-slate-400">
+                            <td colspan="8" class="py-12 px-6 text-center text-slate-400">
                                 <div class="flex flex-col items-center justify-center">
                                     <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mb-3">
                                         <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -285,4 +304,239 @@
         @endif
     </div>
 
+    <!-- Floating Bar Aksi Masal Siswa (Muncul saat ada siswa yang dicentang) -->
+    <div id="bulkActionBar" 
+         class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-slate-900/95 backdrop-blur-md text-white px-5 py-3 rounded-2xl shadow-2xl border border-slate-700/80 flex items-center gap-4 transition-all duration-300 transform translate-y-24 opacity-0 pointer-events-none">
+        
+        <div class="flex items-center gap-3">
+            <!-- Tanda Centang / Master Checkbox Toggle Cepat -->
+            <button type="button" 
+                    onclick="togglePilihSemuaSemua()" 
+                    id="btnSelectAllFloating"
+                    title="Klik untuk memilih seluruh siswa secara bersamaan"
+                    class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-700 transition-colors cursor-pointer">
+                <span id="floatingCheckIcon" class="w-4 h-4 rounded-md border border-slate-400 flex items-center justify-center text-[11px] font-bold"></span>
+                <span id="floatingCheckText">Pilih Semua ({{ $daftarSiswa->count() }})</span>
+            </button>
+
+            <div class="h-5 w-px bg-slate-700"></div>
+
+            <div class="flex items-center gap-2 text-xs">
+                <span class="w-2 h-2 rounded-full bg-[#4EA87D] animate-pulse"></span>
+                <span class="font-bold text-white text-sm" id="selectedCountText">0</span>
+                <span class="text-slate-300">siswa dipilih</span>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <button type="button" 
+                    onclick="batalPilihSemua()" 
+                    class="px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer">
+                Batal
+            </button>
+
+            <button type="button" 
+                    onclick="bukaModalBulkDelete()" 
+                    class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-md shadow-rose-900/30 transition-all flex items-center gap-1.5 cursor-pointer active:scale-95">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                <span>Hapus Siswa Terpilih</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL: Konfirmasi Hapus Siswa Terpilih (Bulk Delete) -->
+    <div id="modalBulkDelete" 
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs opacity-0 pointer-events-none transition-all duration-200">
+        <div class="fixed inset-0" onclick="tutupModalBulkDelete()"></div>
+        
+        <div id="modalBulkDeleteCard" 
+             class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200/80 overflow-hidden transform scale-95 transition-all duration-200 z-10 p-6 lg:p-7 space-y-4">
+            
+            <div class="flex items-start gap-3.5">
+                <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 border border-rose-100 flex items-center justify-center shrink-0 shadow-xs">
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900 tracking-tight">Hapus Siswa Terpilih</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Penghapusan massal akun siswa terpilih</p>
+                </div>
+            </div>
+
+            <form id="formBulkDelete" method="POST" action="{{ route('guru.siswa.bulk_destroy') }}" class="space-y-4">
+                @csrf
+                <!-- Container input hidden ID siswa terpilih diisi via Javascript -->
+                <div id="bulkDeleteInputsContainer"></div>
+
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    Apakah Anda yakin ingin menghapus <strong id="modalBulkCountText" class="text-rose-600 font-extrabold text-sm">0</strong> akun siswa yang telah dipilih?
+                </p>
+
+                <div class="p-3.5 rounded-2xl bg-rose-50/80 border border-rose-200/70 text-xs text-rose-700 flex items-start gap-2.5">
+                    <svg class="w-4 h-4 text-rose-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    <p class="leading-relaxed">
+                        Seluruh riwayat nilai, progres modul materi, paket kuis, listening audio, dan capaian game siswa terpilih akan dihapus permanen.
+                    </p>
+                </div>
+
+                <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-100">
+                    <x-button variant="cancel" type="button" onclick="tutupModalBulkDelete()" class="!rounded-xl">
+                        Batal
+                    </x-button>
+                    <x-button variant="delete" type="submit" class="!rounded-xl !bg-rose-600 hover:!bg-rose-700 !text-white !border-transparent !shadow-xs">
+                        Ya, Hapus Siswa Terpilih
+                    </x-button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script Pengendali Centang Masal & Modal Hapus -->
+    <script>
+        function getSelectedCheckboxes() {
+            return document.querySelectorAll('.siswa-item-checkbox:checked');
+        }
+
+        function getAllCheckboxes() {
+            return document.querySelectorAll('.siswa-item-checkbox');
+        }
+
+        function onSiswaCheckboxChange() {
+            const total = getAllCheckboxes().length;
+            const selected = getSelectedCheckboxes().length;
+            const selectAllCb = document.getElementById('selectAllCheckbox');
+            const bulkBar = document.getElementById('bulkActionBar');
+            const countText = document.getElementById('selectedCountText');
+            const floatingCheckIcon = document.getElementById('floatingCheckIcon');
+            const floatingCheckText = document.getElementById('floatingCheckText');
+
+            // Update master checkbox di table header
+            if (selectAllCb) {
+                selectAllCb.checked = selected > 0 && selected === total;
+                selectAllCb.indeterminate = selected > 0 && selected < total;
+            }
+
+            // Highlight baris tabel yang dicentang
+            getAllCheckboxes().forEach(cb => {
+                const tr = cb.closest('tr');
+                if (tr) {
+                    if (cb.checked) {
+                        tr.classList.add('bg-[#EAF5EF]/50');
+                    } else {
+                        tr.classList.remove('bg-[#EAF5EF]/50');
+                    }
+                }
+            });
+
+            // Tampilkan atau sembunyikan floating action bar
+            if (selected > 0) {
+                if (countText) countText.textContent = selected;
+                if (bulkBar) {
+                    bulkBar.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+                    bulkBar.classList.add('translate-y-0', 'opacity-100');
+                }
+                if (floatingCheckIcon) {
+                    if (selected === total) {
+                        floatingCheckIcon.innerHTML = '✓';
+                        floatingCheckIcon.classList.add('bg-[#4EA87D]', 'text-white', 'border-[#4EA87D]');
+                        floatingCheckText.textContent = 'Lepas Semua (' + total + ')';
+                    } else {
+                        floatingCheckIcon.innerHTML = '✓';
+                        floatingCheckIcon.classList.remove('bg-[#4EA87D]', 'text-white', 'border-[#4EA87D]');
+                        floatingCheckText.textContent = 'Pilih Semua (' + total + ')';
+                    }
+                }
+            } else {
+                if (bulkBar) {
+                    bulkBar.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+                    bulkBar.classList.remove('translate-y-0', 'opacity-100');
+                }
+            }
+        }
+
+        function togglePilihSemua(masterCb) {
+            const allCb = getAllCheckboxes();
+            allCb.forEach(cb => {
+                cb.checked = masterCb.checked;
+            });
+            onSiswaCheckboxChange();
+        }
+
+        function togglePilihSemuaSemua() {
+            const total = getAllCheckboxes().length;
+            const selected = getSelectedCheckboxes().length;
+            const shouldSelectAll = selected < total;
+            
+            getAllCheckboxes().forEach(cb => {
+                cb.checked = shouldSelectAll;
+            });
+            onSiswaCheckboxChange();
+        }
+
+        function batalPilihSemua() {
+            getAllCheckboxes().forEach(cb => {
+                cb.checked = false;
+            });
+            const selectAllCb = document.getElementById('selectAllCheckbox');
+            if (selectAllCb) {
+                selectAllCb.checked = false;
+                selectAllCb.indeterminate = false;
+            }
+            onSiswaCheckboxChange();
+        }
+
+        function bukaModalBulkDelete() {
+            const selected = getSelectedCheckboxes();
+            if (selected.length === 0) {
+                alert('Silakan pilih minimal 1 siswa untuk dihapus.');
+                return;
+            }
+
+            const modal = document.getElementById('modalBulkDelete');
+            const card = document.getElementById('modalBulkDeleteCard');
+            const countText = document.getElementById('modalBulkCountText');
+            const container = document.getElementById('bulkDeleteInputsContainer');
+
+            if (countText) countText.textContent = selected.length;
+            if (container) {
+                container.innerHTML = '';
+                selected.forEach(cb => {
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'siswa_ids[]';
+                    hiddenInput.value = cb.value;
+                    container.appendChild(hiddenInput);
+                });
+            }
+
+            if (modal && card) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                modal.classList.add('opacity-100');
+                card.classList.remove('scale-95');
+                card.classList.add('scale-100');
+            }
+        }
+
+        function tutupModalBulkDelete() {
+            const modal = document.getElementById('modalBulkDelete');
+            const card = document.getElementById('modalBulkDeleteCard');
+            if (modal && card) {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                modal.classList.remove('opacity-100');
+                card.classList.add('scale-95');
+                card.classList.remove('scale-100');
+            }
+        }
+    </script>
 </x-layout>

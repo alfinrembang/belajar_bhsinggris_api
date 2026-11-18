@@ -73,16 +73,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/siswa', [SiswaController::class, 'index'])->name('guru.siswa.index');
     Route::get('/siswa/create', [SiswaController::class, 'create'])->name('guru.siswa.create');
     Route::post('/siswa/store', [SiswaController::class, 'store'])->name('guru.siswa.store');
+    Route::match(['post', 'delete'], '/siswa/bulk-destroy', [SiswaController::class, 'bulkDestroy'])->name('guru.siswa.bulk_destroy');
     Route::get('/siswa/{siswa}', [SiswaController::class, 'show'])->name('guru.siswa.show');
     Route::get('/siswa/{siswa}/edit', [SiswaController::class, 'edit'])->name('guru.siswa.edit');
     Route::post('/siswa/{siswa}/update', [SiswaController::class, 'update'])->name('guru.siswa.update');
     Route::post('/siswa/{siswa}/reset-password', [SiswaController::class, 'resetPassword'])->name('guru.siswa.reset_password');
-    Route::post('/siswa/{siswa}/destroy', [SiswaController::class, 'destroy'])->name('guru.siswa.destroy');
+    Route::match(['post', 'delete'], '/siswa/{siswa}/destroy', [SiswaController::class, 'destroy'])->name('guru.siswa.destroy');
 
     // Mini Games & Leaderboard Guru (Dinamis Sesuai Game Mobile)
     Route::get('/games', [GameController::class, 'index'])->name('guru.game.index');
     Route::post('/games/fishing/soal', [GameController::class, 'storeFishingSoal'])->name('guru.game.fishing.store');
-    Route::post('/games/fishing/soal/{id}/delete', [GameController::class, 'destroyFishingSoal'])->name('guru.game.fishing.destroy');
+    Route::match(['post', 'delete'], '/games/fishing/soal/{id}/delete', [GameController::class, 'destroyFishingSoal'])->name('guru.game.fishing.destroy');
 
     // MODUL 5: LAPORAN & ANALITIK GURU
     Route::get('/laporan', [LaporanAnalitikController::class, 'index'])->name('guru.laporan.index');
@@ -109,6 +110,6 @@ Route::middleware(['auth', 'role.admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/guru/store', [AdminDashboardController::class, 'storeGuru'])->name('guru.store');
     Route::post('/guru/{guru}/update', [AdminDashboardController::class, 'updateGuru'])->name('guru.update');
     Route::post('/guru/{guru}/reset-password', [AdminDashboardController::class, 'resetPasswordGuru'])->name('guru.reset_password');
-    Route::post('/guru/{guru}/destroy', [AdminDashboardController::class, 'destroyGuru'])->name('guru.destroy');
+    Route::match(['post', 'delete'], '/guru/{guru}/destroy', [AdminDashboardController::class, 'destroyGuru'])->name('guru.destroy');
     Route::post('/kenaikan-kelas/toggle', [AdminDashboardController::class, 'toggleKenaikanKelas'])->name('kenaikan_kelas.toggle');
 });

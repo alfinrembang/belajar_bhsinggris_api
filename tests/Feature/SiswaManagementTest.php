@@ -275,7 +275,7 @@ class SiswaManagementTest extends TestCase
     }
 
     /**
-     * Guru dapat menghapus siswa beserta cascading progres belajarnya.
+     * Guru dapat menghapus siswa beserta cascading progres belajarnya menggunakan method POST atau DELETE.
      */
     public function test_guru_can_delete_siswa(): void
     {
@@ -287,6 +287,65 @@ class SiswaManagementTest extends TestCase
         $this->assertDatabaseMissing('siswas', [
             'id' => $siswa->id,
         ]);
+    }
+
+    /**
+     * Guru dapat menghapus siswa menggunakan method HTTP DELETE (kompatibel dengan modal-delete).
+     */
+    public function test_guru_can_delete_siswa_via_delete_http_method(): void
+    {
+        $siswa = Siswa::factory()->create();
+
+        $response = $this->actingAs($this->guru)->delete("/siswa/{$siswa->id}/destroy");
+
+        $response->assertRedirect(route('guru.siswa.index'));
+        $this->assertDatabaseMissing('siswas', [
+            'id' => $siswa->id,
+        ]);
+    }
+
+    /**
+     * Guru dapat menghapus beberapa akun siswa sekaligus secara masal (Bulk Delete).
+     */
+    public function test_guru_can_bulk_delete_students(): void
+    {
+        $siswa1 = Siswa::factory()->create(['nama_lengkap' => 'Siswa Dihapus 1']);
+        $siswa2 = Siswa::factory()->create(['nama_lengkap' => 'Siswa Dihapus 2']);
+        $siswa3 = Siswa::factory()->create(['nama_lengkap' => 'Siswa Tetap Ada']);
+
+        $materi = Materi::factory()->create();
+        SiswaMateriProgres::create([
+            'siswa_id' => $siswa1->id,
+            'materi_id' => $materi->id,
+            'skor' => 80,
+            'status' => 'selesai',
+            'xp_didapat' => 100,
+        ]);
+
+        $response = $this->actingAs($this->guru)->post(route('guru.siswa.bulk_destroy'), [
+            'siswa_ids' => [$siswa1->id, $siswa2->id],
+        ]);
+
+        $response->assertRedirect(route('guru.siswa.index'));
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseMissing('siswas', ['id' => $siswa1->id]);
+        $this->assertDatabaseMissing('siswas', ['id' => $siswa2->id]);
+        $this->assertDatabaseHas('siswas', ['id' => $siswa3->id]);
+
+        $this->assertDatabaseMissing('siswa_materi_progres', ['siswa_id' => $siswa1->id]);
+    }
+
+    /**
+     * Bulk delete gagal validasi jika tidak ada siswa yang dipilih.
+     */
+    public function test_bulk_delete_requires_valid_siswa_ids(): void
+    {
+        $response = $this->actingAs($this->guru)->post(route('guru.siswa.bulk_destroy'), [
+            'siswa_ids' => [],
+        ]);
+
+        $response->assertSessionHasErrors('siswa_ids');
     }
 
     /**
