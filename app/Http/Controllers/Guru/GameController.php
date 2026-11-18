@@ -42,11 +42,11 @@ class GameController extends Controller
             $totalPoin = $fScore + ($koin * 5);
 
             $kelasLengkap = $s->kelas;
-            if (!empty($s->jurusan)) {
-                $kelasLengkap .= ' ' . $s->jurusan;
+            if (! empty($s->jurusan)) {
+                $kelasLengkap .= ' '.$s->jurusan;
             }
-            if (!empty($s->no_kelas)) {
-                $kelasLengkap .= ' ' . $s->no_kelas;
+            if (! empty($s->no_kelas)) {
+                $kelasLengkap .= ' '.$s->no_kelas;
             }
 
             $leaderboard[] = [
@@ -109,7 +109,7 @@ class GameController extends Controller
                         break;
                     }
                 }
-                if (!$exists) {
+                if (! $exists) {
                     $leaderboard[] = $def;
                 }
             }
@@ -120,7 +120,7 @@ class GameController extends Controller
         }
 
         // Filter pencarian leaderboard jika ada input search
-        if (!empty($search)) {
+        if (! empty($search)) {
             $leaderboard = array_filter($leaderboard, function ($item) use ($search) {
                 return stripos($item['nama'], $search) !== false ||
                        stripos($item['kelas'], $search) !== false;
@@ -139,20 +139,20 @@ class GameController extends Controller
         $topPlayer = $rankedLeaderboard[0] ?? null;
         $totalPesertaAktif = count($siswas);
         $totalSoalIkan = FishingSoal::count();
-        
+
         // 5. Query Bank Soal Tangkap Ikan
         $soalQuery = FishingSoal::query()->latest();
-        if (!empty($search)) {
+        if (! empty($search)) {
             $soalQuery->where(function ($q) use ($search) {
                 $q->where('word', 'like', "%{$search}%")
-                  ->orWhere('meaning', 'like', "%{$search}%")
-                  ->orWhere('part_of_speech', 'like', "%{$search}%");
+                    ->orWhere('meaning', 'like', "%{$search}%")
+                    ->orWhere('part_of_speech', 'like', "%{$search}%");
             });
         }
-        if (!empty($levelFilter)) {
+        if (! empty($levelFilter)) {
             $soalQuery->where('level', (int) $levelFilter);
         }
-        if (!empty($diffFilter)) {
+        if (! empty($diffFilter)) {
             $soalQuery->where('difficulty', $diffFilter);
         }
         $daftarSoalIkan = $soalQuery->paginate(10)->withQueryString();
@@ -231,6 +231,6 @@ class GameController extends Controller
         $soal->delete();
 
         return redirect()->route('guru.game.index')
-            ->with('success', 'Soal kosakata "' . $word . '" berhasil dihapus.');
+            ->with('success', 'Soal kosakata "'.$word.'" berhasil dihapus.');
     }
 }

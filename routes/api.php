@@ -58,7 +58,6 @@ Route::get('/quiz/{id}', [QuizApiController::class, 'show']);
 // Mengirim lembar jawaban kuis siswa (+ evaluasi nilai & XP reward server-side)
 Route::post('/quiz/{id}/submit', [QuizApiController::class, 'submit']);
 
-
 // 2D. MODUL GAME WORD FISHING / PANCING KATA (FLUTTER SISWA)
 // Mengambil daftar soal memancing berbobot edukasi & part of speech (?level=1&difficulty=mudah)
 Route::get('/fishing/soal', [FishingApiController::class, 'getSoal']);

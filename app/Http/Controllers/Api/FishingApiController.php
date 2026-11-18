@@ -228,11 +228,11 @@ class FishingApiController extends Controller
             $totalScore = $fScore + ($koin * 5);
 
             $kelasLengkap = $s->kelas;
-            if (!empty($s->jurusan)) {
-                $kelasLengkap .= ' ' . $s->jurusan;
+            if (! empty($s->jurusan)) {
+                $kelasLengkap .= ' '.$s->jurusan;
             }
-            if (!empty($s->no_kelas)) {
-                $kelasLengkap .= ' ' . $s->no_kelas;
+            if (! empty($s->no_kelas)) {
+                $kelasLengkap .= ' '.$s->no_kelas;
             }
 
             $leaderboard[] = [
@@ -295,7 +295,7 @@ class FishingApiController extends Controller
                         break;
                     }
                 }
-                if (!$exists) {
+                if (! $exists) {
                     $leaderboard[] = $def;
                 }
             }
