@@ -4,6 +4,30 @@
     pageSubtitle="Analisis komprehensif perkembangan belajar siswa, ketuntasan KKM, dan evaluasi nilai modul." 
     active="laporan"
 >
+    <!-- Tab Navigasi Sub-Modul Laporan & Analitik -->
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-6 bg-white p-3 rounded-2xl border border-slate-100 shadow-xs">
+        <div class="flex items-center gap-1.5 flex-wrap">
+            <a href="{{ route('guru.laporan.index') }}" 
+               class="px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 bg-[#4EA87D] text-white shadow-xs">
+                <span>📊</span> Leger Nilai Kolektif
+            </a>
+            <a href="{{ route('guru.laporan.materi') }}" 
+               class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all flex items-center gap-2">
+                <span>📚</span> Nilai per Materi & Kategori
+            </a>
+            <a href="{{ route('guru.laporan.quiz') }}" 
+               class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all flex items-center gap-2">
+                <span>📝</span> Rekap Nilai Kuis
+            </a>
+        </div>
+
+        <a href="{{ route('guru.pengaturan.index') }}" 
+           class="px-3.5 py-1.5 rounded-xl bg-slate-50 hover:bg-[#EAF5EF] border border-slate-200/80 hover:border-[#D7EDE1] text-slate-600 hover:text-[#2E7352] text-xs font-bold transition-all flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-[#4EA87D]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            <span>Komposisi Nilai ({{ $bobotMateri }}% : {{ $bobotListening }}% : {{ $bobotQuiz }}%)</span>
+        </a>
+    </div>
+
     <!-- Bar Aksi Atas: Filter Kelas, Jurusan, Status & Tombol Unduh / Cetak -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 lg:p-6 rounded-3xl border border-slate-100 shadow-xs">
         <form method="GET" action="{{ route('guru.laporan.index') }}" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto flex-1">
@@ -157,7 +181,7 @@
                     <line x1="12" y1="8" x2="12.01" y2="8"></line>
                 </svg>
                 <div>
-                    <span class="font-bold text-slate-700">Rumus Nilai Akhir:</span> 30% Modul Materi + 30% Modul Listening + 40% Kuis/Ujian. Standar KKM kelulusan adalah <strong>{{ $kkm }}</strong>.
+                    <span class="font-bold text-slate-700">Rumus Nilai Akhir:</span> {{ $bobotMateri }}% Modul Materi + {{ $bobotListening }}% Modul Listening + {{ $bobotQuiz }}% Kuis/Ujian. Standar KKM kelulusan adalah <strong>{{ $kkm }}</strong>.
                 </div>
             </div>
         </div>
@@ -329,9 +353,9 @@
                         <th class="py-3.5 px-6">No</th>
                         <th class="py-3.5 px-6">Nama Siswa & NIS</th>
                         <th class="py-3.5 px-6">Rombel Kelas</th>
-                        <th class="py-3.5 px-6 text-center">Materi (30%)</th>
-                        <th class="py-3.5 px-6 text-center">Listening (30%)</th>
-                        <th class="py-3.5 px-6 text-center">Kuis (40%)</th>
+                        <th class="py-3.5 px-6 text-center">Materi ({{ $bobotMateri }}%)</th>
+                        <th class="py-3.5 px-6 text-center">Listening ({{ $bobotListening }}%)</th>
+                        <th class="py-3.5 px-6 text-center">Kuis ({{ $bobotQuiz }}%)</th>
                         <th class="py-3.5 px-6 text-center">Nilai Akhir</th>
                         <th class="py-3.5 px-6 text-center">Status</th>
                         <th class="py-3.5 px-6 text-center">Aksi</th>

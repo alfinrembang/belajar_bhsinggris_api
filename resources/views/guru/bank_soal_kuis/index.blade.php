@@ -66,8 +66,13 @@
             @endif
         </form>
 
-        <!-- Tombol Aksi: Import via AI & Buat Paket Kuis -->
+        <!-- Tombol Aksi: Import via AI, Rekap Nilai & Buat Paket Kuis -->
         <div class="flex items-center gap-2.5 shrink-0 self-start xl:self-auto">
+            <a href="{{ route('guru.laporan.quiz') }}" 
+               class="px-4 py-2.5 rounded-2xl bg-[#EAF5EF] hover:bg-[#D7EDE1] text-[#2E7352] text-xs font-bold transition-all flex items-center gap-2">
+                <span>📝</span> Rekap Nilai Kuis
+            </a>
+
             <x-button-ai-import target="quiz" />
 
             <x-button variant="create" href="{{ route('guru.quiz.create') }}">

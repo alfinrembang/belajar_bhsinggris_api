@@ -61,7 +61,7 @@
                 LEGER REKAPITULASI PENILAIAN HASIL BELAJAR SISWA
             </h2>
             <p class="text-xs text-slate-500 mt-1">
-                Mata Pelajaran: <strong>Bahasa Inggris (English Core & Literacy)</strong> • Kriteria Ketuntasan Minimal (KKM): <strong>{{ $kkm }}</strong>
+                Mata Pelajaran: <strong>Bahasa Inggris (English Core & Literacy)</strong> • KKM: <strong>{{ $kkm }}</strong> • Komposisi Nilai: <strong>Materi {{ $bobotMateri ?? 30 }}% + Listening {{ $bobotListening ?? 30 }}% + Kuis {{ $bobotQuiz ?? 40 }}%</strong>
             </p>
             <div class="flex flex-wrap items-center justify-center gap-4 text-[11px] text-slate-600 mt-2">
                 <span>🗓️ Tanggal Cetak: <strong>{{ date('d F Y') }}</strong></span>
@@ -99,9 +99,9 @@
                         <th class="py-2.5 px-4 border border-slate-300 text-left">Nama Siswa</th>
                         <th class="py-2.5 px-3 border border-slate-300 w-24">NIS</th>
                         <th class="py-2.5 px-3 border border-slate-300 w-28">Rombel</th>
-                        <th class="py-2.5 px-3 border border-slate-300 w-20">Materi (30%)</th>
-                        <th class="py-2.5 px-3 border border-slate-300 w-20">Listening (30%)</th>
-                        <th class="py-2.5 px-3 border border-slate-300 w-20">Kuis (40%)</th>
+                        <th class="py-2.5 px-3 border border-slate-300 w-20">Materi ({{ $bobotMateri ?? 30 }}%)</th>
+                        <th class="py-2.5 px-3 border border-slate-300 w-20">Listening ({{ $bobotListening ?? 30 }}%)</th>
+                        <th class="py-2.5 px-3 border border-slate-300 w-20">Kuis ({{ $bobotQuiz ?? 40 }}%)</th>
                         <th class="py-2.5 px-3 border border-slate-300 w-20">Nilai Akhir</th>
                         <th class="py-2.5 px-3 border border-slate-300 w-24">Keterangan</th>
                     </tr>

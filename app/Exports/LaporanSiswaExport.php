@@ -19,7 +19,10 @@ class LaporanSiswaExport implements FromView, ShouldAutoSize, WithTitle
         protected int $totalSiswa,
         protected int $totalTuntas,
         protected int $totalRemedial,
-        protected float $rataRataKelas
+        protected float $rataRataKelas,
+        protected int $bobotMateri = 30,
+        protected int $bobotListening = 30,
+        protected int $bobotQuiz = 40
     ) {}
 
     /**
@@ -34,6 +37,9 @@ class LaporanSiswaExport implements FromView, ShouldAutoSize, WithTitle
             'totalTuntas' => $this->totalTuntas,
             'totalRemedial' => $this->totalRemedial,
             'rataRataKelas' => $this->rataRataKelas,
+            'bobotMateri' => $this->bobotMateri,
+            'bobotListening' => $this->bobotListening,
+            'bobotQuiz' => $this->bobotQuiz,
         ]);
     }
 

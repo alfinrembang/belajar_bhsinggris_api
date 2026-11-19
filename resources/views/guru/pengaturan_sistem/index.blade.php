@@ -186,6 +186,89 @@
                         </div>
                     </div>
 
+                    <!-- PENENTUAN KOMPOSISI BOBOT NILAI AKHIR (POIN 4 REVISI) -->
+                    <div class="p-4 sm:p-5 rounded-2xl bg-[#F8FAF9] border border-[#D7EDE1] space-y-3">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div>
+                                <h4 class="font-extrabold text-slate-800 text-xs flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-[#4EA87D]"></span>
+                                    Komposisi Bobot Nilai Akhir Siswa
+                                </h4>
+                                <p class="text-[11px] text-slate-500 mt-0.5">
+                                    Tentukan persentase kontribusi masing-masing pilar nilai terhadap rapor akhir (Total akumulasi wajib 100%).
+                                </p>
+                            </div>
+                            <div id="badge-total-container" class="shrink-0">
+                                <span id="badge-total-bobot" class="px-3 py-1 rounded-full text-xs font-extrabold inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                    <span id="badge-icon">✓</span> Total: <span id="text-total-bobot">100</span>%
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                            <!-- 1. Bobot Materi -->
+                            <div class="bg-white p-3 rounded-xl border border-slate-200/80 shadow-2xs">
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">
+                                    📚 Modul Materi (%)
+                                </label>
+                                <div class="relative">
+                                    <input type="number" 
+                                           id="input_bobot_materi"
+                                           name="bobot_materi" 
+                                           min="0" 
+                                           max="100" 
+                                           required
+                                           value="{{ old('bobot_materi', $pengaturanAkademik->bobot_materi ?? 30) }}"
+                                           class="w-full px-3 py-2 pr-7 rounded-lg bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none input-bobot">
+                                    <span class="absolute right-2.5 top-2 text-xs font-bold text-slate-400">%</span>
+                                </div>
+                                <span class="text-[10px] text-slate-400 mt-1 block">Pemahaman materi bacaan</span>
+                            </div>
+
+                            <!-- 2. Bobot Listening -->
+                            <div class="bg-white p-3 rounded-xl border border-slate-200/80 shadow-2xs">
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">
+                                    🎧 Audio Listening (%)
+                                </label>
+                                <div class="relative">
+                                    <input type="number" 
+                                           id="input_bobot_listening"
+                                           name="bobot_listening" 
+                                           min="0" 
+                                           max="100" 
+                                           required
+                                           value="{{ old('bobot_listening', $pengaturanAkademik->bobot_listening ?? 30) }}"
+                                           class="w-full px-3 py-2 pr-7 rounded-lg bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none input-bobot">
+                                    <span class="absolute right-2.5 top-2 text-xs font-bold text-slate-400">%</span>
+                                </div>
+                                <span class="text-[10px] text-slate-400 mt-1 block">Evaluasi audio listening</span>
+                            </div>
+
+                            <!-- 3. Bobot Quiz -->
+                            <div class="bg-white p-3 rounded-xl border border-slate-200/80 shadow-2xs">
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">
+                                    📝 Bank Soal & Kuis (%)
+                                </label>
+                                <div class="relative">
+                                    <input type="number" 
+                                           id="input_bobot_quiz"
+                                           name="bobot_quiz" 
+                                           min="0" 
+                                           max="100" 
+                                           required
+                                           value="{{ old('bobot_quiz', $pengaturanAkademik->bobot_quiz ?? 40) }}"
+                                           class="w-full px-3 py-2 pr-7 rounded-lg bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none input-bobot">
+                                    <span class="absolute right-2.5 top-2 text-xs font-bold text-slate-400">%</span>
+                                </div>
+                                <span class="text-[10px] text-slate-400 mt-1 block">Ujian & kuis interaktif</span>
+                            </div>
+                        </div>
+
+                        <p id="bobot-error-message" class="text-[11px] font-semibold text-rose-600 hidden">
+                            ⚠️ Perhatian: Total akumulasi bobot harus tepat 100% sebelum disimpan.
+                        </p>
+                    </div>
+
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Keterangan Catatan Akademik (Opsional)</label>
                         <input type="text" 
@@ -306,4 +389,46 @@
         </div>
 
     </div>
+
+    <!-- Script Kalkulator Live Validasi Bobot Nilai 100% -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const inMateri = document.getElementById('input_bobot_materi');
+            const inListening = document.getElementById('input_bobot_listening');
+            const inQuiz = document.getElementById('input_bobot_quiz');
+            const badge = document.getElementById('badge-total-bobot');
+            const txtTotal = document.getElementById('text-total-bobot');
+            const icon = document.getElementById('badge-icon');
+            const errMsg = document.getElementById('bobot-error-message');
+
+            function updateTotalBobot() {
+                const m = parseInt(inMateri.value) || 0;
+                const l = parseInt(inListening.value) || 0;
+                const q = parseInt(inQuiz.value) || 0;
+                const total = m + l + q;
+
+                txtTotal.textContent = total;
+
+                if (total === 100) {
+                    badge.className = "px-3 py-1 rounded-full text-xs font-extrabold inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 border border-emerald-200";
+                    icon.textContent = "✓";
+                    errMsg.classList.add('hidden');
+                } else {
+                    badge.className = "px-3 py-1 rounded-full text-xs font-extrabold inline-flex items-center gap-1.5 bg-rose-100 text-rose-800 border border-rose-200 animate-pulse";
+                    icon.textContent = "⚠️";
+                    errMsg.classList.remove('hidden');
+                    errMsg.textContent = `⚠️ Perhatian: Total akumulasi bobot saat ini ${total}% (wajib tepat 100% agar perhitungan nilai akurat).`;
+                }
+            }
+
+            [inMateri, inListening, inQuiz].forEach(input => {
+                if (input) {
+                    input.addEventListener('input', updateTotalBobot);
+                }
+            });
+
+            // Jalankan sekali saat halaman dimuat
+            updateTotalBobot();
+        });
+    </script>
 </x-layout>

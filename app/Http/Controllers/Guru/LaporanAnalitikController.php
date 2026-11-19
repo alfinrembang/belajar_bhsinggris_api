@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Guru;
 
 use App\Exports\LaporanSiswaExport;
 use App\Http\Controllers\Controller;
+use App\Models\KategoriMateri;
 use App\Models\Materi;
 use App\Models\ModulListening;
+use App\Models\PengaturanAkademik;
 use App\Models\Quiz;
 use App\Models\Siswa;
 use App\Models\SiswaListeningProgres;
@@ -24,10 +26,16 @@ class LaporanAnalitikController extends Controller
     public const KKM = 75;
 
     /**
-     * Menampilkan dashboard Laporan & Analitik komprehensif.
+     * Menampilkan dashboard Laporan & Analitik komprehensif (Leger Nilai Kolektif).
      */
     public function index(Request $request): View
     {
+        $setting = PengaturanAkademik::getActiveSetting();
+        $bobotMateri = (int) ($setting->bobot_materi ?? 30);
+        $bobotListening = (int) ($setting->bobot_listening ?? 30);
+        $bobotQuiz = (int) ($setting->bobot_quiz ?? 40);
+        $kkm = (int) ($setting->kkm_default ?? self::KKM);
+
         $semuaSiswa = $this->getProcessedSiswaCollection($request);
 
         // Filter status kelulusan/ketuntasan jika dipilih
@@ -113,7 +121,6 @@ class LaporanAnalitikController extends Controller
         $remedialSiswa = $semuaSiswa->where('is_tuntas', false)->sortBy('nilai_akhir')->take(5);
 
         $daftarJurusan = ['RPL', 'DKV', 'TSM', 'BD', 'SA', 'MPLB', 'TKKR'];
-        $kkm = self::KKM;
 
         return view('guru.laporan_analitik.index', compact(
             'paginatedSiswa',
@@ -132,7 +139,210 @@ class LaporanAnalitikController extends Controller
             'topSiswa',
             'remedialSiswa',
             'daftarJurusan',
-            'kkm'
+            'kkm',
+            'bobotMateri',
+            'bobotListening',
+            'bobotQuiz'
+        ));
+    }
+
+    /**
+     * Laporan Detail Nilai Siswa per Modul Materi & Kategori Materi (Poin 5 Revisi).
+     */
+    public function materi(Request $request): View
+    {
+        $setting = PengaturanAkademik::getActiveSetting();
+        $kkm = (int) ($setting->kkm_default ?? self::KKM);
+
+        $daftarKategori = KategoriMateri::orderBy('nama')->pluck('nama')->toArray();
+        if (empty($daftarKategori)) {
+            $daftarKategori = Materi::whereNotNull('kategori')->distinct()->pluck('kategori')->toArray();
+        }
+
+        $daftarMateri = Materi::select('id', 'judul', 'kategori', 'tingkat_kelas')->orderBy('judul')->get();
+        $daftarJurusan = ['RPL', 'DKV', 'TSM', 'BD', 'SA', 'MPLB', 'TKKR'];
+
+        $query = SiswaMateriProgres::with(['siswa', 'materi']);
+
+        if ($request->filled('materi_id')) {
+            $query->where('materi_id', $request->input('materi_id'));
+        }
+
+        if ($request->filled('kategori')) {
+            $kategori = $request->input('kategori');
+            $query->whereHas('materi', function ($q) use ($kategori) {
+                $q->where('kategori', $kategori);
+            });
+        }
+
+        if ($request->filled('kelas')) {
+            $kelas = $request->input('kelas');
+            $query->whereHas('siswa', function ($q) use ($kelas) {
+                $q->where('kelas', $kelas);
+            });
+        }
+
+        if ($request->filled('jurusan')) {
+            $jurusan = $request->input('jurusan');
+            $query->whereHas('siswa', function ($q) use ($jurusan) {
+                $q->where('jurusan', $jurusan);
+            });
+        }
+
+        if ($request->filled('q')) {
+            $q = trim((string) $request->input('q'));
+            $query->whereHas('siswa', function ($sq) use ($q) {
+                $sq->where('nama_lengkap', 'like', "%{$q}%")
+                    ->orWhere('nis', 'like', "%{$q}%");
+            });
+        }
+
+        $semuaProgres = (clone $query)->get();
+        $totalProgres = $semuaProgres->count();
+        $rataRataSkor = $totalProgres > 0 ? round($semuaProgres->whereNotNull('skor')->avg('skor'), 1) : 0;
+        $totalSelesai = $semuaProgres->where('status', 'selesai')->count();
+        $totalTuntas = $semuaProgres->where('skor', '>=', $kkm)->count();
+
+        $progresList = $query->latest('completed_at')->paginate(15)->withQueryString();
+
+        return view('guru.laporan_analitik.materi', compact(
+            'progresList',
+            'daftarKategori',
+            'daftarMateri',
+            'daftarJurusan',
+            'kkm',
+            'totalProgres',
+            'rataRataSkor',
+            'totalSelesai',
+            'totalTuntas'
+        ));
+    }
+
+    /**
+     * Rekapitulasi Lengkap Nilai Bank Soal & Kuis Siswa (Poin 6 Revisi).
+     */
+    public function quiz(Request $request): View
+    {
+        $setting = PengaturanAkademik::getActiveSetting();
+        $kkm = (int) ($setting->kkm_default ?? self::KKM);
+
+        $daftarQuiz = Quiz::select('id', 'judul', 'kategori', 'tingkat_kelas')->latest()->get();
+        $daftarJurusan = ['RPL', 'DKV', 'TSM', 'BD', 'SA', 'MPLB', 'TKKR'];
+
+        $query = SiswaQuizProgres::with(['siswa', 'quiz']);
+
+        if ($request->filled('quiz_id')) {
+            $query->where('quiz_id', $request->input('quiz_id'));
+        }
+
+        if ($request->filled('kelas')) {
+            $kelas = $request->input('kelas');
+            $query->whereHas('siswa', function ($q) use ($kelas) {
+                $q->where('kelas', $kelas);
+            });
+        }
+
+        if ($request->filled('jurusan')) {
+            $jurusan = $request->input('jurusan');
+            $query->whereHas('siswa', function ($q) use ($jurusan) {
+                $q->where('jurusan', $jurusan);
+            });
+        }
+
+        if ($request->filled('status')) {
+            $status = $request->input('status');
+            if ($status === 'tuntas') {
+                $query->where('skor', '>=', $kkm);
+            } elseif ($status === 'remedial') {
+                $query->where('skor', '<', $kkm);
+            }
+        }
+
+        if ($request->filled('q')) {
+            $q = trim((string) $request->input('q'));
+            $query->whereHas('siswa', function ($sq) use ($q) {
+                $sq->where('nama_lengkap', 'like', "%{$q}%")
+                    ->orWhere('nis', 'like', "%{$q}%");
+            });
+        }
+
+        $semuaRiwayat = (clone $query)->get();
+        $totalRiwayat = $semuaRiwayat->count();
+        $rataRataSkor = $totalRiwayat > 0 ? round($semuaRiwayat->avg('skor'), 1) : 0;
+        $totalTuntas = $semuaRiwayat->where('skor', '>=', $kkm)->count();
+        $totalRemedial = $totalRiwayat - $totalTuntas;
+
+        $riwayatQuiz = $query->latest('completed_at')->paginate(15)->withQueryString();
+
+        return view('guru.laporan_analitik.quiz', compact(
+            'riwayatQuiz',
+            'daftarQuiz',
+            'daftarJurusan',
+            'kkm',
+            'totalRiwayat',
+            'rataRataSkor',
+            'totalTuntas',
+            'totalRemedial'
+        ));
+    }
+
+    /**
+     * Lembar Cetak Rekapitulasi Nilai Kuis Resmi (Print-Ready).
+     */
+    public function cetakQuiz(Request $request): View
+    {
+        $setting = PengaturanAkademik::getActiveSetting();
+        $kkm = (int) ($setting->kkm_default ?? self::KKM);
+
+        $query = SiswaQuizProgres::with(['siswa', 'quiz']);
+
+        if ($request->filled('quiz_id')) {
+            $query->where('quiz_id', $request->input('quiz_id'));
+        }
+        if ($request->filled('kelas')) {
+            $kelas = $request->input('kelas');
+            $query->whereHas('siswa', function ($q) use ($kelas) {
+                $q->where('kelas', $kelas);
+            });
+        }
+        if ($request->filled('jurusan')) {
+            $jurusan = $request->input('jurusan');
+            $query->whereHas('siswa', function ($q) use ($jurusan) {
+                $q->where('jurusan', $jurusan);
+            });
+        }
+        if ($request->filled('status')) {
+            $status = $request->input('status');
+            if ($status === 'tuntas') {
+                $query->where('skor', '>=', $kkm);
+            } elseif ($status === 'remedial') {
+                $query->where('skor', '<', $kkm);
+            }
+        }
+        if ($request->filled('q')) {
+            $q = trim((string) $request->input('q'));
+            $query->whereHas('siswa', function ($sq) use ($q) {
+                $sq->where('nama_lengkap', 'like', "%{$q}%")
+                    ->orWhere('nis', 'like', "%{$q}%");
+            });
+        }
+
+        $riwayatQuiz = $query->latest('completed_at')->get();
+        $totalRiwayat = $riwayatQuiz->count();
+        $rataRataSkor = $totalRiwayat > 0 ? round($riwayatQuiz->avg('skor'), 1) : 0;
+        $totalTuntas = $riwayatQuiz->where('skor', '>=', $kkm)->count();
+        $totalRemedial = $totalRiwayat - $totalTuntas;
+
+        $quizPilihan = $request->filled('quiz_id') ? Quiz::find($request->input('quiz_id')) : null;
+
+        return view('guru.laporan_analitik.quiz_cetak', compact(
+            'riwayatQuiz',
+            'kkm',
+            'totalRiwayat',
+            'rataRataSkor',
+            'totalTuntas',
+            'totalRemedial',
+            'quizPilihan'
         ));
     }
 
@@ -141,8 +351,13 @@ class LaporanAnalitikController extends Controller
      */
     public function exportExcel(Request $request): BinaryFileResponse
     {
+        $setting = PengaturanAkademik::getActiveSetting();
+        $bobotMateri = (int) ($setting->bobot_materi ?? 30);
+        $bobotListening = (int) ($setting->bobot_listening ?? 30);
+        $bobotQuiz = (int) ($setting->bobot_quiz ?? 40);
+        $kkm = (int) ($setting->kkm_default ?? self::KKM);
+
         $siswaCollection = $this->getProcessedSiswaCollection($request);
-        $kkm = self::KKM;
 
         $totalSiswa = $siswaCollection->count();
         $totalTuntas = $siswaCollection->where('is_tuntas', true)->count();
@@ -158,7 +373,10 @@ class LaporanAnalitikController extends Controller
                 $totalSiswa,
                 $totalTuntas,
                 $totalRemedial,
-                $rataRataKelas
+                $rataRataKelas,
+                $bobotMateri,
+                $bobotListening,
+                $bobotQuiz
             ),
             $filename
         );
@@ -169,8 +387,13 @@ class LaporanAnalitikController extends Controller
      */
     public function exportCsv(Request $request): StreamedResponse
     {
-        $siswaCollection = $this->getProcessedSiswaCollection($request);
+        $setting = PengaturanAkademik::getActiveSetting();
+        $bobotMateri = (int) ($setting->bobot_materi ?? 30);
+        $bobotListening = (int) ($setting->bobot_listening ?? 30);
+        $bobotQuiz = (int) ($setting->bobot_quiz ?? 40);
+        $kkm = (int) ($setting->kkm_default ?? self::KKM);
 
+        $siswaCollection = $this->getProcessedSiswaCollection($request);
         $filename = 'rekap_nilai_siswa_'.date('Y-m-d_His').'.csv';
 
         $headers = [
@@ -181,24 +404,24 @@ class LaporanAnalitikController extends Controller
             'Expires' => '0',
         ];
 
-        return response()->stream(function () use ($siswaCollection): void {
+        return response()->stream(function () use ($siswaCollection, $bobotMateri, $bobotListening, $bobotQuiz, $kkm): void {
             $handle = fopen('php://output', 'w');
 
             // Tambahkan UTF-8 Byte Order Mark (BOM) agar simbol teks terbuka dengan benar di Microsoft Excel
             fwrite($handle, "\xEF\xBB\xBF");
 
-            // Header Kolom CSV
+            // Header Kolom CSV Dinamis Sesuai Bobot Aktif
             fputcsv($handle, [
                 'No',
                 'Nama Lengkap Siswa',
                 'NIS',
                 'NISN',
                 'Rombel Kelas',
-                'Rerata Modul Materi (30%)',
-                'Rerata Listening Audio (30%)',
-                'Rerata Kuis & Ujian (40%)',
+                "Rerata Modul Materi ({$bobotMateri}%)",
+                "Rerata Listening Audio ({$bobotListening}%)",
+                "Rerata Kuis & Ujian ({$bobotQuiz}%)",
                 'Nilai Akhir Rapor',
-                'Status Ketuntasan (KKM 75)',
+                "Status Ketuntasan (KKM {$kkm})",
                 'Total XP',
             ]);
 
@@ -227,8 +450,13 @@ class LaporanAnalitikController extends Controller
      */
     public function cetak(Request $request): View
     {
+        $setting = PengaturanAkademik::getActiveSetting();
+        $bobotMateri = (int) ($setting->bobot_materi ?? 30);
+        $bobotListening = (int) ($setting->bobot_listening ?? 30);
+        $bobotQuiz = (int) ($setting->bobot_quiz ?? 40);
+        $kkm = (int) ($setting->kkm_default ?? self::KKM);
+
         $siswaCollection = $this->getProcessedSiswaCollection($request);
-        $kkm = self::KKM;
 
         $totalSiswa = $siswaCollection->count();
         $totalTuntas = $siswaCollection->where('is_tuntas', true)->count();
@@ -241,7 +469,10 @@ class LaporanAnalitikController extends Controller
             'totalSiswa',
             'totalTuntas',
             'totalRemedial',
-            'rataRataKelas'
+            'rataRataKelas',
+            'bobotMateri',
+            'bobotListening',
+            'bobotQuiz'
         ));
     }
 
@@ -252,6 +483,12 @@ class LaporanAnalitikController extends Controller
      */
     private function getProcessedSiswaCollection(Request $request): Collection
     {
+        $setting = PengaturanAkademik::getActiveSetting();
+        $bobotMateri = (int) ($setting->bobot_materi ?? 30);
+        $bobotListening = (int) ($setting->bobot_listening ?? 30);
+        $bobotQuiz = (int) ($setting->bobot_quiz ?? 40);
+        $kkm = (int) ($setting->kkm_default ?? self::KKM);
+
         $query = Siswa::query()->with([
             'materiProgres',
             'listeningProgres',
@@ -279,7 +516,7 @@ class LaporanAnalitikController extends Controller
             $query->where('jurusan', $request->input('jurusan'));
         }
 
-        return $query->get()->map(function (Siswa $siswa): array {
+        return $query->get()->map(function (Siswa $siswa) use ($bobotMateri, $bobotListening, $bobotQuiz, $kkm): array {
             $materiSkors = $siswa->materiProgres->pluck('skor')->filter();
             $rataMateri = $materiSkors->isNotEmpty() ? round($materiSkors->avg(), 1) : 0;
 
@@ -289,14 +526,19 @@ class LaporanAnalitikController extends Controller
             $quizSkors = $siswa->quizProgres->pluck('skor')->filter();
             $rataQuiz = $quizSkors->isNotEmpty() ? round($quizSkors->avg(), 1) : 0;
 
-            // Bobot Nilai Akhir: 30% Materi + 30% Listening + 40% Quiz
-            $nilaiAkhir = round(($rataMateri * 0.3) + ($rataListening * 0.3) + ($rataQuiz * 0.4), 1);
+            // Bobot Nilai Akhir Dinamis Sesuai Kebijakan Guru / Pengaturan Akademik
+            $nilaiAkhir = round(
+                ($rataMateri * ($bobotMateri / 100)) +
+                ($rataListening * ($bobotListening / 100)) +
+                ($rataQuiz * ($bobotQuiz / 100)),
+                1
+            );
 
             $totalXp = ($siswa->materiProgres->sum('xp_didapat') ?? 0)
                 + ($siswa->listeningProgres->sum('xp_didapat') ?? 0)
                 + ($siswa->quizProgres->sum('xp_didapat') ?? 0);
 
-            $isTuntas = $nilaiAkhir >= self::KKM;
+            $isTuntas = $nilaiAkhir >= $kkm;
 
             return [
                 'id' => $siswa->id,
