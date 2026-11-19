@@ -2,16 +2,19 @@
 <div class="bg-white p-4 lg:p-5 rounded-3xl border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col md:flex-row md:items-center justify-between gap-4">
     <!-- Form Pencarian dengan Indikator Reset -->
     <div class="flex items-center gap-3 w-full md:w-auto">
-        <form method="GET" action="{{ route('guru.game.index') }}" class="relative w-full md:w-96">
-            <svg class="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <form method="GET" action="{{ route('guru.game.index') }}" class="relative w-full sm:w-80 md:w-96">
+            <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
             <input type="text" 
                    name="q"
                    value="{{ $search ?? '' }}"
-                   placeholder="Cari kosakata, arti kata, atau nama siswa..." 
-                   class="w-full pl-11 pr-10 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/90 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
+                   autocomplete="off"
+                   autocorrect="off"
+                   spellcheck="false"
+                   placeholder="Cari kosakata, arti, atau siswa..." 
+                   class="w-full pl-10 pr-9 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/90 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
             @if(!empty($search))
                 <a href="{{ route('guru.game.index') }}" 
                    title="Hapus pencarian"
@@ -29,15 +32,21 @@
         @endif
     </div>
 
-    <!-- Aksi Utama: Tombol Tambah Soal Kosakata -->
-    <div class="flex items-center gap-2.5 shrink-0">
+    <!-- Aksi Cepat Guru: Tambah Soal / Import -->
+    <div class="flex flex-wrap items-center gap-2 shrink-0">
+        <button type="button" 
+                onclick="openModal('modalImportFishing')"
+                class="px-3.5 py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            <span>Import Excel</span>
+        </button>
         <x-button variant="create" type="button" onclick="openModal('modalTambahSoalIkan')" class="!shadow-[0_4px_14px_rgba(78,168,125,0.22)]">
             Tambah Soal Kosakata
         </x-button>
     </div>
 </div>
 
-<!-- Ringkasan Statistik Metrik Game (Bespoke Dashboard Architecture) -->
+<!-- Ringkasan Statistik Metrik Game -->
 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-5">
     
     <!-- Kartu 1: Modul Engine Game Mobile -->
@@ -48,11 +57,11 @@
             <div class="flex flex-wrap items-center gap-1.5 pt-1 text-[11px]">
                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#EAF5EF] text-[#2E7352] font-semibold border border-[#D7EDE1]">
                     <span class="w-1.5 h-1.5 rounded-full bg-[#4EA87D]"></span>
-                    Word Fishing
+                    Word Fishing ({{ $totalSoalIkan }})
                 </span>
                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-semibold border border-indigo-100">
                     <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                    Wolf vs Sheep
+                    Wolf vs Sheep ({{ $totalSoalWerewolf ?? 0 }})
                 </span>
             </div>
         </div>
@@ -96,9 +105,9 @@
     <!-- Kartu 3: Total Bank Kosakata & Siswa Aktif -->
     <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex items-start justify-between gap-4">
         <div class="space-y-1.5 min-w-0">
-            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Bank Soal Kosakata</p>
+            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total Bank Kosakata</p>
             <h3 class="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight">
-                {{ $totalSoalIkan }} <span class="text-sm font-semibold text-slate-500">Butir</span>
+                {{ $totalSoalIkan + ($totalSoalWerewolf ?? 0) }} <span class="text-sm font-semibold text-slate-500">Butir</span>
             </h3>
             <div class="flex items-center gap-1.5 pt-1 text-[11px] text-slate-500 font-medium">
                 <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 font-semibold">

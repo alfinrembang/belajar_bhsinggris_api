@@ -66,7 +66,18 @@ Route::get('/fishing/progres', [FishingApiController::class, 'getProgres']);
 // Menyimpan hasil penangkapan ikan & koin reward (One-time reward)
 Route::post('/fishing/selesai', [FishingApiController::class, 'submitSelesai']);
 
-// 2E. LEADERBOARD GAME SISWA (TOP SKOR DINAMIS)
+// 2E. MODUL GAME TEBAK SERIGALA (WOLF VS SHEEP)
+// Mengambil daftar pasangan kata kartu yang dikelola guru
+Route::get('/werewolf/words', function () {
+    $words = \App\Models\WerewolfSoal::where('is_active', true)->latest()->get();
+    return response()->json([
+        'status' => 'success',
+        'total' => $words->count(),
+        'data' => $words,
+    ]);
+});
+
+// 2F. LEADERBOARD GAME SISWA (TOP SKOR DINAMIS)
 Route::get('/game/leaderboard', [FishingApiController::class, 'getLeaderboard']);
 
 // 3. RUTE TERPROTEKSI SISWA (Wajib Token Siswa)

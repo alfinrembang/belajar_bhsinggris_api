@@ -82,8 +82,18 @@ Route::middleware(['auth'])->group(function () {
 
     // Mini Games & Leaderboard Guru (Dinamis Sesuai Game Mobile)
     Route::get('/games', [GameController::class, 'index'])->name('guru.game.index');
+    
+    // Game 1: Tangkap Ikan (Word Fishing)
     Route::post('/games/fishing/soal', [GameController::class, 'storeFishingSoal'])->name('guru.game.fishing.store');
     Route::match(['post', 'delete'], '/games/fishing/soal/{id}/delete', [GameController::class, 'destroyFishingSoal'])->name('guru.game.fishing.destroy');
+    Route::post('/games/fishing/import', [GameController::class, 'importFishingExcel'])->name('guru.game.fishing.import');
+    Route::get('/games/fishing/template', [GameController::class, 'downloadFishingTemplate'])->name('guru.game.fishing.template');
+
+    // Game 2: Tebak Serigala (Wolf vs Sheep)
+    Route::post('/games/werewolf/soal', [GameController::class, 'storeWerewolfSoal'])->name('guru.game.werewolf.store');
+    Route::match(['post', 'delete'], '/games/werewolf/soal/{id}/delete', [GameController::class, 'destroyWerewolfSoal'])->name('guru.game.werewolf.destroy');
+    Route::post('/games/werewolf/import', [GameController::class, 'importWerewolfExcel'])->name('guru.game.werewolf.import');
+    Route::get('/games/werewolf/template', [GameController::class, 'downloadWerewolfTemplate'])->name('guru.game.werewolf.template');
 
     // MODUL 5: LAPORAN & ANALITIK GURU
     Route::get('/laporan', [LaporanAnalitikController::class, 'index'])->name('guru.laporan.index');
