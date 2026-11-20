@@ -8,6 +8,7 @@ use App\Http\Requests\Guru\UpdateMateriRequest;
 use App\Models\KategoriMateri;
 use App\Models\Materi;
 use App\Models\MateriSoal;
+use App\Models\Siswa;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -37,8 +38,22 @@ class MateriController extends Controller
             $query->where('kategori', $request->kategori);
         }
 
-        // Filter berdasarkan Tingkat Kelas
-        if ($request->filled('kelas')) {
+        // Filter Rombel Kelas Terpadu (Dinamis Berdasarkan Data Siswa Nyata)
+        if ($request->filled('rombel')) {
+            $rombel = trim((string) $request->input('rombel'));
+            if (str_starts_with($rombel, 'tingkat:')) {
+                $tingkat = str_replace('tingkat:', '', $rombel);
+                $query->where(function ($q) use ($tingkat) {
+                    $q->where('tingkat_kelas', $tingkat)
+                        ->orWhere('tingkat_kelas', 'Semua Kelas');
+                });
+            } else {
+                $query->where(function ($q) use ($rombel) {
+                    $q->where('target_rombel', $rombel)
+                        ->orWhereNull('target_rombel');
+                });
+            }
+        } elseif ($request->filled('kelas')) {
             $query->where(function ($q) use ($request) {
                 $q->where('tingkat_kelas', $request->kelas)
                     ->orWhere('tingkat_kelas', 'Semua Kelas');
@@ -73,8 +88,17 @@ class MateriController extends Controller
         $totalMateri = $totalQuery->count();
         $totalAktif = $aktifQuery->count();
         $kategoriList = KategoriMateri::where('is_aktif', true)->orderBy('urutan')->get();
+        $daftarRombelGrouped = Siswa::getDaftarRombelGrouped();
+        $daftarKelas = Siswa::getDaftarKelas();
 
-        return view('guru.manajemen_materi.index', compact('materis', 'totalMateri', 'totalAktif', 'kategoriList'));
+        return view('guru.manajemen_materi.index', compact(
+            'materis',
+            'totalMateri',
+            'totalAktif',
+            'kategoriList',
+            'daftarRombelGrouped',
+            'daftarKelas'
+        ));
     }
 
     /**
@@ -83,9 +107,10 @@ class MateriController extends Controller
     public function create(): View
     {
         $kategoriList = KategoriMateri::where('is_aktif', true)->orderBy('urutan')->get();
-        $kelasDiampu = auth()->user()->kelas_diampu ?? [];
+        $daftarKelas = Siswa::getDaftarKelas();
+        $daftarRombelGrouped = Siswa::getDaftarRombelGrouped();
 
-        return view('guru.manajemen_materi.create', compact('kategoriList', 'kelasDiampu'));
+        return view('guru.manajemen_materi.create', compact('kategoriList', 'daftarKelas', 'daftarRombelGrouped'));
     }
 
     /**
@@ -171,9 +196,15 @@ class MateriController extends Controller
 
         $materi->load('soals');
         $kategoriList = KategoriMateri::where('is_aktif', true)->orderBy('urutan')->get();
-        $kelasDiampu = auth()->user()->kelas_diampu ?? [];
+        $daftarKelas = Siswa::getDaftarKelas();
+        $daftarRombelGrouped = Siswa::getDaftarRombelGrouped();
 
-        return view('guru.manajemen_materi.edit', compact('materi', 'kategoriList', 'kelasDiampu'));
+        return view('guru.manajemen_materi.edit', compact(
+            'materi',
+            'kategoriList',
+            'daftarKelas',
+            'daftarRombelGrouped'
+        ));
     }
 
     /**

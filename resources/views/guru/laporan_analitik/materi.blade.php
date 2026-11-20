@@ -28,7 +28,7 @@
 
     <!-- Filter & Pencarian -->
     <div class="bg-white p-5 lg:p-6 rounded-3xl border border-slate-100 shadow-xs mb-6">
-        <form method="GET" action="{{ route('guru.laporan.materi') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        <form method="GET" action="{{ route('guru.laporan.materi') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <!-- Pencarian Siswa -->
             <div class="relative">
                 <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -60,24 +60,25 @@
                 @endforeach
             </select>
 
-            <!-- Filter Tingkat Kelas -->
-            <select name="kelas" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
-                <option value="">Semua Kelas</option>
-                <option value="10" {{ request('kelas') == '10' ? 'selected' : '' }}>Kelas 10</option>
-                <option value="11" {{ request('kelas') == '11' ? 'selected' : '' }}>Kelas 11</option>
-                <option value="12" {{ request('kelas') == '12' ? 'selected' : '' }}>Kelas 12</option>
-            </select>
-
-            <!-- Filter Jurusan -->
+            <!-- Filter Kelas & Rombel (Dinamis dari Data Siswa) -->
             <div class="flex items-center gap-2">
-                <select name="jurusan" onchange="this.form.submit()" class="flex-1 px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
-                    <option value="">Semua Jurusan</option>
-                    @foreach($daftarJurusan as $jur)
-                        <option value="{{ $jur }}" {{ request('jurusan') == $jur ? 'selected' : '' }}>{{ $jur }}</option>
+                <select name="rombel" onchange="this.form.submit()" class="flex-1 px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
+                    <option value="">Semua Kelas & Rombel</option>
+                    @foreach($daftarRombelGrouped as $tingkat => $rombels)
+                        <optgroup label="Tingkat Kelas {{ $tingkat }}">
+                            <option value="tingkat:{{ $tingkat }}" {{ request('rombel') === 'tingkat:'.$tingkat || (request('kelas') == $tingkat && !request('rombel') && !request('jurusan')) ? 'selected' : '' }}>
+                                Semua Kelas {{ $tingkat }}
+                            </option>
+                            @foreach($rombels as $itemRombel)
+                                <option value="{{ $itemRombel }}" {{ request('rombel') === $itemRombel ? 'selected' : '' }}>
+                                    {{ $itemRombel }}
+                                </option>
+                            @endforeach
+                        </optgroup>
                     @endforeach
                 </select>
 
-                @if(request('q') || request('kategori') || request('materi_id') || request('kelas') || request('jurusan'))
+                @if(request('q') || request('kategori') || request('materi_id') || request('kelas') || request('jurusan') || request('rombel'))
                     <a href="{{ route('guru.laporan.materi') }}" 
                        class="p-2.5 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-600 transition-colors"
                        title="Reset Filter">

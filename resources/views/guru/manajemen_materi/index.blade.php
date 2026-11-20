@@ -34,12 +34,29 @@
                        class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
             </div>
 
-            <!-- Filter Kelas -->
-            <select name="kelas" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
-                <option value="">Semua Tingkat Kelas</option>
-                <option value="10" {{ request('kelas') == '10' ? 'selected' : '' }}>Kelas 10</option>
-                <option value="11" {{ request('kelas') == '11' ? 'selected' : '' }}>Kelas 11</option>
-                <option value="12" {{ request('kelas') == '12' ? 'selected' : '' }}>Kelas 12</option>
+            <!-- Filter Rombel Kelas Terpadu -->
+            <select name="rombel" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
+                <option value="">Semua Kelas & Rombel</option>
+                @if(isset($daftarRombelGrouped) && !empty($daftarRombelGrouped))
+                    @foreach($daftarRombelGrouped as $tingkat => $rombelList)
+                        <optgroup label="Tingkat Kelas {{ $tingkat }}">
+                            <option value="tingkat:{{ $tingkat }}" {{ request('rombel') === 'tingkat:'.$tingkat || request('kelas') === (string)$tingkat ? 'selected' : '' }}>
+                                📁 Semua Kelas {{ $tingkat }}
+                            </option>
+                            @foreach($rombelList as $rItem)
+                                <option value="{{ $rItem }}" {{ request('rombel') === $rItem ? 'selected' : '' }}>
+                                    {{ $rItem }}
+                                </option>
+                            @endforeach
+                        </optgroup>
+                    @endforeach
+                @else
+                    @foreach($daftarKelas as $k)
+                        <option value="tingkat:{{ $k }}" {{ request('rombel') === 'tingkat:'.$k || request('kelas') === (string)$k ? 'selected' : '' }}>
+                            Kelas {{ $k }}
+                        </option>
+                    @endforeach
+                @endif
             </select>
 
             <!-- Filter Kategori -->
@@ -58,7 +75,7 @@
                 @endif
             </select>
 
-            @if(request()->hasAny(['q', 'kelas', 'kategori']))
+            @if(request()->hasAny(['q', 'rombel', 'kelas', 'kategori']))
                 <a href="{{ route('guru.materi.index') }}" class="text-xs text-rose-600 hover:underline font-semibold py-2 px-1">Reset</a>
             @endif
         </form>

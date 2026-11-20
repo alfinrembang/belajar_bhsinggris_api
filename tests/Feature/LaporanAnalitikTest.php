@@ -194,4 +194,36 @@ class LaporanAnalitikTest extends TestCase
         $response->assertSee('Dewi Pratiwi');
         $response->assertSee('Guru Pengampu Bahasa Inggris');
     }
+
+    /**
+     * Guru dapat memfilter laporan leger menggunakan parameter rombel terpadu (misal: '10 TSM 1' atau 'tingkat:10').
+     */
+    public function test_guru_can_filter_laporan_using_unified_rombel_parameter(): void
+    {
+        $siswaTSM = Siswa::factory()->create([
+            'nama_lengkap' => 'Ferry TSM Student',
+            'kelas' => '10',
+            'jurusan' => 'TSM',
+            'no_kelas' => '1',
+        ]);
+
+        $siswaRPL = Siswa::factory()->create([
+            'nama_lengkap' => 'Rina RPL Student',
+            'kelas' => '11',
+            'jurusan' => 'RPL',
+            'no_kelas' => '1',
+        ]);
+
+        // Filter specific rombel
+        $response = $this->actingAs($this->guru)->get('/laporan?rombel=10+TSM+1');
+        $response->assertStatus(200);
+        $response->assertSee('Ferry TSM Student');
+        $response->assertDontSee('Rina RPL Student');
+
+        // Filter tingkat
+        $responseTingkat = $this->actingAs($this->guru)->get('/laporan?rombel=tingkat:11');
+        $responseTingkat->assertStatus(200);
+        $responseTingkat->assertSee('Rina RPL Student');
+        $responseTingkat->assertDontSee('Ferry TSM Student');
+    }
 }

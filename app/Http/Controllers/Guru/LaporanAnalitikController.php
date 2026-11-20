@@ -120,7 +120,9 @@ class LaporanAnalitikController extends Controller
         $topSiswa = $semuaSiswa->sortByDesc('nilai_akhir')->take(3);
         $remedialSiswa = $semuaSiswa->where('is_tuntas', false)->sortBy('nilai_akhir')->take(5);
 
-        $daftarJurusan = ['RPL', 'DKV', 'TSM', 'BD', 'SA', 'MPLB', 'TKKR'];
+        $daftarRombelGrouped = Siswa::getDaftarRombelGrouped();
+        $daftarJurusan = Siswa::getDaftarJurusan();
+        $daftarKelas = Siswa::getDaftarKelas();
 
         return view('guru.laporan_analitik.index', compact(
             'paginatedSiswa',
@@ -138,7 +140,9 @@ class LaporanAnalitikController extends Controller
             'komparasiRombel',
             'topSiswa',
             'remedialSiswa',
+            'daftarRombelGrouped',
             'daftarJurusan',
+            'daftarKelas',
             'kkm',
             'bobotMateri',
             'bobotListening',
@@ -160,7 +164,9 @@ class LaporanAnalitikController extends Controller
         }
 
         $daftarMateri = Materi::select('id', 'judul', 'kategori', 'tingkat_kelas')->orderBy('judul')->get();
-        $daftarJurusan = ['RPL', 'DKV', 'TSM', 'BD', 'SA', 'MPLB', 'TKKR'];
+        $daftarRombelGrouped = Siswa::getDaftarRombelGrouped();
+        $daftarKelas = Siswa::getDaftarKelas();
+        $daftarJurusan = Siswa::getDaftarJurusan();
 
         $query = SiswaMateriProgres::with(['siswa', 'materi']);
 
@@ -175,14 +181,36 @@ class LaporanAnalitikController extends Controller
             });
         }
 
-        if ($request->filled('kelas')) {
+        if ($request->filled('rombel')) {
+            $rombel = trim((string) $request->input('rombel'));
+            if (str_starts_with($rombel, 'tingkat:')) {
+                $tingkat = str_replace('tingkat:', '', $rombel);
+                $query->whereHas('siswa', function ($q) use ($tingkat) {
+                    $q->where('kelas', $tingkat);
+                });
+            } else {
+                $parts = explode(' ', $rombel);
+                $query->whereHas('siswa', function ($q) use ($parts) {
+                    if (count($parts) >= 3) {
+                        $q->where('kelas', $parts[0])
+                            ->where('jurusan', $parts[1])
+                            ->where('no_kelas', $parts[2]);
+                    } elseif (count($parts) === 2) {
+                        $q->where('kelas', $parts[0])
+                            ->where('jurusan', $parts[1]);
+                    } elseif (! empty($parts[0])) {
+                        $q->where('kelas', $parts[0]);
+                    }
+                });
+            }
+        } elseif ($request->filled('kelas')) {
             $kelas = $request->input('kelas');
             $query->whereHas('siswa', function ($q) use ($kelas) {
                 $q->where('kelas', $kelas);
             });
         }
 
-        if ($request->filled('jurusan')) {
+        if ($request->filled('jurusan') && ! $request->filled('rombel')) {
             $jurusan = $request->input('jurusan');
             $query->whereHas('siswa', function ($q) use ($jurusan) {
                 $q->where('jurusan', $jurusan);
@@ -209,6 +237,8 @@ class LaporanAnalitikController extends Controller
             'progresList',
             'daftarKategori',
             'daftarMateri',
+            'daftarRombelGrouped',
+            'daftarKelas',
             'daftarJurusan',
             'kkm',
             'totalProgres',
@@ -227,7 +257,9 @@ class LaporanAnalitikController extends Controller
         $kkm = (int) ($setting->kkm_default ?? self::KKM);
 
         $daftarQuiz = Quiz::select('id', 'judul', 'kategori', 'tingkat_kelas')->latest()->get();
-        $daftarJurusan = ['RPL', 'DKV', 'TSM', 'BD', 'SA', 'MPLB', 'TKKR'];
+        $daftarRombelGrouped = Siswa::getDaftarRombelGrouped();
+        $daftarKelas = Siswa::getDaftarKelas();
+        $daftarJurusan = Siswa::getDaftarJurusan();
 
         $query = SiswaQuizProgres::with(['siswa', 'quiz']);
 
@@ -235,14 +267,36 @@ class LaporanAnalitikController extends Controller
             $query->where('quiz_id', $request->input('quiz_id'));
         }
 
-        if ($request->filled('kelas')) {
+        if ($request->filled('rombel')) {
+            $rombel = trim((string) $request->input('rombel'));
+            if (str_starts_with($rombel, 'tingkat:')) {
+                $tingkat = str_replace('tingkat:', '', $rombel);
+                $query->whereHas('siswa', function ($q) use ($tingkat) {
+                    $q->where('kelas', $tingkat);
+                });
+            } else {
+                $parts = explode(' ', $rombel);
+                $query->whereHas('siswa', function ($q) use ($parts) {
+                    if (count($parts) >= 3) {
+                        $q->where('kelas', $parts[0])
+                            ->where('jurusan', $parts[1])
+                            ->where('no_kelas', $parts[2]);
+                    } elseif (count($parts) === 2) {
+                        $q->where('kelas', $parts[0])
+                            ->where('jurusan', $parts[1]);
+                    } elseif (! empty($parts[0])) {
+                        $q->where('kelas', $parts[0]);
+                    }
+                });
+            }
+        } elseif ($request->filled('kelas')) {
             $kelas = $request->input('kelas');
             $query->whereHas('siswa', function ($q) use ($kelas) {
                 $q->where('kelas', $kelas);
             });
         }
 
-        if ($request->filled('jurusan')) {
+        if ($request->filled('jurusan') && ! $request->filled('rombel')) {
             $jurusan = $request->input('jurusan');
             $query->whereHas('siswa', function ($q) use ($jurusan) {
                 $q->where('jurusan', $jurusan);
@@ -277,6 +331,8 @@ class LaporanAnalitikController extends Controller
         return view('guru.laporan_analitik.quiz', compact(
             'riwayatQuiz',
             'daftarQuiz',
+            'daftarRombelGrouped',
+            'daftarKelas',
             'daftarJurusan',
             'kkm',
             'totalRiwayat',
@@ -299,13 +355,35 @@ class LaporanAnalitikController extends Controller
         if ($request->filled('quiz_id')) {
             $query->where('quiz_id', $request->input('quiz_id'));
         }
-        if ($request->filled('kelas')) {
+        if ($request->filled('rombel')) {
+            $rombel = trim((string) $request->input('rombel'));
+            if (str_starts_with($rombel, 'tingkat:')) {
+                $tingkat = str_replace('tingkat:', '', $rombel);
+                $query->whereHas('siswa', function ($q) use ($tingkat) {
+                    $q->where('kelas', $tingkat);
+                });
+            } else {
+                $parts = explode(' ', $rombel);
+                $query->whereHas('siswa', function ($q) use ($parts) {
+                    if (count($parts) >= 3) {
+                        $q->where('kelas', $parts[0])
+                            ->where('jurusan', $parts[1])
+                            ->where('no_kelas', $parts[2]);
+                    } elseif (count($parts) === 2) {
+                        $q->where('kelas', $parts[0])
+                            ->where('jurusan', $parts[1]);
+                    } elseif (! empty($parts[0])) {
+                        $q->where('kelas', $parts[0]);
+                    }
+                });
+            }
+        } elseif ($request->filled('kelas')) {
             $kelas = $request->input('kelas');
             $query->whereHas('siswa', function ($q) use ($kelas) {
                 $q->where('kelas', $kelas);
             });
         }
-        if ($request->filled('jurusan')) {
+        if ($request->filled('jurusan') && ! $request->filled('rombel')) {
             $jurusan = $request->input('jurusan');
             $query->whereHas('siswa', function ($q) use ($jurusan) {
                 $q->where('jurusan', $jurusan);
@@ -489,7 +567,7 @@ class LaporanAnalitikController extends Controller
         $bobotQuiz = (int) ($setting->bobot_quiz ?? 40);
         $kkm = (int) ($setting->kkm_default ?? self::KKM);
 
-        $query = Siswa::query()->with([
+        $query = Siswa::query()->latest()->with([
             'materiProgres',
             'listeningProgres',
             'quizProgres',
@@ -506,13 +584,30 @@ class LaporanAnalitikController extends Controller
             });
         }
 
-        // Filter tingkat kelas (10, 11, 12)
-        if ($request->filled('kelas')) {
+        // Filter rombel / tingkat kelas
+        if ($request->filled('rombel')) {
+            $rombel = trim((string) $request->input('rombel'));
+            if (str_starts_with($rombel, 'tingkat:')) {
+                $query->where('kelas', str_replace('tingkat:', '', $rombel));
+            } else {
+                $parts = explode(' ', $rombel);
+                if (count($parts) >= 3) {
+                    $query->where('kelas', $parts[0])
+                        ->where('jurusan', $parts[1])
+                        ->where('no_kelas', $parts[2]);
+                } elseif (count($parts) === 2) {
+                    $query->where('kelas', $parts[0])
+                        ->where('jurusan', $parts[1]);
+                } elseif (! empty($parts[0])) {
+                    $query->where('kelas', $parts[0]);
+                }
+            }
+        } elseif ($request->filled('kelas')) {
             $query->where('kelas', $request->input('kelas'));
         }
 
         // Filter jurusan
-        if ($request->filled('jurusan')) {
+        if ($request->filled('jurusan') && ! $request->filled('rombel')) {
             $query->where('jurusan', $request->input('jurusan'));
         }
 

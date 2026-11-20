@@ -8,6 +8,7 @@ use App\Http\Requests\Guru\UpdateModulListeningRequest;
 use App\Models\ListeningAudio;
 use App\Models\ListeningSoal;
 use App\Models\ModulListening;
+use App\Models\Siswa;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -37,8 +38,22 @@ class ModulListeningController extends Controller
             $query->where('tingkat_kesulitan', $request->tingkat);
         }
 
-        // Filter Tingkat Kelas
-        if ($request->filled('kelas')) {
+        // Filter Rombel Kelas Terpadu (Dinamis Berdasarkan Data Siswa Nyata)
+        if ($request->filled('rombel')) {
+            $rombel = trim((string) $request->input('rombel'));
+            if (str_starts_with($rombel, 'tingkat:')) {
+                $tingkat = str_replace('tingkat:', '', $rombel);
+                $query->where(function ($q) use ($tingkat) {
+                    $q->where('tingkat_kelas', $tingkat)
+                        ->orWhere('tingkat_kelas', 'Semua Kelas');
+                });
+            } else {
+                $query->where(function ($q) use ($rombel) {
+                    $q->where('target_rombel', $rombel)
+                        ->orWhereNull('target_rombel');
+                });
+            }
+        } elseif ($request->filled('kelas')) {
             $query->where(function ($q) use ($request) {
                 $q->where('tingkat_kelas', $request->kelas)
                     ->orWhere('tingkat_kelas', 'Semua Kelas');
@@ -78,8 +93,17 @@ class ModulListeningController extends Controller
         $totalAudio = $totalAudioQuery->count();
         $totalSoal = $totalSoalQuery->count();
         $totalAktif = $totalAktifQuery->count();
+        $daftarRombelGrouped = Siswa::getDaftarRombelGrouped();
+        $daftarKelas = Siswa::getDaftarKelas();
 
-        return view('guru.modul_listening.index', compact('listenings', 'totalAudio', 'totalSoal', 'totalAktif'));
+        return view('guru.modul_listening.index', compact(
+            'listenings',
+            'totalAudio',
+            'totalSoal',
+            'totalAktif',
+            'daftarRombelGrouped',
+            'daftarKelas'
+        ));
     }
 
     /**
@@ -87,9 +111,10 @@ class ModulListeningController extends Controller
      */
     public function create(): View
     {
-        $kelasDiampu = auth()->user()->kelas_diampu ?? [];
+        $daftarKelas = Siswa::getDaftarKelas();
+        $daftarRombelGrouped = Siswa::getDaftarRombelGrouped();
 
-        return view('guru.modul_listening.create', compact('kelasDiampu'));
+        return view('guru.modul_listening.create', compact('daftarKelas', 'daftarRombelGrouped'));
     }
 
     /**
@@ -236,9 +261,14 @@ class ModulListeningController extends Controller
         }
 
         $listening->load(['audios', 'soals.listeningAudio']);
-        $kelasDiampu = auth()->user()->kelas_diampu ?? [];
+        $daftarKelas = Siswa::getDaftarKelas();
+        $daftarRombelGrouped = Siswa::getDaftarRombelGrouped();
 
-        return view('guru.modul_listening.edit', compact('listening', 'kelasDiampu'));
+        return view('guru.modul_listening.edit', compact(
+            'listening',
+            'daftarKelas',
+            'daftarRombelGrouped'
+        ));
     }
 
     /**

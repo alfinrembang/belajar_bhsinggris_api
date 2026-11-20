@@ -7,6 +7,7 @@ use App\Http\Requests\Guru\StoreQuizRequest;
 use App\Http\Requests\Guru\UpdateQuizRequest;
 use App\Models\Quiz;
 use App\Models\QuizSoal;
+use App\Models\Siswa;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -37,7 +38,22 @@ class QuizController extends Controller
         }
 
         // Filter Kelas
-        if ($request->filled('kelas')) {
+        // Filter Rombel Kelas Terpadu (Dinamis Berdasarkan Data Siswa Nyata)
+        if ($request->filled('rombel')) {
+            $rombel = trim((string) $request->input('rombel'));
+            if (str_starts_with($rombel, 'tingkat:')) {
+                $tingkat = str_replace('tingkat:', '', $rombel);
+                $query->where(function ($q) use ($tingkat) {
+                    $q->where('tingkat_kelas', $tingkat)
+                        ->orWhere('tingkat_kelas', 'Semua Kelas');
+                });
+            } else {
+                $query->where(function ($q) use ($rombel) {
+                    $q->where('target_rombel', $rombel)
+                        ->orWhereNull('target_rombel');
+                });
+            }
+        } elseif ($request->filled('kelas')) {
             $query->where(function ($q) use ($request) {
                 $q->where('tingkat_kelas', $request->kelas)
                     ->orWhere('tingkat_kelas', 'Semua Kelas');
@@ -77,8 +93,17 @@ class QuizController extends Controller
         $totalQuiz = $totalQuizQuery->count();
         $totalAktif = $totalAktifQuery->count();
         $totalSoal = $totalSoalQuery->count();
+        $daftarRombelGrouped = Siswa::getDaftarRombelGrouped();
+        $daftarKelas = Siswa::getDaftarKelas();
 
-        return view('guru.bank_soal_kuis.index', compact('quizzes', 'totalQuiz', 'totalAktif', 'totalSoal'));
+        return view('guru.bank_soal_kuis.index', compact(
+            'quizzes',
+            'totalQuiz',
+            'totalAktif',
+            'totalSoal',
+            'daftarRombelGrouped',
+            'daftarKelas'
+        ));
     }
 
     /**
@@ -87,9 +112,10 @@ class QuizController extends Controller
     public function create(): View
     {
         $defaultRoomCode = Quiz::generateUniqueRoomCode();
-        $kelasDiampu = auth()->user()->kelas_diampu ?? [];
+        $daftarKelas = Siswa::getDaftarKelas();
+        $daftarRombelGrouped = Siswa::getDaftarRombelGrouped();
 
-        return view('guru.bank_soal_kuis.create', compact('defaultRoomCode', 'kelasDiampu'));
+        return view('guru.bank_soal_kuis.create', compact('defaultRoomCode', 'daftarKelas', 'daftarRombelGrouped'));
     }
 
     /**
@@ -161,9 +187,14 @@ class QuizController extends Controller
         }
 
         $quiz->load('soals');
-        $kelasDiampu = auth()->user()->kelas_diampu ?? [];
+        $daftarKelas = Siswa::getDaftarKelas();
+        $daftarRombelGrouped = Siswa::getDaftarRombelGrouped();
 
-        return view('guru.bank_soal_kuis.edit', compact('quiz', 'kelasDiampu'));
+        return view('guru.bank_soal_kuis.edit', compact(
+            'quiz',
+            'daftarKelas',
+            'daftarRombelGrouped'
+        ));
     }
 
     /**

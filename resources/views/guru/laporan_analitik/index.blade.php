@@ -44,19 +44,20 @@
                        class="w-full pl-9 pr-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none transition-all">
             </div>
 
-            <!-- Filter Tingkat Kelas -->
-            <select name="kelas" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
-                <option value="">Semua Tingkat</option>
-                <option value="10" {{ request('kelas') == '10' ? 'selected' : '' }}>Kelas 10</option>
-                <option value="11" {{ request('kelas') == '11' ? 'selected' : '' }}>Kelas 11</option>
-                <option value="12" {{ request('kelas') == '12' ? 'selected' : '' }}>Kelas 12</option>
-            </select>
-
-            <!-- Filter Jurusan -->
-            <select name="jurusan" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
-                <option value="">Semua Jurusan</option>
-                @foreach($daftarJurusan as $jur)
-                    <option value="{{ $jur }}" {{ request('jurusan') == $jur ? 'selected' : '' }}>{{ $jur }}</option>
+            <!-- Filter Rombel / Kelas (Dinamis dari Data Siswa) -->
+            <select name="rombel" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
+                <option value="">Semua Kelas & Rombel</option>
+                @foreach($daftarRombelGrouped as $tingkat => $rombels)
+                    <optgroup label="Tingkat Kelas {{ $tingkat }}">
+                        <option value="tingkat:{{ $tingkat }}" {{ request('rombel') === 'tingkat:'.$tingkat || (request('kelas') == $tingkat && !request('rombel') && !request('jurusan')) ? 'selected' : '' }}>
+                            Semua Kelas {{ $tingkat }}
+                        </option>
+                        @foreach($rombels as $itemRombel)
+                            <option value="{{ $itemRombel }}" {{ request('rombel') === $itemRombel ? 'selected' : '' }}>
+                                {{ $itemRombel }}
+                            </option>
+                        @endforeach
+                    </optgroup>
                 @endforeach
             </select>
 
@@ -67,7 +68,7 @@
                 <option value="remedial" {{ request('status') == 'remedial' ? 'selected' : '' }}>Remedial (<75)</option>
             </select>
 
-            @if(request('q') || request('kelas') || request('jurusan') || request('status'))
+            @if(request('q') || request('kelas') || request('jurusan') || request('rombel') || request('status'))
                 <a href="{{ route('guru.laporan.index') }}" class="px-3 py-2 text-xs font-semibold text-slate-500 hover:text-rose-600 transition-colors flex items-center gap-1">
                     <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     Reset
@@ -210,7 +211,7 @@
                 <!-- Scrollable list: tetap rapi dan tidak melar ke bawah meski ada puluhan kelas -->
                 <div class="space-y-2.5 pt-3 max-h-[300px] overflow-y-auto pr-1">
                     @forelse($komparasiRombel as $rombel)
-                        <a href="{{ route('guru.laporan.index', array_merge(request()->except(['page', 'kelas', 'jurusan']), ['kelas' => $rombel['kelas'], 'jurusan' => $rombel['jurusan']])) }}#tabel-leger"
+                        <a href="{{ route('guru.laporan.index', array_merge(request()->except(['page', 'kelas', 'jurusan', 'rombel']), ['rombel' => $rombel['nama_kelas']])) }}#tabel-leger"
                            title="Klik untuk filter tabel ke kelas {{ $rombel['nama_kelas'] }}"
                            class="group block p-3 rounded-2xl bg-slate-50 hover:bg-[#EAF5EF]/50 border border-slate-100 hover:border-[#D7EDE1] transition-all cursor-pointer">
                             <div class="flex items-center justify-between">
