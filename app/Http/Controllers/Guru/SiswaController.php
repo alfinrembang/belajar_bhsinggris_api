@@ -14,11 +14,14 @@ use App\Models\SiswaFishingProgres;
 use App\Models\SiswaListeningProgres;
 use App\Models\SiswaMateriProgres;
 use App\Models\SiswaQuizProgres;
+use App\Services\SiswaImportService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SiswaController extends Controller
 {
@@ -40,13 +43,31 @@ class SiswaController extends Controller
             });
         }
 
-        // 2. Filter Tingkat Kelas (10, 11, 12)
-        if ($request->filled('kelas')) {
+        // 2. Filter Rombel Kelas Terpadu (Dinamis Berdasarkan Data Siswa Nyata)
+        if ($request->filled('rombel')) {
+            $rombel = trim((string) $request->input('rombel'));
+            if (str_starts_with($rombel, 'tingkat:')) {
+                $tingkat = str_replace('tingkat:', '', $rombel);
+                $query->where('kelas', $tingkat);
+            } else {
+                $parts = explode(' ', $rombel);
+                if (count($parts) >= 3) {
+                    $query->where('kelas', $parts[0])
+                        ->where('jurusan', $parts[1])
+                        ->where('no_kelas', $parts[2]);
+                } elseif (count($parts) === 2) {
+                    $query->where('kelas', $parts[0])
+                        ->where('jurusan', $parts[1]);
+                } elseif (! empty($parts[0])) {
+                    $query->where('kelas', $parts[0]);
+                }
+            }
+        } elseif ($request->filled('kelas')) {
             $query->where('kelas', $request->input('kelas'));
         }
 
-        // 3. Filter Jurusan
-        if ($request->filled('jurusan')) {
+        // 3. Filter Jurusan (Kompatibilitas query langsung)
+        if ($request->filled('jurusan') && ! $request->filled('rombel')) {
             $query->where('jurusan', $request->input('jurusan'));
         }
 
@@ -54,13 +75,7 @@ class SiswaController extends Controller
 
         // Statistik Ringkasan Atas
         $totalSiswa = Siswa::count();
-        $totalRombel = Siswa::select('kelas', 'jurusan', 'no_kelas')
-            ->distinct()
-            ->get()
-            ->map->kelas_lengkap
-            ->filter()
-            ->unique()
-            ->count();
+        $totalRombel = Siswa::getDaftarRombel()->count();
 
         // Hitung siswa yang pernah login / aktif belajar
         $siswaAktif = Siswa::whereNotNull('api_token')
@@ -68,14 +83,19 @@ class SiswaController extends Controller
             ->orWhereHas('quizProgres')
             ->count();
 
-        $daftarJurusan = ['RPL', 'DKV', 'TSM', 'BD', 'SA', 'MPLB', 'TKKR'];
+        // Data filter dinamis mengikuti database aktual
+        $daftarRombelGrouped = Siswa::getDaftarRombelGrouped();
+        $daftarJurusan = Siswa::getDaftarJurusan();
+        $daftarKelas = Siswa::getDaftarKelas();
 
         return view('guru.manajemen_siswa_kelas.index', compact(
             'daftarSiswa',
             'totalSiswa',
             'totalRombel',
             'siswaAktif',
-            'daftarJurusan'
+            'daftarRombelGrouped',
+            'daftarJurusan',
+            'daftarKelas'
         ));
     }
 
@@ -84,8 +104,8 @@ class SiswaController extends Controller
      */
     public function create(): View
     {
-        $daftarTingkat = ['10', '11', '12'];
-        $daftarJurusan = ['RPL', 'DKV', 'TSM', 'BD', 'SA', 'MPLB', 'TKKR'];
+        $daftarTingkat = Siswa::getDaftarKelas();
+        $daftarJurusan = Siswa::getDaftarJurusan();
         $daftarNoKelas = ['1', '2', '3'];
 
         return view('guru.manajemen_siswa_kelas.create', compact(
@@ -114,6 +134,64 @@ class SiswaController extends Controller
 
         return redirect()->route('guru.siswa.index')
             ->with('success', "Akun siswa {$siswa->nama_lengkap} berhasil ditambahkan! Kata sandi bawaan: {$defaultPassword}");
+    }
+
+    /**
+     * Mengunduh dokumen template Excel data siswa siap pakai untuk guru.
+     */
+    public function downloadTemplateExcel(SiswaImportService $service): StreamedResponse
+    {
+        $spreadsheet = $service->generateTemplate();
+        $filename = 'template_import_siswa_'.date('Ymd_His').'.xlsx';
+
+        return response()->streamDownload(function () use ($spreadsheet): void {
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Cache-Control' => 'max-age=0',
+        ]);
+    }
+
+    /**
+     * Memproses upload file Excel/CSV siswa, mengimpor akun, dan menyinkronkan nomor absen otomatis.
+     */
+    public function importExcel(Request $request, SiswaImportService $service): RedirectResponse
+    {
+        $request->validate([
+            'file' => ['required', 'file', 'mimes:xlsx,xls,csv', 'max:5120'],
+        ], [
+            'file.required' => 'Silakan pilih file dokumen Excel atau CSV terlebih dahulu.',
+            'file.file' => 'File yang diunggah tidak valid.',
+            'file.mimes' => 'Format file harus berupa dokumen Excel (.xlsx, .xls) atau CSV (.csv).',
+            'file.max' => 'Ukuran file dokumen tidak boleh melebihi 5 MB.',
+        ]);
+
+        try {
+            $result = $service->import($request->file('file'));
+
+            if (! $result['success'] && empty($result['imported']) && empty($result['updated'])) {
+                $errorMsg = ! empty($result['errors']) ? implode(' ', $result['errors']) : 'Tidak ada data siswa yang valid untuk diimpor.';
+
+                return redirect()->route('guru.siswa.index')
+                    ->with('error', "Gagal mengimpor file: {$errorMsg}");
+            }
+
+            $msg = "Berhasil memproses import Excel: {$result['imported']} siswa baru ditambahkan";
+            if ($result['updated'] > 0) {
+                $msg .= ", {$result['updated']} data siswa diperbarui";
+            }
+            $msg .= ', serta nomor urut absen seluruh rombel telah otomatis diurutkan sesuai abjad nama.';
+
+            if ($result['skipped'] > 0) {
+                $msg .= " Catatan: {$result['skipped']} baris dilewati karena format tidak lengkap.";
+            }
+
+            return redirect()->route('guru.siswa.index')->with('success', $msg);
+        } catch (\Throwable $e) {
+            return redirect()->route('guru.siswa.index')
+                ->with('error', 'Terjadi kesalahan saat membaca file Excel: '.$e->getMessage());
+        }
     }
 
     /**
@@ -173,8 +251,8 @@ class SiswaController extends Controller
      */
     public function edit(Siswa $siswa): View
     {
-        $daftarTingkat = ['10', '11', '12'];
-        $daftarJurusan = ['RPL', 'DKV', 'TSM', 'BD', 'SA', 'MPLB', 'TKKR'];
+        $daftarTingkat = Siswa::getDaftarKelas();
+        $daftarJurusan = Siswa::getDaftarJurusan();
         $daftarNoKelas = ['1', '2', '3'];
 
         return view('guru.manajemen_siswa_kelas.edit', compact(

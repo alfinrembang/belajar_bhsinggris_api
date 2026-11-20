@@ -73,6 +73,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/siswa', [SiswaController::class, 'index'])->name('guru.siswa.index');
     Route::get('/siswa/create', [SiswaController::class, 'create'])->name('guru.siswa.create');
     Route::post('/siswa/store', [SiswaController::class, 'store'])->name('guru.siswa.store');
+    Route::get('/siswa/template-excel', [SiswaController::class, 'downloadTemplateExcel'])->name('guru.siswa.template_excel');
+    Route::post('/siswa/import-excel', [SiswaController::class, 'importExcel'])->name('guru.siswa.import_excel');
     Route::match(['post', 'delete'], '/siswa/bulk-destroy', [SiswaController::class, 'bulkDestroy'])->name('guru.siswa.bulk_destroy');
     Route::get('/siswa/{siswa}', [SiswaController::class, 'show'])->name('guru.siswa.show');
     Route::get('/siswa/{siswa}/edit', [SiswaController::class, 'edit'])->name('guru.siswa.edit');
@@ -82,7 +84,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Mini Games & Leaderboard Guru (Dinamis Sesuai Game Mobile)
     Route::get('/games', [GameController::class, 'index'])->name('guru.game.index');
-    
+
     // Game 1: Tangkap Ikan (Word Fishing)
     Route::post('/games/fishing/soal', [GameController::class, 'storeFishingSoal'])->name('guru.game.fishing.store');
     Route::match(['post', 'delete'], '/games/fishing/soal/{id}/delete', [GameController::class, 'destroyFishingSoal'])->name('guru.game.fishing.destroy');

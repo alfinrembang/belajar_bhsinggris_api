@@ -12,7 +12,10 @@ use App\Models\SiswaMateriProgres;
 use App\Models\SiswaQuizProgres;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Tests\TestCase;
 
 class SiswaManagementTest extends TestCase
@@ -510,5 +513,149 @@ class SiswaManagementTest extends TestCase
         $this->assertEquals(1, $siswa->materiProgres()->count());
         $this->assertEquals(95, $siswa->materiProgres()->first()->skor);
         $this->assertEquals(150, $siswa->materiProgres()->first()->xp_didapat);
+    }
+
+    /**
+     * Guru dapat mengunduh dokumen template Excel data siswa.
+     */
+    public function test_guru_can_download_siswa_excel_template(): void
+    {
+        $response = $this->actingAs($this->guru)->get(route('guru.siswa.template_excel'));
+
+        $response->assertStatus(200);
+        $this->assertStringContainsString('spreadsheetml.sheet', (string) $response->headers->get('content-type'));
+    }
+
+    /**
+     * Guru dapat mengimpor data siswa dari berkas Excel dan nomor absen otomatis diurutkan sesuai abjad nama (A-Z).
+     */
+    public function test_guru_can_import_siswa_from_excel_and_auto_assign_alphabetical_absent_numbers(): void
+    {
+        $spreadsheet = new Spreadsheet;
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->fromArray([
+            ['NO', 'NAMA LENGKAP', 'NISN', 'ROMBEL KELAS', 'NIS'],
+            [1, 'Citra Lestari', '0089990001', '10 RPL 1', '20001'],
+            [2, 'Ahmad Fajar', '0089990002', '10 RPL 1', '20002'],
+            [3, 'Budi Santoso', '0089990003', '10 RPL 1', '20003'],
+        ]);
+
+        $tempPath = tempnam(sys_get_temp_dir(), 'test_excel_').'.xlsx';
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($tempPath);
+
+        $uploadedFile = new UploadedFile(
+            $tempPath,
+            'siswa_10_rpl_1.xlsx',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            null,
+            true
+        );
+
+        $response = $this->actingAs($this->guru)->post(route('guru.siswa.import_excel'), [
+            'file' => $uploadedFile,
+        ]);
+
+        $response->assertRedirect(route('guru.siswa.index'));
+        $response->assertSessionHas('success');
+
+        // Pastikan ketiga siswa tersimpan
+        $this->assertDatabaseHas('siswas', ['nisn' => '0089990001', 'nama_lengkap' => 'Citra Lestari', 'kelas' => '10', 'jurusan' => 'RPL', 'no_kelas' => '1']);
+        $this->assertDatabaseHas('siswas', ['nisn' => '0089990002', 'nama_lengkap' => 'Ahmad Fajar', 'kelas' => '10', 'jurusan' => 'RPL', 'no_kelas' => '1']);
+        $this->assertDatabaseHas('siswas', ['nisn' => '0089990003', 'nama_lengkap' => 'Budi Santoso', 'kelas' => '10', 'jurusan' => 'RPL', 'no_kelas' => '1']);
+
+        // Verifikasi pengurutan nomor absen otomatis secara abjad (A-Z)
+        // 1. Ahmad Fajar -> 1
+        // 2. Budi Santoso -> 2
+        // 3. Citra Lestari -> 3
+        $ahmad = Siswa::where('nisn', '0089990002')->first();
+        $budi = Siswa::where('nisn', '0089990003')->first();
+        $citra = Siswa::where('nisn', '0089990001')->first();
+
+        $this->assertEquals('1', $ahmad->no_absen);
+        $this->assertEquals('2', $budi->no_absen);
+        $this->assertEquals('3', $citra->no_absen);
+
+        // Verifikasi kata sandi bawaan adalah 12345678
+        $this->assertTrue(Hash::check('12345678', $ahmad->password));
+
+        if (file_exists($tempPath)) {
+            unlink($tempPath);
+        }
+    }
+
+    /**
+     * Siswa yang diimpor via Excel dapat langsung login di aplikasi Flutter menggunakan NISN dan kata sandi default 12345678.
+     */
+    public function test_imported_siswa_can_login_via_api_using_nisn_and_default_password(): void
+    {
+        $siswa = Siswa::factory()->create([
+            'nama_lengkap' => 'Siswa Import Test',
+            'nisn' => '0098887776',
+            'password' => Hash::make('12345678'),
+        ]);
+
+        $response = $this->postJson('/api/siswa/login', [
+            'nisn' => '0098887776',
+            'password' => '12345678',
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'status' => 'success',
+            'role' => 'siswa',
+        ]);
+        $this->assertNotEmpty($response->json('token'));
+    }
+
+    /**
+     * Validasi gagal jika file dokumen kosong atau format bukan excel/csv.
+     */
+    public function test_import_siswa_requires_valid_excel_or_csv_file(): void
+    {
+        $response = $this->actingAs($this->guru)->post(route('guru.siswa.import_excel'), [
+            'file' => null,
+        ]);
+
+        $response->assertSessionHasErrors('file');
+
+        $fakeTxt = UploadedFile::fake()->create('dokumen.txt', 100, 'text/plain');
+        $responseInvalid = $this->actingAs($this->guru)->post(route('guru.siswa.import_excel'), [
+            'file' => $fakeTxt,
+        ]);
+
+        $responseInvalid->assertSessionHasErrors('file');
+    }
+
+    /**
+     * Guru dapat memfilter siswa menggunakan parameter rombel terpadu (contoh: '10 TSM 1' atau 'tingkat:10').
+     */
+    public function test_guru_can_filter_siswa_using_unified_rombel_parameter(): void
+    {
+        $siswaTSM = Siswa::factory()->create([
+            'nama_lengkap' => 'Zaky TSM User',
+            'kelas' => '10',
+            'jurusan' => 'TSM',
+            'no_kelas' => '1',
+        ]);
+
+        $siswaRPL = Siswa::factory()->create([
+            'nama_lengkap' => 'Doni RPL User',
+            'kelas' => '11',
+            'jurusan' => 'RPL',
+            'no_kelas' => '2',
+        ]);
+
+        // Filter specific rombel
+        $responseSpecific = $this->actingAs($this->guru)->get('/siswa?rombel=10+TSM+1');
+        $responseSpecific->assertStatus(200);
+        $responseSpecific->assertSee('Zaky TSM User');
+        $responseSpecific->assertDontSee('Doni RPL User');
+
+        // Filter whole tingkat
+        $responseTingkat = $this->actingAs($this->guru)->get('/siswa?rombel=tingkat:11');
+        $responseTingkat->assertStatus(200);
+        $responseTingkat->assertSee('Doni RPL User');
+        $responseTingkat->assertDontSee('Zaky TSM User');
     }
 }

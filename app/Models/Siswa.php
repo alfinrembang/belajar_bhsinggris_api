@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 
 class Siswa extends Authenticatable
 {
@@ -106,5 +107,95 @@ class Siswa extends Authenticatable
     public function fishingProgres(): HasMany
     {
         return $this->hasMany(SiswaFishingProgres::class, 'siswa_id');
+    }
+
+    /**
+     * Mengambil daftar tingkat kelas unik yang ada siswanya di database (misal: ['10', '11', '12']).
+     *
+     * @return Collection<int, string>
+     */
+    public static function getDaftarKelas(): Collection
+    {
+        $kelas = static::whereNotNull('kelas')
+            ->where('kelas', '!=', '')
+            ->distinct()
+            ->orderByRaw('CAST(kelas AS UNSIGNED) ASC, kelas ASC')
+            ->pluck('kelas');
+
+        return $kelas->isNotEmpty() ? $kelas : collect(['10', '11', '12']);
+    }
+
+    /**
+     * Mengambil daftar jurusan unik yang ada siswanya di database (misal: ['RPL', 'TSM']).
+     *
+     * @return Collection<int, string>
+     */
+    public static function getDaftarJurusan(): Collection
+    {
+        $jurusan = static::whereNotNull('jurusan')
+            ->where('jurusan', '!=', '')
+            ->distinct()
+            ->orderBy('jurusan', 'asc')
+            ->pluck('jurusan');
+
+        return $jurusan->isNotEmpty() ? $jurusan : collect(['RPL', 'DKV', 'TSM', 'BD', 'SA', 'MPLB', 'TKKR']);
+    }
+
+    /**
+     * Mengambil seluruh daftar rombel kelas lengkap yang ada siswanya di database.
+     *
+     * @return Collection<int, string>
+     */
+    public static function getDaftarRombel(): Collection
+    {
+        return static::select('kelas', 'jurusan', 'no_kelas')
+            ->whereNotNull('kelas')
+            ->where('kelas', '!=', '')
+            ->distinct()
+            ->get()
+            ->map->kelas_lengkap
+            ->filter()
+            ->unique()
+            ->values();
+    }
+
+    /**
+     * Mengambil daftar rombel terkelompok per tingkat kelas untuk dropdown ber-optgroup.
+     * Contoh hasil:
+     * [
+     *     '10' => ['10 RPL 1', '10 TSM 1', '10 TSM 2'],
+     *     '11' => ['11 RPL 1'],
+     * ]
+     *
+     * @return array<string, list<string>>
+     */
+    public static function getDaftarRombelGrouped(): array
+    {
+        $rombels = static::select('kelas', 'jurusan', 'no_kelas')
+            ->whereNotNull('kelas')
+            ->where('kelas', '!=', '')
+            ->distinct()
+            ->get();
+
+        $grouped = [];
+        foreach ($rombels as $item) {
+            $kelasKey = (string) $item->kelas;
+            $label = $item->kelas_lengkap;
+            if (! empty($label)) {
+                $grouped[$kelasKey][] = $label;
+            }
+        }
+
+        // Urutkan key tingkat kelas (10, 11, 12, dst.)
+        uksort($grouped, function ($a, $b) {
+            return (int) $a <=> (int) $b;
+        });
+
+        foreach ($grouped as &$list) {
+            $list = array_values(array_unique($list));
+            sort($list);
+        }
+
+        return $grouped;
     }
 }

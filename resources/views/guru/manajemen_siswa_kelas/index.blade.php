@@ -19,6 +19,23 @@
         </div>
     @endif
 
+    <!-- Bar Notifikasi Error / Peringatan -->
+    @if(session('error'))
+        <div class="mb-5 p-4 rounded-xl bg-rose-50 border border-rose-200/80 text-rose-800 text-xs font-semibold flex items-center justify-between shadow-xs">
+            <div class="flex items-center gap-3">
+                <span class="w-7 h-7 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center text-sm font-bold shrink-0">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                </span>
+                <p>{{ session('error') }}</p>
+            </div>
+            <button type="button" onclick="this.parentElement.remove()" class="text-rose-500 hover:text-rose-700 font-bold text-base px-2">×</button>
+        </div>
+    @endif
+
     <!-- Bar Aksi Atas: Pencarian, Filter Kelas/Jurusan & Tombol Tambah Siswa -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 lg:p-6 rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
         <form method="GET" action="{{ route('guru.siswa.index') }}" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full md:w-auto flex-1">
@@ -35,23 +52,32 @@
                        class="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
             </div>
 
-            <!-- Filter Tingkat Kelas -->
-            <select name="kelas" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
-                <option value="">Semua Tingkat</option>
-                <option value="10" {{ request('kelas') == '10' ? 'selected' : '' }}>Kelas 10</option>
-                <option value="11" {{ request('kelas') == '11' ? 'selected' : '' }}>Kelas 11</option>
-                <option value="12" {{ request('kelas') == '12' ? 'selected' : '' }}>Kelas 12</option>
+            <!-- Filter Rombel Kelas Terpadu (Dinamis Sesuai Siswa Terdaftar) -->
+            <select name="rombel" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
+                <option value="">Semua Rombel & Kelas</option>
+                @if(isset($daftarRombelGrouped) && !empty($daftarRombelGrouped))
+                    @foreach($daftarRombelGrouped as $tingkat => $rombelList)
+                        <optgroup label="Tingkat Kelas {{ $tingkat }}">
+                            <option value="tingkat:{{ $tingkat }}" {{ request('rombel') === 'tingkat:'.$tingkat || request('kelas') === (string)$tingkat ? 'selected' : '' }}>
+                                📁 Semua Kelas {{ $tingkat }}
+                            </option>
+                            @foreach($rombelList as $rItem)
+                                <option value="{{ $rItem }}" {{ request('rombel') === $rItem ? 'selected' : '' }}>
+                                    {{ $rItem }}
+                                </option>
+                            @endforeach
+                        </optgroup>
+                    @endforeach
+                @else
+                    @foreach($daftarKelas as $k)
+                        <option value="tingkat:{{ $k }}" {{ request('rombel') === 'tingkat:'.$k || request('kelas') === (string)$k ? 'selected' : '' }}>
+                            Kelas {{ $k }}
+                        </option>
+                    @endforeach
+                @endif
             </select>
 
-            <!-- Filter Jurusan -->
-            <select name="jurusan" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
-                <option value="">Semua Jurusan</option>
-                @foreach($daftarJurusan as $jur)
-                    <option value="{{ $jur }}" {{ request('jurusan') == $jur ? 'selected' : '' }}>{{ $jur }}</option>
-                @endforeach
-            </select>
-
-            @if(request('q') || request('kelas') || request('jurusan'))
+            @if(request('q') || request('rombel') || request('kelas') || request('jurusan'))
                 <a href="{{ route('guru.siswa.index') }}" class="px-3 py-2 text-xs font-medium text-slate-500 hover:text-rose-600 transition-colors flex items-center gap-1 self-center">
                     <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     Reset
@@ -59,15 +85,31 @@
             @endif
         </form>
 
-        <!-- Tombol Tambah Siswa Baru -->
-        <a href="{{ route('guru.siswa.create') }}" 
-           class="px-4 py-2.5 rounded-xl bg-[#4EA87D] hover:bg-[#43966E] text-white font-semibold text-xs shadow-xs transition-all flex items-center gap-2 shrink-0 self-start sm:self-auto cursor-pointer active:scale-95">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            Tambah Siswa Baru
-        </a>
+        <!-- Tombol Aksi Kanan: Import Excel & Tambah Siswa Baru -->
+        <div class="flex items-center gap-2.5 shrink-0 self-start sm:self-auto">
+            <!-- Tombol Buka Modal Import Excel -->
+            <button type="button" 
+                    onclick="bukaModalImportExcel()" 
+                    class="px-3.5 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100/90 text-emerald-800 border border-emerald-200/90 font-semibold text-xs shadow-xs transition-all flex items-center gap-2 cursor-pointer active:scale-95">
+                <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="12" y1="18" x2="12" y2="12"></line>
+                    <line x1="9" y1="15" x2="15" y2="15"></line>
+                </svg>
+                <span>Import Excel</span>
+            </button>
+
+            <!-- Tombol Tambah Siswa Baru -->
+            <a href="{{ route('guru.siswa.create') }}" 
+               class="px-4 py-2.5 rounded-xl bg-[#4EA87D] hover:bg-[#43966E] text-white font-semibold text-xs shadow-xs transition-all flex items-center gap-2 cursor-pointer active:scale-95">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>Tambah Siswa Baru</span>
+            </a>
+        </div>
     </div>
 
     <!-- Ringkasan Statistik Siswa & Kelas -->
@@ -347,6 +389,102 @@
         </div>
     </div>
 
+    <!-- MODAL: Import Data Siswa dari File Excel -->
+    <div id="modalImportExcel" 
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs opacity-0 pointer-events-none transition-all duration-200">
+        <div class="fixed inset-0" onclick="tutupModalImportExcel()"></div>
+        
+        <div id="modalImportExcelCard" 
+             class="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200/80 overflow-hidden transform scale-95 transition-all duration-200 z-10 p-6 lg:p-7 space-y-5">
+            
+            <div class="flex items-start justify-between gap-3">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0 shadow-xs">
+                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="8" y1="13" x2="16" y2="13"></line>
+                            <line x1="8" y1="17" x2="16" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-extrabold text-slate-900 tracking-tight">Import Data Siswa dari Excel</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Mendaftarkan banyak akun siswa sekaligus lewat dokumen spreadsheet</p>
+                    </div>
+                </div>
+                <button type="button" onclick="tutupModalImportExcel()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+
+            <!-- Panduan Format & Fitur Login -->
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-600 space-y-2.5">
+                <div class="flex items-center justify-between pb-2 border-b border-slate-200/60">
+                    <span class="font-bold text-slate-800 flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-[#4EA87D]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        Format & Ketentuan Login Siswa:
+                    </span>
+                    <a href="{{ route('guru.siswa.template_excel') }}" 
+                       class="text-[#4EA87D] hover:text-[#3B8361] font-bold inline-flex items-center gap-1 hover:underline text-[11px]">
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Unduh Template (.xlsx)
+                    </a>
+                </div>
+                <ul class="space-y-1.5 text-[11px] text-slate-500 list-disc list-inside">
+                    <li>Kolom utama: <strong class="text-slate-700">NAMA LENGKAP</strong>, <strong class="text-slate-700">NISN</strong>, dan <strong class="text-slate-700">ROMBEL KELAS</strong> (contoh: <em>10 RPL 1</em>).</li>
+                    <li>Siswa masuk ke aplikasi dengan <strong class="text-slate-700">NISN</strong> dan kata sandi bawaan <strong class="text-[#4EA87D]">12345678</strong>.</li>
+                    <li><strong class="text-slate-700">Nomor Absen Otomatis:</strong> Sistem langsung mengurutkan nomor absen (1, 2, 3...) per kelas berdasarkan abjad nama.</li>
+                </ul>
+            </div>
+
+            <form id="formImportExcel" method="POST" action="{{ route('guru.siswa.import_excel') }}" enctype="multipart/form-data" class="space-y-4">
+                @csrf
+                
+                <!-- Area Unggah Berkas -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-2">Pilih File Spreadsheet (.xlsx, .xls, .csv)</label>
+                    <label for="excelFileInput" 
+                           id="excelDropzone"
+                           class="relative border-2 border-dashed border-slate-200 hover:border-[#4EA87D] bg-slate-50/60 hover:bg-emerald-50/20 rounded-2xl p-6 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-2 group">
+                        <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 group-hover:border-emerald-300 group-hover:bg-emerald-50 text-slate-400 group-hover:text-emerald-600 flex items-center justify-center transition-all shadow-xs">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-slate-700 group-hover:text-emerald-700 transition-colors" id="excelFileNameText">
+                                Klik untuk memilih file Excel atau seret berkas ke sini
+                            </p>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Mendukung format .xlsx, .xls, .csv hingga maksimal 5 MB</p>
+                        </div>
+                        <input type="file" 
+                               name="file" 
+                               id="excelFileInput" 
+                               accept=".xlsx,.xls,.csv" 
+                               required 
+                               class="hidden" 
+                               onchange="handleExcelFileSelect(this)">
+                    </label>
+                </div>
+
+                <div class="pt-3 flex items-center justify-end gap-2.5 border-t border-slate-100">
+                    <x-button variant="cancel" type="button" onclick="tutupModalImportExcel()" class="!rounded-xl">
+                        Batal
+                    </x-button>
+                    <button type="submit" 
+                            id="btnSubmitImport"
+                            class="px-5 py-2.5 rounded-xl bg-[#4EA87D] hover:bg-[#43966E] text-white text-xs font-bold shadow-xs transition-all flex items-center gap-2 cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span>Mulai Import Siswa</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- MODAL: Konfirmasi Hapus Siswa Terpilih (Bulk Delete) -->
     <div id="modalBulkDelete" 
          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs opacity-0 pointer-events-none transition-all duration-200">
@@ -536,6 +674,45 @@
                 modal.classList.remove('opacity-100');
                 card.classList.add('scale-95');
                 card.classList.remove('scale-100');
+            }
+        }
+
+        // ==========================================
+        // Logika Modal Import Data Siswa dari Excel
+        // ==========================================
+        function bukaModalImportExcel() {
+            const modal = document.getElementById('modalImportExcel');
+            const card = document.getElementById('modalImportExcelCard');
+            if (modal && card) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                modal.classList.add('opacity-100');
+                card.classList.remove('scale-95');
+                card.classList.add('scale-100');
+            }
+        }
+
+        function tutupModalImportExcel() {
+            const modal = document.getElementById('modalImportExcel');
+            const card = document.getElementById('modalImportExcelCard');
+            if (modal && card) {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                modal.classList.remove('opacity-100');
+                card.classList.add('scale-95');
+                card.classList.remove('scale-100');
+            }
+        }
+
+        function handleExcelFileSelect(input) {
+            const textSpan = document.getElementById('excelFileNameText');
+            const dropzone = document.getElementById('excelDropzone');
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const fileSizeKb = (file.size / 1024).toFixed(1);
+                textSpan.innerHTML = '<span class="text-emerald-700 font-bold">' + file.name + '</span> <span class="text-slate-400">(' + fileSizeKb + ' KB)</span>';
+                if (dropzone) {
+                    dropzone.classList.remove('border-slate-200');
+                    dropzone.classList.add('border-emerald-500', 'bg-emerald-50/40');
+                }
             }
         }
     </script>
