@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\LoginSiswaController;
 use App\Http\Controllers\Api\MateriApiController;
 use App\Http\Controllers\Api\ModulListeningApiController;
 use App\Http\Controllers\Api\QuizApiController;
+use App\Models\WerewolfSoal;
 use Illuminate\Support\Facades\Route;
 
 // API Routes - Belajar Bahasa Inggris (Khusus Aplikasi Siswa / Flutter)
@@ -69,7 +70,8 @@ Route::post('/fishing/selesai', [FishingApiController::class, 'submitSelesai']);
 // 2E. MODUL GAME TEBAK SERIGALA (WOLF VS SHEEP)
 // Mengambil daftar pasangan kata kartu yang dikelola guru
 Route::get('/werewolf/words', function () {
-    $words = \App\Models\WerewolfSoal::where('is_active', true)->latest()->get();
+    $words = WerewolfSoal::where('is_active', true)->latest()->get();
+
     return response()->json([
         'status' => 'success',
         'total' => $words->count(),

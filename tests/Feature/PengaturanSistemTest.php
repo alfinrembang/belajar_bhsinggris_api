@@ -132,6 +132,9 @@ class PengaturanSistemTest extends TestCase
         $response = $this->actingAs($this->guru)->post('/pengaturan/akademik', [
             'tahun_ajaran' => '2027/2028',
             'kkm_default' => 80,
+            'bobot_materi' => 30,
+            'bobot_listening' => 30,
+            'bobot_quiz' => 40,
             'durasi_kuis_default' => 25,
             'is_periode_kenaikan_aktif' => '1',
             'is_leaderboard_aktif' => '1',

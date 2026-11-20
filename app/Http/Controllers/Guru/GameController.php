@@ -310,7 +310,7 @@ class GameController extends Controller
         return response()->stream(function () {
             $handle = fopen('php://output', 'w');
             // Tulis BOM UTF-8 agar Excel membuka karakter dengan rapi
-            fputs($handle, "\xEF\xBB\xBF");
+            fwrite($handle, "\xEF\xBB\xBF");
 
             // Header kolom
             fputcsv($handle, [
@@ -395,15 +395,23 @@ class GameController extends Controller
             trim($validated['domba_clue_1']),
             trim($validated['domba_clue_2']),
         ];
-        if ($request->filled('domba_clue_3')) $dombaClues[] = trim($request->input('domba_clue_3'));
-        if ($request->filled('domba_clue_4')) $dombaClues[] = trim($request->input('domba_clue_4'));
+        if ($request->filled('domba_clue_3')) {
+            $dombaClues[] = trim($request->input('domba_clue_3'));
+        }
+        if ($request->filled('domba_clue_4')) {
+            $dombaClues[] = trim($request->input('domba_clue_4'));
+        }
 
         $serigalaClues = [
             trim($validated['serigala_clue_1']),
             trim($validated['serigala_clue_2']),
         ];
-        if ($request->filled('serigala_clue_3')) $serigalaClues[] = trim($request->input('serigala_clue_3'));
-        if ($request->filled('serigala_clue_4')) $serigalaClues[] = trim($request->input('serigala_clue_4'));
+        if ($request->filled('serigala_clue_3')) {
+            $serigalaClues[] = trim($request->input('serigala_clue_3'));
+        }
+        if ($request->filled('serigala_clue_4')) {
+            $serigalaClues[] = trim($request->input('serigala_clue_4'));
+        }
 
         WerewolfSoal::create([
             'theme' => trim($validated['theme']),
@@ -476,7 +484,7 @@ class GameController extends Controller
 
         return response()->stream(function () {
             $handle = fopen('php://output', 'w');
-            fputs($handle, "\xEF\xBB\xBF");
+            fwrite($handle, "\xEF\xBB\xBF");
 
             // Header kolom
             fputcsv($handle, [

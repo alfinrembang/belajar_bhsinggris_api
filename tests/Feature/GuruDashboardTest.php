@@ -114,13 +114,13 @@ class GuruDashboardTest extends TestCase
     {
         $guruDenganKelas = User::factory()->create([
             'role' => 'guru',
-            'kelas_diampu' => ['10 DKV 1'],
+            'kelas_diampu' => ['10 TKKR 3'],
         ]);
 
         $siswaDiampu = Siswa::factory()->create([
             'kelas' => '10',
-            'jurusan' => 'DKV',
-            'no_kelas' => '1',
+            'jurusan' => 'TKKR',
+            'no_kelas' => '3',
             'nama_lengkap' => 'Siswa Kelas Diampu',
         ]);
 
@@ -156,7 +156,7 @@ class GuruDashboardTest extends TestCase
         $response = $this->actingAs($guruDenganKelas)->get(route('guru.dashboard'));
 
         $response->assertStatus(200);
-        $response->assertSee('Kelas Diampu: 10 DKV 1');
+        $response->assertSee('Kelas Diampu: 10 TKKR 3');
         $response->assertSee('Memantau 1 siswa dari kelas yang diampu');
         $response->assertSee('90');
     }

@@ -85,7 +85,7 @@ class GameExcelService
     protected static function parseXlsx(string $filePath): array
     {
         $rows = [];
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
 
         if ($zip->open($filePath) !== true) {
             return $rows;
@@ -223,6 +223,7 @@ class GameExcelService
 
             if (empty($word) || empty($meaning)) {
                 $errors[] = "Baris #{$rowNum}: Kosakata (Word) dan Arti tidak boleh kosong.";
+
                 continue;
             }
 
@@ -239,9 +240,15 @@ class GameExcelService
 
             // Normalisasi Pilihan Jawaban
             $options = [$meaning];
-            if (! empty($opt2)) $options[] = $opt2;
-            if (! empty($opt3)) $options[] = $opt3;
-            if (! empty($opt4)) $options[] = $opt4;
+            if (! empty($opt2)) {
+                $options[] = $opt2;
+            }
+            if (! empty($opt3)) {
+                $options[] = $opt3;
+            }
+            if (! empty($opt4)) {
+                $options[] = $opt4;
+            }
 
             // Tambahkan fallback pilihan jika guru hanya mengisi arti
             while (count($options) < 4) {
@@ -253,6 +260,7 @@ class GameExcelService
             $exists = FishingSoal::whereRaw('UPPER(TRIM(word)) = ?', [$word])->exists();
             if ($exists) {
                 $skipped++;
+
                 continue; // Lewati agar database tetap ringan dan tidak dobel
             }
 
@@ -315,6 +323,7 @@ class GameExcelService
 
             if (empty($dombaWord) || empty($serigalaWord)) {
                 $errors[] = "Baris #{$rowNum}: Kata Domba dan Kata Serigala wajib diisi.";
+
                 continue;
             }
 
@@ -326,6 +335,7 @@ class GameExcelService
             $exists = WerewolfSoal::whereRaw('UPPER(TRIM(domba_word)) = ? AND UPPER(TRIM(serigala_word)) = ?', [$dombaWord, $serigalaWord])->exists();
             if ($exists) {
                 $skipped++;
+
                 continue; // Lewati agar data tidak membengkak
             }
 
@@ -361,8 +371,8 @@ class GameExcelService
         if (empty($raw)) {
             return [
                 "It is related to {$word}.",
-                "Commonly known in English.",
-                "Has distinct characteristics.",
+                'Commonly known in English.',
+                'Has distinct characteristics.',
             ];
         }
 
@@ -387,13 +397,17 @@ class GameExcelService
         foreach ($keys as $k) {
             if (isset($headerMap[$k]) && isset($row[$headerMap[$k]])) {
                 $val = trim((string) $row[$headerMap[$k]]);
-                if ($val !== '') return $val;
+                if ($val !== '') {
+                    return $val;
+                }
             }
         }
 
         if (isset($row[$fallbackIdx])) {
             $val = trim((string) $row[$fallbackIdx]);
-            if ($val !== '') return $val;
+            if ($val !== '') {
+                return $val;
+            }
         }
 
         return $default;
