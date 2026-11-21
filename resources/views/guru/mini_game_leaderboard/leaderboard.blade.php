@@ -70,7 +70,7 @@
                             {{ $item['kelas'] }} • No. {{ $item['no_absen'] }}
                         </p>
                         <div class="flex items-center gap-2 mt-1 text-[10px] text-slate-500">
-                            <span class="inline-flex items-center gap-1 font-semibold text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded border border-sky-100">
+                            <span class="inline-flex items-center gap-1 font-semibold text-[#2E7352] bg-[#EAF5EF] px-1.5 py-0.5 rounded border border-[#D7EDE1]">
                                 <span>Memancing:</span>
                                 <span>{{ number_format($item['skor_memancing']) }} pts</span>
                             </span>

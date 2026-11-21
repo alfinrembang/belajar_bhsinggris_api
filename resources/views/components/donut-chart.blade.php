@@ -16,9 +16,9 @@
      style="background: conic-gradient(
          #4EA87D 0deg calc({{ $d1 }}deg - 2deg),
          transparent calc({{ $d1 }}deg - 2deg) {{ $d1 }}deg,
-         #FB7185 {{ $d1 }}deg calc({{ $d2 }}deg - 2deg),
+         #3E946B {{ $d1 }}deg calc({{ $d2 }}deg - 2deg),
          transparent calc({{ $d2 }}deg - 2deg) {{ $d2 }}deg,
-         #F59E0B {{ $d2 }}deg 358deg,
+         #256345 {{ $d2 }}deg 358deg,
          transparent 358deg 360deg
      );"
      role="img"

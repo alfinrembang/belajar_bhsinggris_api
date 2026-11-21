@@ -73,36 +73,48 @@
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                     @forelse($kategoris as $kategori)
-                        @php
-                            $iconEmojis = [
-                                'auto_stories' => '📚',
-                                'spellcheck' => '✍️',
-                                'forum' => '🗣️',
-                                'translate' => '📖',
-                                'lightbulb' => '💡',
-                                'headphones' => '🎧',
-                                'business_center' => '💼',
-                                'track_changes' => '🎯',
-                            ];
-                            $emoji = $iconEmojis[$kategori->icon_name] ?? '🏷️';
-                        @endphp
                         <tr class="hover:bg-slate-50/70 transition-colors">
                             <td class="py-3 px-4 whitespace-nowrap">
                                 <div class="flex items-center gap-2.5">
-                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm shadow-xs shrink-0" style="background-color: {{ $kategori->warna_hex }};">
-                                        {{ $emoji }}
+                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs shadow-xs shrink-0" style="background-color: {{ $kategori->warna_hex ?: '#4EA87D' }};">
+                                        @if($kategori->icon_name === 'auto_stories')
+                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                                        @elseif($kategori->icon_name === 'spellcheck')
+                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 11 3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                                        @elseif($kategori->icon_name === 'forum')
+                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                                        @elseif($kategori->icon_name === 'translate')
+                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                                        @else
+                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path></svg>
+                                        @endif
                                     </div>
                                     <div>
                                         <a href="{{ route('guru.kategori.show', $kategori->id) }}" class="font-bold text-slate-800 hover:text-[#4EA87D] text-xs transition-colors">
                                             {{ $kategori->nama }}
                                         </a>
-                                        <p class="text-[10px] text-slate-400 font-mono mt-0.5">{{ $kategori->warna_hex }}</p>
+                                        <p class="text-[10px] text-slate-400 font-mono mt-0.5">{{ $kategori->warna_hex ?: '#4EA87D' }}</p>
                                     </div>
                                 </div>
                             </td>
                             <td class="py-3 px-3 whitespace-nowrap">
-                                <span class="px-2 py-0.5 rounded-md bg-slate-100 font-mono text-slate-600 text-[10.5px] font-semibold border border-slate-200/60">
-                                    {{ $kategori->icon_name }}
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200/70 text-slate-700 text-xs font-medium">
+                                    @if($kategori->icon_name === 'auto_stories')
+                                        <svg class="w-3.5 h-3.5 text-[#4EA87D]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                                        <span>Reading</span>
+                                    @elseif($kategori->icon_name === 'spellcheck')
+                                        <svg class="w-3.5 h-3.5 text-[#4EA87D]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 11 3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                                        <span>Grammar</span>
+                                    @elseif($kategori->icon_name === 'forum')
+                                        <svg class="w-3.5 h-3.5 text-[#4EA87D]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                                        <span>Conversation</span>
+                                    @elseif($kategori->icon_name === 'translate')
+                                        <svg class="w-3.5 h-3.5 text-[#4EA87D]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                                        <span>Vocabulary</span>
+                                    @else
+                                        <svg class="w-3.5 h-3.5 text-[#4EA87D]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path></svg>
+                                        <span>{{ ucfirst($kategori->icon_name ?: 'General') }}</span>
+                                    @endif
                                 </span>
                             </td>
                             <td class="py-3 px-4 max-w-xs">
@@ -112,7 +124,8 @@
                             </td>
                             <td class="py-3 px-3.5 whitespace-nowrap">
                                 <a href="{{ route('guru.kategori.show', $kategori->id) }}" class="whitespace-nowrap inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#EAF5EF] text-[#2E7352] font-semibold text-[11px] border border-[#D7EDE1] hover:bg-[#EAF5EF] transition-colors">
-                                    📘 {{ $kategori->materis_count }} Materi
+                                    <svg class="w-3 h-3 text-[#4EA87D]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                                    {{ $kategori->materis_count }} Modul
                                 </a>
                             </td>
                             <td class="py-3 px-3 whitespace-nowrap">

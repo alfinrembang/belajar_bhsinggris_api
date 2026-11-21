@@ -59,8 +59,8 @@
                     <span class="w-1.5 h-1.5 rounded-full bg-[#4EA87D]"></span>
                     Word Fishing ({{ $totalSoalIkan }})
                 </span>
-                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-semibold border border-indigo-100">
-                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#EAF5EF] text-[#2E7352] font-semibold border border-[#D7EDE1]">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#3E946B]"></span>
                     Wolf vs Sheep ({{ $totalSoalWerewolf ?? 0 }})
                 </span>
             </div>
@@ -116,7 +116,7 @@
                 <span class="text-slate-400">• Real-Time Sync</span>
             </div>
         </div>
-        <div class="w-12 h-12 rounded-2xl bg-sky-50 border border-sky-200 text-sky-700 flex items-center justify-center shrink-0 shadow-xs">
+        <div class="w-12 h-12 rounded-2xl bg-[#EAF5EF] border border-[#D7EDE1] text-[#2E7352] flex items-center justify-center shrink-0 shadow-xs">
             <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
                 <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>

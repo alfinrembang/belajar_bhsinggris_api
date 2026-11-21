@@ -95,9 +95,9 @@
 
     <!-- Ringkasan Statistik Listening -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-5 mb-6">
-        <x-stat-card title="Total Track Audio" :value="$totalAudio . ' Paket'" icon="headphones" color="blue" />
+        <x-stat-card title="Total Track Audio" :value="$totalAudio . ' Paket'" icon="headphones" color="green" />
         <x-stat-card title="Track Aktif Tayang" :value="$totalAktif . ' Track'" icon="check" color="emerald" />
-        <x-stat-card title="Total Latihan Soal" :value="$totalSoal . ' Pertanyaan'" icon="file-text" color="purple" />
+        <x-stat-card title="Total Latihan Soal" :value="$totalSoal . ' Pertanyaan'" icon="file-text" color="green" />
     </div>
 
     <!-- Tabel Daftar Track Listening -->
@@ -126,15 +126,11 @@
                     @forelse($listenings as $item)
                         @php
                             $levelColor = match($item->tingkat_kesulitan) {
-                                'Intermediate' => 'bg-purple-50 text-purple-700 border-purple-100',
-                                'Advanced' => 'bg-rose-50 text-rose-700 border-rose-100',
-                                default => 'bg-[#EAF5EF] text-[#4EA87D] border-[#D7EDE1]',
+                                'Intermediate' => 'bg-slate-100 text-slate-700 border-slate-200/80',
+                                'Advanced' => 'bg-amber-50 text-amber-700 border-amber-200/80',
+                                default => 'bg-[#EAF5EF] text-[#2E7352] border-[#D7EDE1]',
                             };
-                            $iconBg = match($item->tingkat_kesulitan) {
-                                'Intermediate' => 'bg-purple-50 text-purple-600',
-                                'Advanced' => 'bg-rose-50 text-rose-600',
-                                default => 'bg-[#EAF5EF] text-[#4EA87D]',
-                            };
+                            $iconBg = 'bg-[#EAF5EF] text-[#2E7352]';
                         @endphp
                         <tr class="hover:bg-slate-50/70 transition-colors">
                             <td class="py-3 px-4">
@@ -163,7 +159,7 @@
                             <td class="py-3 px-2.5 text-slate-600 font-mono text-[11.5px] whitespace-nowrap">
                                 <div class="whitespace-nowrap">{{ $item->durasi ?? '00:00' }}</div>
                                 @if(isset($item->audios_count) && $item->audios_count > 1)
-                                    <span class="text-[10px] text-purple-600 font-bold bg-purple-50 px-1.5 py-0.5 rounded-md whitespace-nowrap">{{ $item->audios_count }} Track</span>
+                                    <span class="text-[10px] text-[#2E7352] font-bold bg-[#EAF5EF] px-1.5 py-0.5 rounded-md whitespace-nowrap">{{ $item->audios_count }} Track</span>
                                 @endif
                             </td>
                             <td class="py-3 px-2.5 whitespace-nowrap">

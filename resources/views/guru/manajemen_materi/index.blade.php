@@ -92,9 +92,9 @@
 
     <!-- Ringkasan Statistik Cepat Materi -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-5">
-        <x-stat-card title="Total Modul Materi" :value="$totalMateri . ' Modul'" icon="book" color="blue" />
+        <x-stat-card title="Total Modul Materi" :value="$totalMateri . ' Modul'" icon="book" color="green" />
         <x-stat-card title="Materi Aktif Tayang" :value="$totalAktif . ' Modul'" icon="check" color="emerald" />
-        <x-stat-card title="Sinkronisasi Flutter" value="Real-time Live" icon="mobile" color="purple" />
+        <x-stat-card title="Sinkronisasi Flutter" value="Real-time Live" icon="mobile" color="green" />
     </div>
 
     <!-- Tabel Daftar Modul Materi -->

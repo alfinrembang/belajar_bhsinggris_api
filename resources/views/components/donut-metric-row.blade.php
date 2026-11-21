@@ -12,20 +12,30 @@
     $progressWidth = min(100, max(0, $percentage !== null ? (float) $percentage : $score));
 
     $colorScheme = match ($color) {
-        'pink', 'rose' => [
-            'bar' => 'bg-[#FB7185]',
-            'dot' => 'bg-[#FB7185]',
-            'text' => 'text-[#FB7185]',
+        'listening', 'darkgreen' => [
+            'bar' => 'bg-[#3E946B]',
+            'dot' => 'bg-[#3E946B]',
+            'text' => 'text-[#3E946B]',
         ],
-        'emerald', 'green' => [
-            'bar' => 'bg-[#10B981]',
-            'dot' => 'bg-[#10B981]',
-            'text' => 'text-[#10B981]',
+        'kuis', 'forest' => [
+            'bar' => 'bg-[#256345]',
+            'dot' => 'bg-[#256345]',
+            'text' => 'text-[#256345]',
+        ],
+        'emerald', 'green', 'materi' => [
+            'bar' => 'bg-[#4EA87D]',
+            'dot' => 'bg-[#4EA87D]',
+            'text' => 'text-[#4EA87D]',
         ],
         'amber', 'yellow' => [
             'bar' => 'bg-[#F59E0B]',
             'dot' => 'bg-[#F59E0B]',
             'text' => 'text-[#F59E0B]',
+        ],
+        'pink', 'rose' => [
+            'bar' => 'bg-[#E11D48]',
+            'dot' => 'bg-[#E11D48]',
+            'text' => 'text-[#E11D48]',
         ],
         default => [
             'bar' => 'bg-[#4EA87D]',

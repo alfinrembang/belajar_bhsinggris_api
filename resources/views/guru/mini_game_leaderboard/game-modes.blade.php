@@ -25,12 +25,12 @@
         <!-- ========================================== -->
         <!-- GAME 1: Tangkap Ikan (Word Fishing) -->
         <!-- ========================================== -->
-        <div class="rounded-2xl border border-slate-200/80 bg-white hover:border-sky-300 transition-all overflow-hidden shadow-xs">
+        <div class="rounded-2xl border border-slate-200/80 bg-white hover:border-[#4EA87D]/40 transition-all overflow-hidden shadow-xs">
             
             <!-- Header Kartu Game Tangkap Ikan -->
-            <div class="p-5 lg:p-6 bg-gradient-to-r from-sky-50/50 via-white to-white flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-b border-slate-100">
+            <div class="p-5 lg:p-6 bg-gradient-to-r from-[#EAF5EF]/50 via-white to-white flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-b border-slate-100">
                 <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-sky-600 text-white flex items-center justify-center shadow-[0_4px_12px_rgba(2,132,199,0.25)] shrink-0">
+                    <div class="w-12 h-12 rounded-2xl bg-[#3E946B] text-white flex items-center justify-center shadow-xs shrink-0">
                         <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M6 12c-2.5 0-4-2.5-4-5 3.5 0 6 2 8 5"></path>
                             <path d="M18 12c2.5 0 4-2.5 4-5-3.5 0-6 2-8 5"></path>
@@ -40,9 +40,9 @@
                     <div class="space-y-1.5 min-w-0">
                         <div class="flex flex-wrap items-center gap-2">
                             <h4 class="font-extrabold text-slate-900 text-base tracking-tight">Tangkap Ikan (Word Fishing)</h4>
-                            <span class="px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[11px] font-bold">Vocabulary & Grammar</span>
+                            <span class="px-2.5 py-0.5 rounded-full bg-[#EAF5EF] text-[#2E7352] text-[11px] font-bold border border-[#D7EDE1]">Vocabulary & Grammar</span>
                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200/60">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Live di Mobile
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#4EA87D]"></span> Live di Mobile
                             </span>
                         </div>
                         <p class="text-xs text-slate-600 leading-relaxed">
@@ -52,15 +52,15 @@
                         <!-- Chips Metadata Game -->
                         <div class="flex flex-wrap items-center gap-2 pt-1 text-[11px]">
                             <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 text-slate-700 font-semibold border border-slate-200/70">
-                                <svg class="w-3.5 h-3.5 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                                <svg class="w-3.5 h-3.5 text-[#2E7352]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                                 9 Level Akuarium
                             </span>
                             <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 text-slate-700 font-semibold border border-slate-200/70">
                                 <svg class="w-3.5 h-3.5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                                 Timer 60 Detik
                             </span>
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-sky-50 text-sky-800 font-bold border border-sky-200/70">
-                                <svg class="w-3.5 h-3.5 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#EAF5EF] text-[#2E7352] font-bold border border-[#D7EDE1]">
+                                <svg class="w-3.5 h-3.5 text-[#2E7352]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
                                 {{ $totalSoalIkan }} Soal Terdaftar
                             </span>
                         </div>
@@ -69,7 +69,7 @@
 
                 <!-- Tombol Aksi Kontrol Game Tangkap Ikan -->
                 <div class="flex flex-wrap sm:flex-col gap-2 shrink-0">
-                    <x-button variant="create" size="sm" type="button" onclick="openModal('modalTambahSoalIkan')" class="!bg-sky-600 hover:!bg-sky-700 !shadow-xs !rounded-xl">
+                    <x-button variant="create" size="sm" type="button" onclick="openModal('modalTambahSoalIkan')" class="!shadow-xs !rounded-xl">
                         Tambah Soal
                     </x-button>
 
@@ -257,12 +257,12 @@
         <!-- ========================================== -->
         <!-- GAME 2: Tebak Serigala (Wolf vs Sheep) -->
         <!-- ========================================== -->
-        <div class="rounded-2xl border border-slate-200/80 bg-white hover:border-indigo-300 transition-all overflow-hidden shadow-xs">
+        <div class="rounded-2xl border border-slate-200/80 bg-white hover:border-[#2E7352]/40 transition-all overflow-hidden shadow-xs">
             
             <!-- Header Kartu Game Tebak Serigala -->
-            <div class="p-5 lg:p-6 bg-gradient-to-r from-indigo-50/50 via-white to-white flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-b border-slate-100">
+            <div class="p-5 lg:p-6 bg-gradient-to-r from-[#EAF5EF]/40 via-white to-white flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-b border-slate-100">
                 <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-[0_4px_12px_rgba(79,70,229,0.25)] shrink-0">
+                    <div class="w-12 h-12 rounded-2xl bg-[#2E7352] text-white flex items-center justify-center shadow-xs shrink-0">
                         <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                             <circle cx="9" cy="7" r="4"></circle>
@@ -273,9 +273,9 @@
                     <div class="space-y-1.5 min-w-0">
                         <div class="flex flex-wrap items-center gap-2">
                             <h4 class="font-extrabold text-slate-900 text-base tracking-tight">Tebak Serigala (Wolf vs Sheep)</h4>
-                            <span class="px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-[11px] font-bold">Speaking & Deduction</span>
-                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-[10px] font-bold border border-indigo-200/60">
-                                <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> Room Mabar 10 Orang & AI Bot
+                            <span class="px-2.5 py-0.5 rounded-full bg-[#EAF5EF] text-[#2E7352] text-[11px] font-bold border border-[#D7EDE1]">Speaking & Deduction</span>
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold border border-slate-200/60">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#4EA87D]"></span> Room Mabar 10 Orang & AI Bot
                             </span>
                         </div>
                         <p class="text-xs text-slate-600 leading-relaxed">
@@ -285,15 +285,15 @@
                         <!-- Chips Metadata Game -->
                         <div class="flex flex-wrap items-center gap-2 pt-1 text-[11px]">
                             <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 text-slate-700 font-semibold border border-slate-200/70">
-                                <svg class="w-3.5 h-3.5 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                                <svg class="w-3.5 h-3.5 text-[#2E7352]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
                                 Format: 9 Domba vs 1 Serigala (10 Pemain)
                             </span>
                             <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 text-slate-700 font-semibold border border-slate-200/70">
-                                <svg class="w-3.5 h-3.5 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                <svg class="w-3.5 h-3.5 text-[#2E7352]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                                 Room Kode 6-Digit & AI Bot Kalem
                             </span>
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-800 font-bold border border-indigo-200/70">
-                                <svg class="w-3.5 h-3.5 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#EAF5EF] text-[#2E7352] font-bold border border-[#D7EDE1]">
+                                <svg class="w-3.5 h-3.5 text-[#2E7352]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                 {{ $totalSoalWerewolf ?? 0 }} Pasangan Kata Kartu
                             </span>
                         </div>
@@ -302,7 +302,7 @@
 
                 <!-- Tombol Aksi Kontrol Game Tebak Serigala -->
                 <div class="flex flex-wrap sm:flex-col gap-2 shrink-0">
-                    <x-button variant="create" size="sm" type="button" onclick="openModal('modalTambahSoalWerewolf')" class="!bg-indigo-600 hover:!bg-indigo-700 !shadow-xs !rounded-xl">
+                    <x-button variant="create" size="sm" type="button" onclick="openModal('modalTambahSoalWerewolf')" class="!shadow-xs !rounded-xl">
                         Tambah Pasangan
                     </x-button>
 
@@ -310,7 +310,7 @@
                         <button type="button" 
                                 onclick="openModal('modalImportWerewolf')"
                                 title="Import dari Excel (.xlsx / .csv)"
-                                class="px-2.5 py-1.5 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer">
+                                class="px-2.5 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer">
                             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                             <span>Import</span>
                         </button>
@@ -344,7 +344,7 @@
                     <div>
                         <div class="flex items-center gap-2">
                             <h4 class="font-extrabold text-slate-900 text-sm">Daftar Pasangan Kata Game Tebak Serigala</h4>
-                            <span class="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 text-[11px] font-bold">
+                            <span class="px-2 py-0.5 rounded-full bg-[#EAF5EF] text-[#2E7352] border border-[#D7EDE1] text-[11px] font-bold">
                                 {{ $totalSoalWerewolf ?? 0 }} Pasang
                             </span>
                         </div>
@@ -359,7 +359,7 @@
                             @endif
                             <select name="werewolf_theme" 
                                     onchange="this.form.submit()"
-                                    class="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 outline-none focus:bg-white focus:border-indigo-500 cursor-pointer">
+                                    class="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 outline-none focus:bg-white focus:border-[#4EA87D] cursor-pointer">
                                 <option value="">Semua Kategori</option>
                                 @foreach($werewolfThemes ?? [] as $theme)
                                     <option value="{{ $theme }}" {{ ($werewolfThemeFilter ?? '') == $theme ? 'selected' : '' }}>{{ $theme }}</option>
@@ -372,12 +372,12 @@
                             <span>Unduh Template</span>
                         </a>
 
-                        <button type="button" onclick="openModal('modalImportWerewolf')" class="px-3 py-1.5 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
+                        <button type="button" onclick="openModal('modalImportWerewolf')" class="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
                             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                             <span>Import Excel</span>
                         </button>
 
-                        <x-button variant="create" size="sm" type="button" onclick="openModal('modalTambahSoalWerewolf')" class="!bg-indigo-600 hover:!bg-indigo-700 !rounded-xl">
+                        <x-button variant="create" size="sm" type="button" onclick="openModal('modalTambahSoalWerewolf')" class="!shadow-xs !rounded-xl">
                             Pasangan Baru
                         </x-button>
                     </div>

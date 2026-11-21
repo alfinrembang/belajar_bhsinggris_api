@@ -9,15 +9,27 @@
         <div class="flex items-center gap-1.5 flex-wrap">
             <a href="{{ route('guru.laporan.index') }}" 
                class="px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 bg-[#4EA87D] text-white shadow-xs">
-                <span>📊</span> Leger Nilai Kolektif
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                <span>Leger Nilai Kolektif</span>
             </a>
             <a href="{{ route('guru.laporan.materi') }}" 
                class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all flex items-center gap-2">
-                <span>📚</span> Nilai per Materi & Kategori
+                <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+                <span>Nilai per Materi & Kategori</span>
             </a>
             <a href="{{ route('guru.laporan.quiz') }}" 
                class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all flex items-center gap-2">
-                <span>📝</span> Rekap Nilai Kuis
+                <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                </svg>
+                <span>Rekap Nilai Kuis</span>
             </a>
         </div>
 
@@ -121,7 +133,7 @@
             title="Total Pengerjaan Soal" 
             :value="$totalAktivitasBelajar . ' Submit'" 
             icon="zap" 
-            color="purple" 
+            color="green" 
         />
         <x-stat-card 
             title="Siswa Perlu Remedial" 
@@ -192,7 +204,7 @@
             <div>
                 <div class="flex items-center justify-between">
                     <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
-                        <span class="w-6 h-6 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+                        <span class="w-6 h-6 rounded-lg bg-[#EAF5EF] text-[#2E7352] flex items-center justify-center shrink-0">
                             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="9" cy="7" r="4"></circle>

@@ -94,7 +94,12 @@
                         <h3 class="font-extrabold text-slate-800 text-sm">Informasi Akun Pengajar</h3>
                         <p class="text-xs text-slate-400 mt-0.5">Perbarui nama lengkap, email login, dan NIP Anda</p>
                     </div>
-                    <span class="p-2.5 rounded-2xl bg-[#EAF5EF] text-[#4EA87D] text-base">👤</span>
+                    <span class="w-10 h-10 rounded-2xl bg-[#EAF5EF] border border-[#D7EDE1] text-[#2E7352] flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </span>
                 </div>
 
                 <form action="{{ route('guru.pengaturan.update_profil') }}" method="POST" class="space-y-4">
@@ -144,7 +149,12 @@
                         <h3 class="font-extrabold text-slate-800 text-sm">Konfigurasi Akademik & Evaluasi</h3>
                         <p class="text-xs text-slate-400 mt-0.5">Pengaturan tahun ajaran aktif, KKM, dan sakelar fitur aplikasi siswa</p>
                     </div>
-                    <span class="p-2.5 rounded-2xl bg-purple-50 text-purple-600 text-base">⚙️</span>
+                    <span class="w-10 h-10 rounded-2xl bg-[#EAF5EF] border border-[#D7EDE1] text-[#2E7352] flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
+                    </span>
                 </div>
 
                 <form action="{{ route('guru.pengaturan.update_akademik') }}" method="POST" class="space-y-4">
@@ -208,8 +218,12 @@
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
                             <!-- 1. Bobot Materi -->
                             <div class="bg-white p-3 rounded-xl border border-slate-200/80 shadow-2xs">
-                                <label class="block text-[11px] font-bold text-slate-700 mb-1">
-                                    📚 Modul Materi (%)
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1 flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 text-[#4EA87D]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                    </svg>
+                                    <span>Modul Materi (%)</span>
                                 </label>
                                 <div class="relative">
                                     <input type="number" 
@@ -227,8 +241,12 @@
 
                             <!-- 2. Bobot Listening -->
                             <div class="bg-white p-3 rounded-xl border border-slate-200/80 shadow-2xs">
-                                <label class="block text-[11px] font-bold text-slate-700 mb-1">
-                                    🎧 Audio Listening (%)
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1 flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 text-[#3E946B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                                        <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+                                    </svg>
+                                    <span>Audio Listening (%)</span>
                                 </label>
                                 <div class="relative">
                                     <input type="number" 
@@ -246,8 +264,13 @@
 
                             <!-- 3. Bobot Quiz -->
                             <div class="bg-white p-3 rounded-xl border border-slate-200/80 shadow-2xs">
-                                <label class="block text-[11px] font-bold text-slate-700 mb-1">
-                                    📝 Bank Soal & Kuis (%)
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1 flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 text-[#256345]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                                        <path d="M9 14l2 2 4-4"></path>
+                                    </svg>
+                                    <span>Bank Soal & Kuis (%)</span>
                                 </label>
                                 <div class="relative">
                                     <input type="number" 
@@ -301,12 +324,12 @@
                     </div>
 
                     <!-- Sakelar 2: Papan Peringkat (Leaderboard) -->
-                    <div class="flex items-center justify-between p-4 rounded-2xl {{ $pengaturanAkademik->is_leaderboard_aktif ? 'bg-purple-50/70 border border-purple-200' : 'bg-slate-50 border border-slate-200/70' }} transition-colors">
+                    <div class="flex items-center justify-between p-4 rounded-2xl {{ $pengaturanAkademik->is_leaderboard_aktif ? 'bg-[#EAF5EF]/70 border border-[#D7EDE1]' : 'bg-slate-50 border border-slate-200/70' }} transition-colors">
                         <div class="pr-4">
                             <div class="flex items-center gap-2">
                                 <span class="font-bold text-slate-800 text-xs">Papan Peringkat (Leaderboard) Siswa</span>
                                 @if($pengaturanAkademik->is_leaderboard_aktif)
-                                    <span class="px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 text-[10px] font-extrabold">AKTIF</span>
+                                    <span class="px-2 py-0.5 rounded-full bg-[#EAF5EF] text-[#2E7352] text-[10px] font-extrabold">AKTIF</span>
                                 @else
                                     <span class="px-2 py-0.5 rounded-full bg-slate-200 text-slate-600 text-[10px] font-extrabold">NONAKTIF</span>
                                 @endif
@@ -319,7 +342,7 @@
                                name="is_leaderboard_aktif" 
                                value="1" 
                                {{ old('is_leaderboard_aktif', $pengaturanAkademik->is_leaderboard_aktif ?? true) ? 'checked' : '' }} 
-                               class="w-5 h-5 text-purple-600 rounded accent-purple-600 cursor-pointer shrink-0">
+                               class="w-5 h-5 text-[#4EA87D] rounded accent-[#4EA87D] cursor-pointer shrink-0">
                     </div>
 
                     <div class="pt-2 flex justify-end">
@@ -338,7 +361,7 @@
                         <h3 class="font-extrabold text-slate-800 text-sm">Keamanan & Kata Sandi</h3>
                         <p class="text-xs text-slate-400 mt-0.5">Ubah kata sandi akun login portal pengajar</p>
                     </div>
-                    <span class="w-10 h-10 rounded-2xl bg-purple-50 text-purple-600 border border-purple-100/60 flex items-center justify-center shrink-0">
+                    <span class="w-10 h-10 rounded-2xl bg-[#EAF5EF] border border-[#D7EDE1] text-[#2E7352] flex items-center justify-center shrink-0">
                         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
@@ -379,7 +402,7 @@
 
                     <div class="pt-2 flex justify-end">
                         <button type="submit" 
-                                class="px-5 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-[0_4px_14px_rgba(147,51,234,0.25)] transition-all cursor-pointer">
+                                class="px-5 py-2.5 rounded-2xl bg-[#4EA87D] hover:bg-[#43966E] text-white font-bold text-xs shadow-[0_4px_14px_rgba(78,168,125,0.25)] transition-all cursor-pointer">
                             Perbarui Kata Sandi
                         </button>
                     </div>

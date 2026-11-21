@@ -11,18 +11,18 @@
     $barColors = [
         'blue' => 'bg-[#4EA87D]',
         'green' => 'bg-[#4EA87D]',
-        'pink' => 'bg-[#FB7185]',
-        'purple' => 'bg-purple-600',
-        'emerald' => 'bg-[#4EA87D]',
+        'pink' => 'bg-[#3E946B]',
+        'purple' => 'bg-[#3E946B]',
+        'emerald' => 'bg-[#256345]',
         'amber' => 'bg-amber-500',
     ][$color] ?? 'bg-[#4EA87D]';
 
     $textColors = [
         'blue' => 'text-[#4EA87D]',
         'green' => 'text-[#4EA87D]',
-        'pink' => 'text-[#FB7185]',
-        'purple' => 'text-purple-600',
-        'emerald' => 'text-[#4EA87D]',
+        'pink' => 'text-[#3E946B]',
+        'purple' => 'text-[#3E946B]',
+        'emerald' => 'text-[#256345]',
         'amber' => 'text-amber-600',
     ][$color] ?? 'text-[#4EA87D]';
 

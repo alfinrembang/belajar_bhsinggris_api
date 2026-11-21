@@ -59,7 +59,7 @@
                     @foreach($daftarRombelGrouped as $tingkat => $rombelList)
                         <optgroup label="Tingkat Kelas {{ $tingkat }}">
                             <option value="tingkat:{{ $tingkat }}" {{ request('rombel') === 'tingkat:'.$tingkat || request('kelas') === (string)$tingkat ? 'selected' : '' }}>
-                                📁 Semua Kelas {{ $tingkat }}
+                                Semua Kelas {{ $tingkat }}
                             </option>
                             @foreach($rombelList as $rItem)
                                 <option value="{{ $rItem }}" {{ request('rombel') === $rItem ? 'selected' : '' }}>
@@ -118,9 +118,9 @@
             <div>
                 <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Siswa Terdaftar</p>
                 <h3 class="text-2xl font-bold text-slate-900 mt-1 tracking-tight">{{ $totalSiswa }} Siswa</h3>
-                <p class="text-[11px] text-[#4EA87D] font-medium mt-1">Siswa Aktif</p>
+                <p class="text-[11px] text-[#2E7352] font-semibold mt-1">Siswa Terdaftar</p>
             </div>
-            <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 text-[#4EA87D] flex items-center justify-center shrink-0">
+            <div class="w-11 h-11 rounded-xl bg-[#EAF5EF] border border-[#D7EDE1] text-[#2E7352] flex items-center justify-center shrink-0">
                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                     <circle cx="9" cy="7" r="4"></circle>
@@ -132,9 +132,9 @@
             <div>
                 <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Rombel / Kelas Aktif</p>
                 <h3 class="text-2xl font-bold text-slate-900 mt-1 tracking-tight">{{ $totalRombel }} Rombel</h3>
-                <p class="text-[11px] text-emerald-600 font-medium mt-1">Distribusi Kelas</p>
+                <p class="text-[11px] text-[#2E7352] font-semibold mt-1">Distribusi Kelas</p>
             </div>
-            <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 text-emerald-600 flex items-center justify-center shrink-0">
+            <div class="w-11 h-11 rounded-xl bg-[#EAF5EF] border border-[#D7EDE1] text-[#2E7352] flex items-center justify-center shrink-0">
                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                     <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
@@ -146,11 +146,13 @@
             <div>
                 <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Siswa Aktif Belajar</p>
                 <h3 class="text-2xl font-bold text-slate-900 mt-1 tracking-tight">{{ $siswaAktif }} Siswa</h3>
-                <p class="text-[11px] text-slate-500 font-medium mt-1">Aktivitas Belajar</p>
+                <p class="text-[11px] text-[#2E7352] font-semibold mt-1">Aktivitas Terpantau</p>
             </div>
-            <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+            <div class="w-11 h-11 rounded-xl bg-[#EAF5EF] border border-[#D7EDE1] text-[#2E7352] flex items-center justify-center shrink-0">
                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="8.5" cy="7" r="4"></circle>
+                    <polyline points="17 11 19 13 23 9"></polyline>
                 </svg>
             </div>
         </div>

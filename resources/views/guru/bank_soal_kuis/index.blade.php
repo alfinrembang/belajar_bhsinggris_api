@@ -8,7 +8,9 @@
     @if (session('success'))
         <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center justify-between">
             <div class="flex items-center gap-2">
-                <span class="text-base">✅</span>
+                <svg class="w-4 h-4 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
                 <span>{{ session('success') }}</span>
             </div>
             <button onclick="this.parentElement.remove()" class="text-emerald-600 hover:text-emerald-900 font-bold text-sm leading-none">&times;</button>
@@ -18,7 +20,11 @@
     @if (session('error'))
         <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-center justify-between">
             <div class="flex items-center gap-2">
-                <span class="text-base">⚠️</span>
+                <svg class="w-4 h-4 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
                 <span>{{ session('error') }}</span>
             </div>
             <button onclick="this.parentElement.remove()" class="text-rose-600 hover:text-rose-900 font-bold text-sm leading-none">&times;</button>
@@ -58,7 +64,7 @@
                     @foreach($daftarRombelGrouped as $tingkat => $rombelList)
                         <optgroup label="Tingkat Kelas {{ $tingkat }}">
                             <option value="tingkat:{{ $tingkat }}" {{ request('rombel') === 'tingkat:'.$tingkat || request('kelas') === (string)$tingkat ? 'selected' : '' }}>
-                                📁 Semua Kelas {{ $tingkat }}
+                                Semua Kelas {{ $tingkat }}
                             </option>
                             @foreach($rombelList as $rItem)
                                 <option value="{{ $rItem }}" {{ request('rombel') === $rItem ? 'selected' : '' }}>
@@ -87,7 +93,10 @@
         <div class="flex items-center gap-2.5 shrink-0 self-start xl:self-auto">
             <a href="{{ route('guru.laporan.quiz') }}" 
                class="px-4 py-2.5 rounded-2xl bg-[#EAF5EF] hover:bg-[#D7EDE1] text-[#2E7352] text-xs font-bold transition-all flex items-center gap-2">
-                <span>📝</span> Rekap Nilai Kuis
+                <svg class="w-4 h-4 text-[#2E7352]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                </svg>
+                <span>Rekap Nilai Kuis</span>
             </a>
 
             <x-button-ai-import target="quiz" />
@@ -100,8 +109,8 @@
 
     <!-- Ringkasan Statistik Kuis -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-5">
-        <x-stat-card title="Total Paket Kuis" :value="$totalQuiz . ' Paket'" icon="clipboard" color="blue" />
-        <x-stat-card title="Total Butir Soal" :value="$totalSoal . ' Butir'" icon="help" color="purple" />
+        <x-stat-card title="Total Paket Kuis" :value="$totalQuiz . ' Paket'" icon="clipboard" color="green" />
+        <x-stat-card title="Total Butir Soal" :value="$totalSoal . ' Butir'" icon="help" color="green" />
         <x-stat-card title="Paket Kuis Aktif" :value="$totalAktif . ' Kuis'" icon="rocket" color="emerald" />
     </div>
 
@@ -155,7 +164,7 @@
                             </td>
                             <td class="py-3 px-3 whitespace-nowrap">
                                 <div class="flex flex-col gap-0.5 items-start">
-                                    <span class="px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 text-[11px] font-semibold whitespace-nowrap">
+                                    <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-semibold whitespace-nowrap border border-slate-200/60">
                                         {{ $quiz->kategori }}
                                     </span>
                                     <span class="text-[11px] text-slate-400 whitespace-nowrap">
@@ -210,7 +219,7 @@
                     @empty
                         <x-empty-state 
                             colspan="6" 
-                            icon="📭" 
+                            icon="quiz" 
                             title="Belum ada paket kuis" 
                             subtitle="Buat paket kuis dan bagikan kode room ujian kepada siswa Anda."
                             actionText="Buat Paket Kuis Baru"

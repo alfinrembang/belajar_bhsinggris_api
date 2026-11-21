@@ -59,8 +59,9 @@
                     <span class="w-2 h-2 rounded-full {{ $rataKeseluruhan >= 75 ? 'bg-emerald-500' : 'bg-amber-500' }}"></span>
                     {{ $rataKeseluruhan >= 75 ? 'Rata-rata di Atas KKM (75)' : 'Perlu Pendampingan Tambahan' }}
                 </span>
+                @php $settingAkademik = \App\Models\PengaturanAkademik::first(); @endphp
                 <p class="text-[11px] text-slate-400 font-medium">
-                    Bobot: 30% Teori • 30% Audio • 40% Kuis
+                    Bobot: {{ $settingAkademik->bobot_materi ?? 30 }}% Teori • {{ $settingAkademik->bobot_listening ?? 30 }}% Audio • {{ $settingAkademik->bobot_quiz ?? 40 }}% Kuis
                 </p>
             </div>
         </div>
@@ -68,29 +69,29 @@
         <!-- Bagian Rincian Metrik Vertikal (7 Kolom di Desktop) -->
         <div class="md:col-span-7 flex flex-col justify-center space-y-3">
             
-            <!-- 1. Latihan Teori Materi (Hijau Susu) -->
+            <!-- 1. Latihan Teori Materi (Hijau Prima) -->
             <x-donut-metric-row 
                 label="Latihan Teori Materi"
                 :value="$rataMateri"
-                color="green"
+                color="materi"
                 subtext="{{ $totalMateriSelesai }} Selesai"
                 :max="100"
             />
 
-            <!-- 2. Listening Audio (Aksen Pink Lembut) -->
+            <!-- 2. Listening Audio (Deep Emerald) -->
             <x-donut-metric-row 
                 label="Listening Audio"
                 :value="$rataListening"
-                color="pink"
+                color="listening"
                 subtext="{{ $totalListeningSelesai }} Selesai"
                 :max="100"
             />
 
-            <!-- 3. Paket Kuis & Ujian (Warm Amber) -->
+            <!-- 3. Paket Kuis & Ujian (Forest Green) -->
             <x-donut-metric-row 
                 label="Paket Kuis & Ujian"
                 :value="$rataQuiz"
-                color="amber"
+                color="kuis"
                 subtext="{{ $totalQuizSelesai }} Selesai"
                 :max="100"
             />
