@@ -7,6 +7,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreQuizRequest extends FormRequest
 {
+    use HandlesTargetRombel;
+
     /**
      * Determine if the user is authorized to make this request.
      */

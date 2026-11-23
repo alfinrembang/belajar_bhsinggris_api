@@ -8,6 +8,8 @@ use Illuminate\Validation\Rule;
 
 class UpdateQuizRequest extends FormRequest
 {
+    use HandlesTargetRombel;
+
     /**
      * Determine if the user is authorized to make this request.
      */

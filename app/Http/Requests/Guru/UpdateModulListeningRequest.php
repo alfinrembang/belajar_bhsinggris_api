@@ -7,6 +7,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateModulListeningRequest extends FormRequest
 {
+    use HandlesTargetRombel;
+
     /**
      * Tentukan apakah pengguna memiliki hak akses untuk memperbarui modul listening.
      */

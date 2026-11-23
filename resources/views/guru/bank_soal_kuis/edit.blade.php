@@ -55,31 +55,26 @@
                     </select>
                 </div>
 
-                <!-- Tingkat Kelas -->
+                <!-- Target Kelas & Rombel (Dinamis Satu Dropdown Terpadu) -->
+                @php
+                    $selectedRombel = old('target_rombel', $quiz->target_rombel ?? ($quiz->tingkat_kelas && $quiz->tingkat_kelas !== 'Semua Kelas' ? 'tingkat:'.$quiz->tingkat_kelas : ''));
+                @endphp
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">
-                        Target Tingkat Kelas <span class="text-rose-500">*</span>
-                    </label>
-                    <select name="tingkat_kelas" required class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#4EA87D] outline-none">
-                        @foreach($daftarKelas as $tk)
-                            <option value="{{ $tk }}" {{ old('tingkat_kelas', $quiz->tingkat_kelas) == $tk ? 'selected' : '' }}>Khusus Kelas {{ $tk }}</option>
-                        @endforeach
-                        <option value="Semua Kelas" {{ old('tingkat_kelas', $quiz->tingkat_kelas) == 'Semua Kelas' ? 'selected' : '' }}>Semua Kelas (Umum)</option>
-                    </select>
-                </div>
-
-                <!-- Target Rombel Spesifik -->
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">
-                        Target Rombel Spesifik <span class="text-slate-400 font-normal">(Opsional)</span>
+                        Target Kelas & Rombel Siswa <span class="text-rose-500">*</span>
                     </label>
                     <select name="target_rombel" class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#4EA87D] outline-none">
-                        <option value="">Semua Rombel (Bisa diakses seluruh rombel)</option>
+                        <option value="" {{ $selectedRombel === '' || $selectedRombel === 'Semua Kelas' ? 'selected' : '' }}>
+                            Semua Kelas (Umum / Bisa Diakses Seluruh Siswa)
+                        </option>
                         @if(isset($daftarRombelGrouped) && !empty($daftarRombelGrouped))
                             @foreach($daftarRombelGrouped as $tingkat => $rombelList)
                                 <optgroup label="Tingkat Kelas {{ $tingkat }}">
+                                    <option value="tingkat:{{ $tingkat }}" {{ $selectedRombel === 'tingkat:'.$tingkat ? 'selected' : '' }}>
+                                        Semua Kelas {{ $tingkat }} (Seluruh Rombel)
+                                    </option>
                                     @foreach($rombelList as $rombel)
-                                        <option value="{{ $rombel }}" {{ old('target_rombel', $quiz->target_rombel) == $rombel ? 'selected' : '' }}>
+                                        <option value="{{ $rombel }}" {{ $selectedRombel === $rombel ? 'selected' : '' }}>
                                             Khusus Rombel {{ $rombel }}
                                         </option>
                                     @endforeach

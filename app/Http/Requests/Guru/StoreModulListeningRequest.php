@@ -7,6 +7,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreModulListeningRequest extends FormRequest
 {
+    use HandlesTargetRombel;
+
     /**
      * Tentukan apakah pengguna memiliki hak akses untuk membuat modul listening.
      */
