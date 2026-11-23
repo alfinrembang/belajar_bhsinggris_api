@@ -54,12 +54,12 @@
 
             <!-- Filter Rombel Kelas Terpadu (Dinamis Sesuai Siswa Terdaftar) -->
             <select name="rombel" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
-                <option value="">Semua Rombel & Kelas</option>
+                <option value="">Semua Kelas & Rombel</option>
                 @if(isset($daftarRombelGrouped) && !empty($daftarRombelGrouped))
                     @foreach($daftarRombelGrouped as $tingkat => $rombelList)
                         <optgroup label="Tingkat Kelas {{ $tingkat }}">
                             <option value="tingkat:{{ $tingkat }}" {{ request('rombel') === 'tingkat:'.$tingkat || request('kelas') === (string)$tingkat ? 'selected' : '' }}>
-                                Semua Kelas {{ $tingkat }}
+                                📁 Semua Kelas {{ $tingkat }}
                             </option>
                             @foreach($rombelList as $rItem)
                                 <option value="{{ $rItem }}" {{ request('rombel') === $rItem ? 'selected' : '' }}>
@@ -71,7 +71,7 @@
                 @else
                     @foreach($daftarKelas as $k)
                         <option value="tingkat:{{ $k }}" {{ request('rombel') === 'tingkat:'.$k || request('kelas') === (string)$k ? 'selected' : '' }}>
-                            Kelas {{ $k }}
+                            📁 Kelas {{ $k }}
                         </option>
                     @endforeach
                 @endif
@@ -184,8 +184,8 @@
                             </div>
                         </th>
                         <th class="py-3 px-4 w-12 text-center whitespace-nowrap">No</th>
-                        <th class="py-3 px-4 whitespace-nowrap">Nama Siswa & Email</th>
-                        <th class="py-3 px-4 whitespace-nowrap">NIS / NISN</th>
+                        <th class="py-3 px-4 whitespace-nowrap">Nama Siswa</th>
+                        <th class="py-3 px-4 whitespace-nowrap">NISN</th>
                         <th class="py-3 px-4 whitespace-nowrap">Rombel Kelas</th>
                         <th class="py-3 px-4 text-center whitespace-nowrap">No. Absen</th>
                         <th class="py-3 px-4 text-center whitespace-nowrap">Status Akun</th>
@@ -217,17 +217,14 @@
                                         <a href="{{ route('guru.siswa.show', $siswa) }}" class="font-semibold text-slate-900 text-xs hover:text-[#4EA87D] transition-colors">
                                             {{ $siswa->nama_lengkap }}
                                         </a>
-                                        <p class="text-[11px] text-slate-400 mt-0.5 font-normal">{{ $siswa->email }}</p>
+                                        @if(!empty($siswa->email))
+                                            <p class="text-[11px] text-slate-400 mt-0.5 font-normal">{{ $siswa->email }}</p>
+                                        @endif
                                     </div>
                                 </div>
                             </td>
                             <td class="py-3.5 px-4 font-mono text-slate-600 whitespace-nowrap">
-                                <div>
-                                    <span class="font-semibold text-slate-800">{{ $siswa->nis ?: '-' }}</span>
-                                    @if($siswa->nisn)
-                                        <p class="text-[10px] text-slate-400 mt-0.5 font-normal">NISN: {{ $siswa->nisn }}</p>
-                                    @endif
-                                </div>
+                                <span class="font-semibold text-slate-800">{{ $siswa->nisn ?: ($siswa->nis ?: '-') }}</span>
                             </td>
                             <!-- Kolom Rombel Kelas (Dipastikan Full Lurus Tanpa Wrapping) -->
                             <td class="py-3.5 px-4 whitespace-nowrap">

@@ -31,16 +31,16 @@
                     <label class="block text-xs font-bold text-slate-700 mb-1.5">Level Akuarium (1-9)</label>
                     <select name="level" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
                         @for($lvl = 1; $lvl <= 9; $lvl++)
-                            <option value="{{ $lvl }}">Level {{ $lvl }}</option>
+                            <option value="{{ $lvl }}">⭐ Level {{ $lvl }}</option>
                         @endfor
                     </select>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1.5">Tingkat Kesulitan</label>
                     <select name="difficulty" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
-                        <option value="mudah">Mudah</option>
-                        <option value="sedang">Sedang</option>
-                        <option value="sulit">Sulit</option>
+                        <option value="mudah">🟢 Mudah (Easy)</option>
+                        <option value="sedang">🟡 Sedang (Medium)</option>
+                        <option value="sulit">🔴 Sulit (Hard)</option>
                     </select>
                 </div>
             </div>
@@ -58,10 +58,10 @@
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1.5">Jenis Kata (Part of Speech)</label>
                     <select name="part_of_speech" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
-                        <option value="Adjective (Kata Sifat)">Adjective (Kata Sifat)</option>
-                        <option value="Verb (Kata Kerja)">Verb (Kata Kerja)</option>
-                        <option value="Noun (Kata Benda)">Noun (Kata Benda)</option>
-                        <option value="Adverb (Kata Keterangan)">Adverb (Kata Keterangan)</option>
+                        <option value="Adjective (Kata Sifat)">🏷️ Adjective (Kata Sifat)</option>
+                        <option value="Verb (Kata Kerja)">⚡ Verb (Kata Kerja)</option>
+                        <option value="Noun (Kata Benda)">📦 Noun (Kata Benda)</option>
+                        <option value="Adverb (Kata Keterangan)">✨ Adverb (Kata Keterangan)</option>
                     </select>
                 </div>
             </div>

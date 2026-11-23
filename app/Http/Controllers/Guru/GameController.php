@@ -25,6 +25,11 @@ class GameController extends Controller
         $levelFilter = $request->query('level', '');
         $diffFilter = $request->query('difficulty', '');
         $werewolfThemeFilter = $request->query('werewolf_theme', '');
+        $rombelFilter = $request->query('rombel', '');
+
+        // Master Rombel & Tingkat Kelas untuk filter
+        $daftarRombelGrouped = Siswa::getDaftarRombelGrouped();
+        $daftarKelas = Siswa::getDaftarKelas();
 
         // 1. Ambil Skor Memancing per Siswa
         $fishingScores = SiswaFishingProgres::selectRaw('siswa_id, SUM(high_score) as total_fishing_score, COUNT(id) as total_fish_caught')
@@ -33,8 +38,27 @@ class GameController extends Controller
             ->get()
             ->keyBy('siswa_id');
 
-        // 2. Ambil Seluruh Data Siswa & Hitung Leaderboard Aktual
-        $siswas = Siswa::latest()->get();
+        // 2. Ambil Data Siswa (Dapat difilter berdasarkan rombel/kelas) & Hitung Leaderboard Aktual
+        $siswaQuery = Siswa::latest();
+        if (!empty($rombelFilter)) {
+            if (str_starts_with($rombelFilter, 'tingkat:')) {
+                $tingkat = substr($rombelFilter, 8);
+                $siswaQuery->where('kelas', $tingkat);
+            } else {
+                $parts = explode(' ', $rombelFilter);
+                if (count($parts) >= 3) {
+                    $siswaQuery->where('kelas', $parts[0])
+                               ->where('jurusan', $parts[1])
+                               ->where('no_kelas', $parts[2]);
+                } else {
+                    $siswaQuery->where(function($q) use ($rombelFilter) {
+                        $q->where('kelas', $rombelFilter)
+                          ->orWhere('jurusan', $rombelFilter);
+                    });
+                }
+            }
+        }
+        $siswas = $siswaQuery->get();
         $leaderboard = [];
 
         foreach ($siswas as $s) {
@@ -191,7 +215,10 @@ class GameController extends Controller
             'werewolfThemeFilter',
             'search',
             'levelFilter',
-            'diffFilter'
+            'diffFilter',
+            'rombelFilter',
+            'daftarRombelGrouped',
+            'daftarKelas'
         ));
     }
 

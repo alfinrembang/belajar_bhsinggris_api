@@ -16,13 +16,13 @@
     <div class="max-w-4xl bg-white rounded-3xl border border-slate-100 shadow-xs p-6 lg:p-8">
         <x-section-header 
             title="Formulir Identitas & Akun Siswa"
-            subtitle="Pastikan NISN, email, dan pembagian rombel kelas siswa sesuai dengan data Dapodik."
+            subtitle="Pastikan nama, NISN, dan pembagian rombel kelas siswa sesuai dengan data Dapodik."
         />
 
         <form action="{{ route('guru.siswa.store') }}" method="POST" class="mt-6 space-y-6">
             @csrf
 
-            <!-- 1. Data Personal Siswa -->
+            <!-- 1. Data Personal Siswa (Nama & NISN Sejajar Simetris) -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
@@ -38,40 +38,15 @@
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                        Alamat Email Siswa <span class="text-rose-500">*</span>
-                    </label>
-                    <input type="email" 
-                           name="email" 
-                           value="{{ old('email') }}" 
-                           placeholder="Contoh: budi.pratama@sekolah.sch.id" 
-                           required 
-                           class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
-                    <p class="text-[11px] text-slate-400 mt-1">Digunakan siswa untuk login ke aplikasi mobile.</p>
-                </div>
-            </div>
-
-            <!-- 2. NIS & NISN -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                        Nomor Induk Siswa (NIS)
-                    </label>
-                    <input type="text" 
-                           name="nis" 
-                           value="{{ old('nis') }}" 
-                           placeholder="Contoh: 102938" 
-                           class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                        NISN Siswa
+                        NISN Siswa <span class="text-rose-500">*</span>
                     </label>
                     <input type="text" 
                            name="nisn" 
                            value="{{ old('nisn') }}" 
                            placeholder="Contoh: 0071829301" 
+                           required 
                            class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
+                    <p class="text-[11px] text-slate-400 mt-1">Digunakan siswa sebagai identitas akun untuk login ke aplikasi mobile.</p>
                 </div>
             </div>
 

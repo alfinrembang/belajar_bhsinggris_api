@@ -124,12 +124,15 @@
                             @if(!empty($search))
                                 <input type="hidden" name="q" value="{{ $search }}">
                             @endif
+                            @if(!empty($rombelFilter))
+                                <input type="hidden" name="rombel" value="{{ $rombelFilter }}">
+                            @endif
                             <select name="level" 
                                     onchange="this.form.submit()"
                                     class="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 outline-none focus:bg-white focus:border-[#4EA87D] cursor-pointer">
-                                <option value="">Semua Level (1-9)</option>
+                                <option value="">📁 Semua Level (1-9)</option>
                                 @for($i = 1; $i <= 9; $i++)
-                                    <option value="{{ $i }}" {{ ($levelFilter ?? '') == $i ? 'selected' : '' }}>Level {{ $i }}</option>
+                                    <option value="{{ $i }}" {{ ($levelFilter ?? '') == $i ? 'selected' : '' }}>⭐ Level {{ $i }}</option>
                                 @endfor
                             </select>
                         </form>
@@ -357,12 +360,15 @@
                             @if(!empty($search))
                                 <input type="hidden" name="q" value="{{ $search }}">
                             @endif
+                            @if(!empty($rombelFilter))
+                                <input type="hidden" name="rombel" value="{{ $rombelFilter }}">
+                            @endif
                             <select name="werewolf_theme" 
                                     onchange="this.form.submit()"
                                     class="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 outline-none focus:bg-white focus:border-[#4EA87D] cursor-pointer">
-                                <option value="">Semua Kategori</option>
+                                <option value="">📁 Semua Kategori</option>
                                 @foreach($werewolfThemes ?? [] as $theme)
-                                    <option value="{{ $theme }}" {{ ($werewolfThemeFilter ?? '') == $theme ? 'selected' : '' }}>{{ $theme }}</option>
+                                    <option value="{{ $theme }}" {{ ($werewolfThemeFilter ?? '') == $theme ? 'selected' : '' }}>🏷️ {{ $theme }}</option>
                                 @endforeach
                             </select>
                         </form>

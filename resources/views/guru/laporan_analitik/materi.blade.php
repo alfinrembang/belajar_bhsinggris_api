@@ -79,7 +79,7 @@
                     @foreach($daftarRombelGrouped as $tingkat => $rombels)
                         <optgroup label="Tingkat Kelas {{ $tingkat }}">
                             <option value="tingkat:{{ $tingkat }}" {{ request('rombel') === 'tingkat:'.$tingkat || (request('kelas') == $tingkat && !request('rombel') && !request('jurusan')) ? 'selected' : '' }}>
-                                Semua Kelas {{ $tingkat }}
+                                📁 Semua Kelas {{ $tingkat }}
                             </option>
                             @foreach($rombels as $itemRombel)
                                 <option value="{{ $itemRombel }}" {{ request('rombel') === $itemRombel ? 'selected' : '' }}>

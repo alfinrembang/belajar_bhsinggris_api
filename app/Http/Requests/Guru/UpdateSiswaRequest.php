@@ -30,8 +30,14 @@ class UpdateSiswaRequest extends FormRequest
 
         return [
             'nama_lengkap' => ['required', 'string', 'max:255'],
-            'email' => [
+            'nisn' => [
                 'required',
+                'string',
+                'max:50',
+                Rule::unique('siswas', 'nisn')->ignore($siswaId),
+            ],
+            'email' => [
+                'nullable',
                 'string',
                 'email',
                 'max:255',
@@ -42,12 +48,6 @@ class UpdateSiswaRequest extends FormRequest
                 'string',
                 'max:50',
                 Rule::unique('siswas', 'nis')->ignore($siswaId),
-            ],
-            'nisn' => [
-                'nullable',
-                'string',
-                'max:50',
-                Rule::unique('siswas', 'nisn')->ignore($siswaId),
             ],
             'kelas' => ['required', 'string', 'in:10,11,12'],
             'jurusan' => ['required', 'string', 'max:50'],
@@ -68,11 +68,11 @@ class UpdateSiswaRequest extends FormRequest
     {
         return [
             'nama_lengkap.required' => 'Nama lengkap siswa wajib diisi.',
-            'email.required' => 'Alamat email siswa wajib diisi.',
+            'nisn.required' => 'NISN siswa wajib diisi sebagai identitas akun.',
+            'nisn.unique' => 'NISN ini sudah digunakan oleh siswa lain.',
             'email.email' => 'Format alamat email tidak valid.',
             'email.unique' => 'Alamat email ini sudah terdaftar oleh siswa lain.',
             'nis.unique' => 'NIS ini sudah digunakan oleh siswa lain.',
-            'nisn.unique' => 'NISN ini sudah digunakan oleh siswa lain.',
             'kelas.required' => 'Tingkat kelas siswa wajib dipilih.',
             'jurusan.required' => 'Jurusan siswa wajib diisi.',
             'password.min' => 'Kata sandi minimal berjumlah 6 karakter.',

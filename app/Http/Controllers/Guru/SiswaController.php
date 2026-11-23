@@ -126,6 +126,14 @@ class SiswaController extends Controller
         $defaultPassword = ! empty($data['password']) ? $data['password'] : '12345678';
         $data['password'] = Hash::make($defaultPassword);
 
+        // Fallback NIS dan Email
+        if (empty($data['nis']) && ! empty($data['nisn'])) {
+            $data['nis'] = $data['nisn'];
+        }
+        if (empty($data['email'])) {
+            $data['email'] = null;
+        }
+
         if (empty($data['tahun_ajaran_aktif'])) {
             $data['tahun_ajaran_aktif'] = PengaturanAkademik::getActiveSetting()->tahun_ajaran;
         }
