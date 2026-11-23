@@ -188,9 +188,9 @@
         </div>
 
         <!-- Pagination -->
-        @if($materis->hasPages())
-            <div class="px-6 py-4 border-t border-slate-100">
-                {{ $materis->links() }}
+        @if($materis->total() > 0)
+            <div class="px-6 py-3.5 border-t border-slate-100">
+                <x-pagination :paginator="$materis" />
             </div>
         @endif
     </div>

@@ -341,9 +341,9 @@
             </table>
         </div>
 
-        @if($daftarSiswa->hasPages())
-            <div class="px-6 py-4 border-t border-slate-100">
-                {{ $daftarSiswa->links() }}
+        @if($daftarSiswa->total() > 0)
+            <div class="px-6 py-3.5 border-t border-slate-100">
+                <x-pagination :paginator="$daftarSiswa" />
             </div>
         @endif
     </div>

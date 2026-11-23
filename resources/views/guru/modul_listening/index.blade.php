@@ -47,14 +47,6 @@
                        class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
             </div>
 
-            <!-- Filter Tingkat Kesulitan -->
-            <select name="tingkat" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
-                <option value="">Semua Tingkat</option>
-                <option value="Beginner" {{ request('tingkat') == 'Beginner' ? 'selected' : '' }}>Beginner (Pemula)</option>
-                <option value="Intermediate" {{ request('tingkat') == 'Intermediate' ? 'selected' : '' }}>Intermediate (Menengah)</option>
-                <option value="Advanced" {{ request('tingkat') == 'Advanced' ? 'selected' : '' }}>Advanced (Lanjutan)</option>
-            </select>
-
             <!-- Filter Rombel Kelas Terpadu -->
             <select name="rombel" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
                 <option value="">Semua Kelas & Rombel</option>
@@ -114,22 +106,16 @@
             <table class="w-full table-fixed text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-50/75 border-b border-slate-200/70 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-                        <th class="py-3 px-4 w-[36%]">Judul Percakapan & Audio</th>
-                        <th class="py-3 px-2.5 w-[13%]">Tingkat</th>
-                        <th class="py-3 px-2.5 w-[11%]">Durasi</th>
-                        <th class="py-3 px-2.5 w-[13%]">Latihan Soal</th>
-                        <th class="py-3 px-2.5 w-[11%]">Status</th>
+                        <th class="py-3 px-4 w-[45%]">Judul Percakapan & Audio</th>
+                        <th class="py-3 px-2.5 w-[13%]">Durasi</th>
+                        <th class="py-3 px-2.5 w-[14%]">Latihan Soal</th>
+                        <th class="py-3 px-2.5 w-[12%]">Status</th>
                         <th class="py-3 px-3 w-[16%] text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-xs font-medium text-slate-700">
                     @forelse($listenings as $item)
                         @php
-                            $levelColor = match($item->tingkat_kesulitan) {
-                                'Intermediate' => 'bg-slate-100 text-slate-700 border-slate-200/80',
-                                'Advanced' => 'bg-amber-50 text-amber-700 border-amber-200/80',
-                                default => 'bg-[#EAF5EF] text-[#2E7352] border-[#D7EDE1]',
-                            };
                             $iconBg = 'bg-[#EAF5EF] text-[#2E7352]';
                         @endphp
                         <tr class="hover:bg-slate-50/70 transition-colors">
@@ -150,11 +136,6 @@
                                         </p>
                                     </div>
                                 </div>
-                            </td>
-                            <td class="py-3 px-2.5 whitespace-nowrap">
-                                <span class="whitespace-nowrap px-2.5 py-0.5 rounded-md text-[10.5px] font-semibold border {{ $levelColor }} inline-flex items-center">
-                                    {{ $item->tingkat_kesulitan }}
-                                </span>
                             </td>
                             <td class="py-3 px-2.5 text-slate-600 font-mono text-[11.5px] whitespace-nowrap">
                                 <div class="whitespace-nowrap">{{ $item->durasi ?? '00:00' }}</div>
@@ -185,7 +166,7 @@
                         </tr>
                     @empty
                         <x-empty-state 
-                            colspan="6" 
+                            colspan="5" 
                             icon="🎧" 
                             title="Belum Ada Modul Listening" 
                             subtitle="Unggah audio rekaman percakapan pertama untuk pembelajaran listening siswa."
@@ -197,9 +178,9 @@
             </table>
         </div>
 
-        @if($listenings->hasPages())
-            <div class="p-5 border-t border-slate-100">
-                {{ $listenings->links() }}
+        @if($listenings->total() > 0)
+            <div class="px-6 py-3.5 border-t border-slate-100">
+                <x-pagination :paginator="$listenings" />
             </div>
         @endif
     </div>

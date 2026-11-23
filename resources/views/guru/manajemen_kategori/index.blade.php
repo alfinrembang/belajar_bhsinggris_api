@@ -168,9 +168,9 @@
             </table>
         </div>
 
-        @if($kategoris->hasPages())
-            <div class="p-5 border-t border-slate-100">
-                {{ $kategoris->links() }}
+        @if($kategoris->total() > 0)
+            <div class="px-6 py-3.5 border-t border-slate-100">
+                <x-pagination :paginator="$kategoris" />
             </div>
         @endif
     </div>

@@ -44,23 +44,6 @@
                     </p>
                 @endif
             </div>
-
-            <!-- Kartu Kode Room Besar -->
-            <div class="p-5 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50/60 border border-[#D7EDE1] flex flex-col items-center justify-center shrink-0 min-w-[200px]">
-                <span class="text-[11px] font-bold text-[#4EA87D] uppercase tracking-wider">KODE ROOM SISWA</span>
-                <span class="text-3xl font-mono font-extrabold text-slate-900 tracking-widest mt-1">
-                    {{ $quiz->kode_room }}
-                </span>
-                <button type="button" 
-                        onclick="salinKode('{{ $quiz->kode_room }}', this)"
-                        class="mt-2.5 px-3 py-1 rounded-lg bg-white shadow-xs border border-[#D7EDE1] text-[#4EA87D] text-[11px] font-bold hover:bg-[#EAF5EF] transition-all flex items-center gap-1.5 cursor-pointer">
-                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                    </svg>
-                    <span>Salin Kode</span>
-                </button>
-            </div>
         </div>
 
         <!-- 4 Metrik Kuis -->
@@ -248,7 +231,7 @@
                                 <div class="flex flex-col items-center justify-center">
                                     <span class="text-3xl mb-2">🎯</span>
                                     <p class="font-bold text-slate-600 text-xs">Belum ada siswa yang mengerjakan kuis ini</p>
-                                    <p class="text-[11px] text-slate-400 mt-0.5">Bagikan kode room <span class="font-mono font-bold text-[#4EA87D]">{{ $quiz->kode_room }}</span> kepada siswa Anda.</p>
+                                    <p class="text-[11px] text-slate-400 mt-0.5">Kuis ini telah tayang dan siap dikerjakan siswa di aplikasi.</p>
                                 </div>
                             </td>
                         </tr>
@@ -257,20 +240,4 @@
             </table>
         </div>
     </div>
-
-    <!-- Script Salin Kode -->
-    <script>
-        function salinKode(kode, btn) {
-            navigator.clipboard.writeText(kode).then(() => {
-                const span = btn.querySelector('span');
-                if (span) {
-                    const original = span.textContent;
-                    span.textContent = 'Tersalin!';
-                    setTimeout(() => { span.textContent = original; }, 1500);
-                }
-            }).catch(err => {
-                alert('Kode room: ' + kode);
-            });
-        }
-    </script>
 </x-layout>

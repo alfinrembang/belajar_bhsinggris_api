@@ -1,7 +1,7 @@
 <x-layout 
     title="Edit Paket Kuis - Study English Prima" 
     pageTitle="Edit Paket Kuis" 
-    pageSubtitle="Perbarui informasi kuis, kode room, durasi, dan butir-butir pertanyaan." 
+    pageSubtitle="Perbarui informasi kuis, durasi pengerjaan, dan butir-butir pertanyaan evaluasi." 
     active="quiz"
 >
     <!-- Navigasi Kembali -->
@@ -18,12 +18,12 @@
         @csrf
         @method('PUT')
 
-        <!-- SEKSI 1: INFORMASI KUIS & KODE ROOM -->
+        <!-- SEKSI 1: INFORMASI KUIS -->
         <div class="bg-white p-6 lg:p-7 rounded-3xl border border-slate-100 shadow-xs space-y-5">
             <x-section-header 
                 number="01" 
-                title="Informasi Utama & Pengaturan Room" 
-                subtitle="Atur judul paket, kategori, durasi waktu pengerjaan, dan kode room ujian siswa" 
+                title="Informasi Utama Kuis" 
+                subtitle="Atur judul paket, kategori, durasi waktu pengerjaan, dan target kelas siswa" 
                 color="blue" 
             />
 
@@ -89,28 +89,8 @@
                     </select>
                 </div>
 
-                <!-- Kode Room Siswa -->
-                <div>
-                    <div class="flex items-center justify-between mb-1.5">
-                        <label class="block text-xs font-semibold text-slate-700">
-                            Kode Room Siswa <span class="text-rose-500">*</span>
-                        </label>
-                        <button type="button" onclick="acakKodeRoom()" class="text-[11px] text-[#4EA87D] hover:underline font-semibold cursor-pointer">
-                            🔄 Acak Kode
-                        </button>
-                    </div>
-                    <div class="relative">
-                        <input type="text" 
-                               id="kode_room_input"
-                               name="kode_room" 
-                               value="{{ old('kode_room', $quiz->kode_room) }}"
-                               maxlength="10"
-                               placeholder="ENG10A" 
-                               required
-                               class="w-full px-4 py-2.5 font-mono tracking-wider font-bold rounded-2xl bg-[#EAF5EF]/50 border border-[#D7EDE1] text-xs text-[#4EA87D] focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none uppercase transition-all">
-                    </div>
-                    <span class="text-[10px] text-slate-400 mt-1 block">Kode 6 digit room ujian live untuk bergabung dari aplikasi</span>
-                </div>
+                <!-- Simpan Kode Room Otomatis (Hidden) -->
+                <input type="hidden" id="kode_room_input" name="kode_room" value="{{ old('kode_room', $quiz->kode_room ?? 'QUIZ01') }}">
 
                 <!-- Durasi Waktu (Menit) -->
                 <div>

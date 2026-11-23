@@ -136,6 +136,7 @@ class ModulListeningController extends Controller
 
         $data['user_id'] = auth()->id();
         $data['xp_reward'] = $data['xp_reward'] ?? 50;
+        $data['tingkat_kesulitan'] = $data['tingkat_kesulitan'] ?? 'Beginner';
 
         // Bersihkan array tujuan belajar
         if ($request->has('tujuan_belajar')) {

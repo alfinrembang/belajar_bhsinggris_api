@@ -43,7 +43,7 @@
                 <input type="text" 
                        name="q" 
                        value="{{ request('q') }}"
-                       placeholder="Cari judul kuis atau kode room..." 
+                       placeholder="Cari judul paket kuis..." 
                        class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
             </div>
 
@@ -117,15 +117,15 @@
     <!-- Tabel Daftar Paket Kuis -->
     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-            <h3 class="font-bold text-slate-800 text-sm">Daftar Paket Kuis & Room Ujian</h3>
-            <span class="text-xs text-slate-400">Terhubung live dengan kuis & kode room aplikasi siswa</span>
+            <h3 class="font-bold text-slate-800 text-sm">Daftar Paket Kuis Evaluasi</h3>
+            <span class="text-xs text-slate-400">Sinkron otomatis dengan menu kuis aplikasi siswa</span>
         </div>
 
         <div class="w-full overflow-hidden">
             <table class="w-full table-fixed text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-50/75 border-b border-slate-200/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                        <th class="py-3 px-4 w-[36%] whitespace-nowrap">Nama Paket & Kode Room</th>
+                        <th class="py-3 px-4 w-[36%] whitespace-nowrap">Nama Paket Kuis</th>
                         <th class="py-3 px-3 w-[13%] whitespace-nowrap">Kategori & Kelas</th>
                         <th class="py-3 px-3 w-[13%] whitespace-nowrap">Jumlah Soal</th>
                         <th class="py-3 px-3 w-[11%] whitespace-nowrap">Durasi</th>
@@ -145,20 +145,9 @@
                                         <a href="{{ route('guru.quiz.show', $quiz) }}" class="font-bold text-slate-800 hover:text-[#4EA87D] transition-colors truncate block" title="{{ $quiz->judul }}">
                                             {{ $quiz->judul }}
                                         </a>
-                                        <div class="flex items-center gap-2 mt-0.5">
-                                            <span class="inline-flex items-center gap-1 font-mono text-[11px] font-bold text-[#4EA87D] bg-[#EAF5EF] px-2 py-0.5 rounded-md whitespace-nowrap">
-                                                ROOM: {{ $quiz->kode_room }}
-                                            </span>
-                                            <button type="button" 
-                                                    onclick="salinKodeRoom('{{ $quiz->kode_room }}', this)" 
-                                                    class="text-slate-400 hover:text-[#4EA87D] transition-colors p-0.5" 
-                                                    title="Salin Kode Room">
-                                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                                </svg>
-                                            </button>
-                                        </div>
+                                        <p class="text-[11px] text-slate-400 truncate mt-0.5">
+                                            {{ $quiz->deskripsi ?? 'Tidak ada ringkasan deskripsi' }}
+                                        </p>
                                     </div>
                                 </div>
                             </td>
@@ -230,9 +219,9 @@
             </table>
         </div>
 
-        @if($quizzes->hasPages())
-            <div class="px-6 py-4 border-t border-slate-100">
-                {{ $quizzes->links() }}
+        @if($quizzes->total() > 0)
+            <div class="px-6 py-3.5 border-t border-slate-100">
+                <x-pagination :paginator="$quizzes" />
             </div>
         @endif
     </div>

@@ -22,9 +22,6 @@
             <!-- Deskripsi & Info Modul -->
             <div class="lg:col-span-2 space-y-3">
                 <div class="flex flex-wrap items-center gap-2">
-                    <span class="px-3 py-1 rounded-xl text-xs font-bold {{ $listening->tingkat_kesulitan === 'Beginner' ? 'bg-emerald-100 text-emerald-700' : ($listening->tingkat_kesulitan === 'Intermediate' ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700') }}">
-                        Level: {{ $listening->tingkat_kesulitan }}
-                    </span>
                     <span class="px-3 py-1 rounded-xl text-xs font-semibold bg-[#EAF5EF] text-[#4EA87D]">
                         Target: {{ $listening->tingkat_kelas }}
                     </span>

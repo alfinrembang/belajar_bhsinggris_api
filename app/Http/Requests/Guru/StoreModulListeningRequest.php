@@ -25,7 +25,7 @@ class StoreModulListeningRequest extends FormRequest
         return [
             'judul' => ['required', 'string', 'max:255'],
             'deskripsi' => ['nullable', 'string'],
-            'tingkat_kesulitan' => ['required', 'in:Beginner,Intermediate,Advanced'],
+            'tingkat_kesulitan' => ['nullable', 'string'],
             'tingkat_kelas' => ['required', 'string', 'max:50'],
             'target_rombel' => ['nullable', 'string', 'max:50'],
             'xp_reward' => ['nullable', 'integer', 'min:0'],

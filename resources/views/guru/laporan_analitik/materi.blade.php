@@ -250,9 +250,9 @@
             </table>
         </div>
 
-        @if($progresList->hasPages())
-            <div class="p-6 border-t border-slate-100">
-                {{ $progresList->links() }}
+        @if($progresList->total() > 0)
+            <div class="px-6 py-3.5 border-t border-slate-100">
+                <x-pagination :paginator="$progresList" />
             </div>
         @endif
     </div>

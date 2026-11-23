@@ -257,9 +257,9 @@
             </table>
         </div>
 
-        @if($riwayatQuiz->hasPages())
-            <div class="p-6 border-t border-slate-100">
-                {{ $riwayatQuiz->links() }}
+        @if($riwayatQuiz->total() > 0)
+            <div class="px-6 py-3.5 border-t border-slate-100">
+                <x-pagination :paginator="$riwayatQuiz" />
             </div>
         @endif
     </div>

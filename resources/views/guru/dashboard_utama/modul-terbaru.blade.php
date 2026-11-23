@@ -71,7 +71,9 @@
         </div>
 
         <!-- Custom Pagination Links Sesuai Mockup -->
-        {{ $materiTerbaru->links('components.pagination') }}
+        <div class="mt-4 pt-3 border-t border-slate-100">
+            <x-pagination :paginator="$materiTerbaru" />
+        </div>
     @else
         <div class="py-8 text-center text-slate-400">
             <svg class="w-10 h-10 mx-auto text-slate-300 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">

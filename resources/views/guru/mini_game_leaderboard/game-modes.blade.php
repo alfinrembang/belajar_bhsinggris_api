@@ -237,14 +237,14 @@
 
                 <!-- Footer Accordion & Pagination -->
                 <div class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
-                    <div>
-                        @if($daftarSoalIkan->hasPages())
-                            {{ $daftarSoalIkan->links() }}
+                    <div class="flex-1 w-full">
+                        @if($daftarSoalIkan->total() > 0)
+                            <x-pagination :paginator="$daftarSoalIkan" />
                         @endif
                     </div>
                     <button type="button" 
                             onclick="toggleBankSoal()"
-                            class="text-xs text-slate-400 hover:text-slate-600 font-semibold flex items-center gap-1.5 cursor-pointer">
+                            class="text-xs text-slate-400 hover:text-slate-600 font-semibold flex items-center gap-1.5 cursor-pointer shrink-0">
                         <span>Tutup Bank Soal</span>
                         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>
                     </button>
@@ -472,14 +472,14 @@
 
                 <!-- Footer Accordion & Pagination -->
                 <div class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
-                    <div>
-                        @if($daftarSoalWerewolf->hasPages())
-                            {{ $daftarSoalWerewolf->links() }}
+                    <div class="flex-1 w-full">
+                        @if($daftarSoalWerewolf->total() > 0)
+                            <x-pagination :paginator="$daftarSoalWerewolf" />
                         @endif
                     </div>
                     <button type="button" 
                             onclick="toggleBankWerewolf()"
-                            class="text-xs text-slate-400 hover:text-slate-600 font-semibold flex items-center gap-1.5 cursor-pointer">
+                            class="text-xs text-slate-400 hover:text-slate-600 font-semibold flex items-center gap-1.5 cursor-pointer shrink-0">
                         <span>Tutup Bank Kata</span>
                         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>
                     </button>
