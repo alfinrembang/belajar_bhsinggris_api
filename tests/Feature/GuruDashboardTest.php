@@ -98,13 +98,13 @@ class GuruDashboardTest extends TestCase
 
         $response = $this->actingAs($this->guru)->get(route('guru.dashboard', ['page' => 1]));
         $response->assertStatus(200);
-        $response->assertSee('Showing');
-        $response->assertSee('results');
-        $response->assertSee('Next');
+        $response->assertSee('Menampilkan');
+        $response->assertSee('data');
+        $response->assertSee('Selanjutnya');
 
         $page2Response = $this->actingAs($this->guru)->get(route('guru.dashboard', ['page' => 2]));
         $page2Response->assertStatus(200);
-        $page2Response->assertSee('Previous');
+        $page2Response->assertSee('Sebelumnya');
     }
 
     /**
