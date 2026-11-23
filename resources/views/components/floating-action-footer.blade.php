@@ -18,7 +18,7 @@
                 {{ $cancelText }}
             </a>
             <button type="submit" 
-                    class="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#1E6BFF] to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md shadow-blue-500/20 flex items-center gap-2 cursor-pointer transition-all active:scale-95">
+                    class="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#4EA87D] to-[#388E63] hover:from-[#43966E] hover:to-[#2E7352] shadow-md shadow-[#4EA87D]/25 flex items-center gap-2 cursor-pointer transition-all active:scale-95">
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                     <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>

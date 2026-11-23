@@ -185,4 +185,31 @@ class AiImportFeatureTest extends TestCase
             'kunci_jawaban' => 'B',
         ]);
     }
+
+    public function test_guru_can_confirm_ai_materi_using_unified_target_rombel(): void
+    {
+        $aiImport = AiImport::factory()->completed()->create([
+            'user_id' => $this->guru->id,
+            'tipe_target' => 'materi',
+        ]);
+
+        $payload = [
+            'judul' => 'Materi AI Khusus 10 DKV 1',
+            'kategori' => 'Grammar',
+            'target_rombel' => '10 DKV 1',
+            'deskripsi_singkat' => 'Materi tenses hasil ekstraksi AI.',
+            'penjelasan' => 'Penjelasan rumus dasar.',
+            'status' => 'aktif',
+        ];
+
+        $response = $this->actingAs($this->guru)->post(route('guru.ai-import.confirm-materi', $aiImport->id), $payload);
+
+        $response->assertRedirect(route('guru.materi.index'));
+        $this->assertDatabaseHas('materis', [
+            'user_id' => $this->guru->id,
+            'judul' => 'Materi AI Khusus 10 DKV 1',
+            'tingkat_kelas' => '10',
+            'target_rombel' => '10 DKV 1',
+        ]);
+    }
 }

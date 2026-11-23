@@ -22,7 +22,7 @@
                 number="01" 
                 :title="$aiImport->tipe_target === 'quiz' ? 'Informasi Paket Kuis' : 'Informasi Utama Modul Materi'" 
                 subtitle="Parameter penting materi pembelajaran" 
-                color="blue" 
+                color="emerald" 
             />
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -53,26 +53,39 @@
                     @endif
                 </x-form-select>
 
-                <!-- Tingkat Kelas -->
-                <x-form-select label="Tingkat Kelas" name="tingkat_kelas" required>
-                    @php $currentKelas = old('tingkat_kelas', $hasil['tingkat_kelas'] ?? 'Kelas 10'); @endphp
-                    <option value="Kelas 10" {{ str_contains($currentKelas, '10') ? 'selected' : '' }}>Kelas 10</option>
-                    <option value="Kelas 11" {{ str_contains($currentKelas, '11') ? 'selected' : '' }}>Kelas 11</option>
-                    <option value="Kelas 12" {{ str_contains($currentKelas, '12') ? 'selected' : '' }}>Kelas 12</option>
-                    <option value="Kelas 7" {{ str_contains($currentKelas, '7') ? 'selected' : '' }}>Kelas 7 (SMP)</option>
-                    <option value="Kelas 8" {{ str_contains($currentKelas, '8') ? 'selected' : '' }}>Kelas 8 (SMP)</option>
-                    <option value="Kelas 9" {{ str_contains($currentKelas, '9') ? 'selected' : '' }}>Kelas 9 (SMP)</option>
-                    <option value="Umum" {{ strcasecmp($currentKelas, 'Umum') === 0 ? 'selected' : '' }}>Tingkat Umum / Semua Kelas</option>
-                </x-form-select>
-
-                <!-- Target Rombel (Opsional) -->
-                <x-form-input 
-                    label="Target Rombel"
-                    name="target_rombel"
-                    :value="old('target_rombel')"
-                    hint="Opsional"
-                    placeholder="Contoh: X-A, XI MIPA 1 (kosongkan jika semua)"
-                />
+                <!-- Target Kelas & Rombel (Dinamis Satu Dropdown Terpadu) -->
+                @php
+                    $extractedKelas = $hasil['tingkat_kelas'] ?? '';
+                    $defaultTingkat = '';
+                    if (preg_match('/\b(10|11|12)\b/', $extractedKelas, $m)) {
+                        $defaultTingkat = 'tingkat:'.$m[1];
+                    }
+                    $selectedRombel = old('target_rombel', $defaultTingkat);
+                @endphp
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+                        Target Kelas & Rombel Siswa <span class="text-rose-500">*</span>
+                    </label>
+                    <select name="target_rombel" class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#4EA87D] outline-none">
+                        <option value="" {{ $selectedRombel === '' || $selectedRombel === 'Semua Kelas' ? 'selected' : '' }}>
+                            Semua Kelas (Umum / Bisa Diakses Seluruh Siswa)
+                        </option>
+                        @if(isset($daftarRombelGrouped) && !empty($daftarRombelGrouped))
+                            @foreach($daftarRombelGrouped as $tingkat => $rombelList)
+                                <optgroup label="Tingkat Kelas {{ $tingkat }}">
+                                    <option value="tingkat:{{ $tingkat }}" {{ $selectedRombel === 'tingkat:'.$tingkat ? 'selected' : '' }}>
+                                        Semua Kelas {{ $tingkat }} (Seluruh Rombel)
+                                    </option>
+                                    @foreach($rombelList as $rombel)
+                                        <option value="{{ $rombel }}" {{ $selectedRombel === $rombel ? 'selected' : '' }}>
+                                            Khusus Rombel {{ $rombel }}
+                                        </option>
+                                    @endforeach
+                                </optgroup>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
 
                 <!-- XP Reward -->
                 <x-form-input 

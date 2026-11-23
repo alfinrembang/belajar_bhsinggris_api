@@ -13,6 +13,7 @@ use App\Models\Materi;
 use App\Models\MateriSoal;
 use App\Models\Quiz;
 use App\Models\QuizSoal;
+use App\Models\Siswa;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -88,9 +89,11 @@ class AiImportController extends Controller
 
         $hasil = $aiImport->hasil_ekstraksi_json ?? [];
         $kategoriList = KategoriMateri::where('is_aktif', true)->orderBy('urutan')->get();
+        $daftarRombelGrouped = Siswa::getDaftarRombelGrouped();
+        $daftarKelas = Siswa::getDaftarKelas();
         $kelasDiampu = $user->kelas_diampu ?? [];
 
-        return view('guru.ai_import.review', compact('aiImport', 'hasil', 'kategoriList', 'kelasDiampu'));
+        return view('guru.ai_import.review', compact('aiImport', 'hasil', 'kategoriList', 'kelasDiampu', 'daftarRombelGrouped', 'daftarKelas'));
     }
 
     /**

@@ -7,6 +7,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class ConfirmAiMateriRequest extends FormRequest
 {
+    use HandlesTargetRombel;
+
     /**
      * Tentukan apakah pengguna memiliki hak akses untuk mengonfirmasi materi dokumen ini.
      */
