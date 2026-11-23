@@ -21,8 +21,8 @@
         </span>
     </div>
 
-    <!-- Daftar Siswa Ranked Leaderboard -->
-    <div class="space-y-3">
+    <!-- Daftar Siswa Ranked Leaderboard (Scrollable) -->
+    <div class="space-y-3 max-h-[480px] overflow-y-auto pr-1.5 leaderboard-scroll" style="scrollbar-width: thin; scrollbar-color: #CBD5E1 transparent;">
         @forelse($rankedLeaderboard as $item)
             @php
                 $rank = $item['rank'];
@@ -100,4 +100,34 @@
         @endforelse
     </div>
 
+    @if(count($rankedLeaderboard) > 5)
+        <!-- Indikator Gulir jika siswa lebih dari 5 -->
+        <div class="pt-2 text-center border-t border-slate-100">
+            <span class="text-[11px] text-slate-400 font-medium inline-flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-slate-400 animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+                Gulir ke bawah untuk melihat peringkat lainnya (Total {{ count($rankedLeaderboard) }} siswa)
+            </span>
+        </div>
+    @endif
+
+    <!-- Custom Thin Scrollbar Styling -->
+    <style>
+        .leaderboard-scroll::-webkit-scrollbar {
+            width: 5px;
+        }
+        .leaderboard-scroll::-webkit-scrollbar-track {
+            background: transparent;
+            border-radius: 9999px;
+        }
+        .leaderboard-scroll::-webkit-scrollbar-thumb {
+            background-color: #E2E8F0;
+            border-radius: 9999px;
+            transition: background-color 0.2s ease;
+        }
+        .leaderboard-scroll::-webkit-scrollbar-thumb:hover {
+            background-color: #CBD5E1;
+        }
+    </style>
 </div>
