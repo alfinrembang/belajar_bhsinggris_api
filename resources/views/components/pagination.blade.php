@@ -4,9 +4,16 @@
 ])
 
 @php
-    // Kompatibilitas: jika dipanggil via komponen tag <x-pagination :paginator="$data" />
-    if (!isset($elements) && $paginator instanceof \Illuminate\Pagination\LengthAwarePaginator) {
-        $elements = $paginator->elements();
+    // Kompatibilitas saat dipanggil via tag component <x-pagination :paginator="$data" />
+    if ((!isset($elements) || empty($elements)) && $paginator instanceof \Illuminate\Pagination\LengthAwarePaginator) {
+        $window = \Illuminate\Pagination\UrlWindow::make($paginator);
+        $elements = array_filter([
+            $window['first'],
+            is_array($window['slider']) ? '...' : null,
+            $window['slider'],
+            is_array($window['last']) ? '...' : null,
+            $window['last'],
+        ]);
     }
     $elements = $elements ?? [];
 @endphp
