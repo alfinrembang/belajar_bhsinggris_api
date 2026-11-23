@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\KategoriMateriApiController;
 use App\Http\Controllers\Api\LoginSiswaController;
 use App\Http\Controllers\Api\MateriApiController;
 use App\Http\Controllers\Api\ModulListeningApiController;
+use App\Http\Controllers\Api\PencapaianApiController;
 use App\Http\Controllers\Api\QuizApiController;
 use App\Models\WerewolfSoal;
 use Illuminate\Support\Facades\Route;
@@ -81,6 +82,9 @@ Route::get('/werewolf/words', function () {
 
 // 2F. LEADERBOARD GAME SISWA (TOP SKOR DINAMIS)
 Route::get('/game/leaderboard', [FishingApiController::class, 'getLeaderboard']);
+
+// 2G. PENCAPAIAN / LENCANA PRESTASI SISWA DINAMIS (FLUTTER SISWA)
+Route::get('/pencapaian', [PencapaianApiController::class, 'index']);
 
 // 3. RUTE TERPROTEKSI SISWA (Wajib Token Siswa)
 Route::middleware('auth.siswa')->group(function () {
