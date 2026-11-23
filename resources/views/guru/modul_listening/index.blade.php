@@ -106,7 +106,16 @@
             <table class="w-full table-fixed text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-50/75 border-b border-slate-200/70 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-                        <th class="py-3 px-4 w-[45%]">Judul Percakapan & Audio</th>
+                        <th class="py-3 px-3.5 w-10 text-center whitespace-nowrap">
+                            <div class="flex items-center justify-center">
+                                <input type="checkbox" 
+                                       id="selectAllCheckbox" 
+                                       onchange="togglePilihSemua(this)" 
+                                       title="Centang untuk memilih seluruh modul listening di halaman ini"
+                                       class="w-4 h-4 rounded text-[#4EA87D] focus:ring-[#4EA87D]/20 border-slate-300 cursor-pointer transition-all">
+                            </div>
+                        </th>
+                        <th class="py-3 px-4 w-[42%]">Judul Percakapan & Audio</th>
                         <th class="py-3 px-2.5 w-[13%]">Durasi</th>
                         <th class="py-3 px-2.5 w-[14%]">Latihan Soal</th>
                         <th class="py-3 px-2.5 w-[12%]">Status</th>
@@ -118,7 +127,17 @@
                         @php
                             $iconBg = 'bg-[#EAF5EF] text-[#2E7352]';
                         @endphp
-                        <tr class="hover:bg-slate-50/70 transition-colors">
+                        <tr class="hover:bg-slate-50/70 transition-colors" id="row-listening-{{ $item->id }}">
+                            <td class="py-3.5 px-3.5 text-center whitespace-nowrap">
+                                <div class="flex items-center justify-center">
+                                    <input type="checkbox" 
+                                           name="listening_ids[]" 
+                                           value="{{ $item->id }}" 
+                                           data-judul="{{ $item->judul }}"
+                                           onchange="onItemCheckboxChange()"
+                                           class="listening-item-checkbox w-4 h-4 rounded text-[#4EA87D] focus:ring-[#4EA87D]/20 border-slate-300 cursor-pointer transition-all">
+                                </div>
+                            </td>
                             <td class="py-3 px-4">
                                 <div class="flex items-center gap-2.5 min-w-0">
                                     <div class="w-8 h-8 rounded-lg {{ $iconBg }} flex items-center justify-center shrink-0 border border-slate-200/60">
@@ -166,7 +185,7 @@
                         </tr>
                     @empty
                         <x-empty-state 
-                            colspan="5" 
+                            colspan="6" 
                             icon="🎧" 
                             title="Belum Ada Modul Listening" 
                             subtitle="Unggah audio rekaman percakapan pertama untuk pembelajaran listening siswa."
@@ -184,4 +203,14 @@
             </div>
         @endif
     </div>
+
+    <!-- Floating Bar Aksi Massal & Modal Hapus Listening -->
+    <x-bulk-delete-bar 
+        :action="route('guru.listening.bulk_destroy')"
+        checkboxClass="listening-item-checkbox"
+        inputName="listening_ids[]"
+        itemLabel="modul listening"
+        :totalPageCount="$listenings->count()"
+        warningText="Seluruh rekaman audio, butir latihan soal listening, dan riwayat progres siswa pada modul terpilih akan dihapus permanen."
+    />
 </x-layout>

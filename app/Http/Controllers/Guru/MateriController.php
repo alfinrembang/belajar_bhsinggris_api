@@ -323,6 +323,65 @@ class MateriController extends Controller
     }
 
     /**
+     * Menghapus beberapa modul materi sekaligus beserta soal dan file medianya (Bulk Delete).
+     */
+    public function bulkDestroy(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'materi_ids' => ['required', 'array', 'min:1'],
+            'materi_ids.*' => ['required', 'integer', 'exists:materis,id'],
+        ]);
+
+        $materiIds = $validated['materi_ids'];
+        $user = auth()->user();
+
+        $query = Materi::whereIn('id', $materiIds)->with('soals');
+        if ($user && $user->role === 'guru') {
+            $query->where(function ($q) use ($user) {
+                $q->whereNull('user_id')->orWhere('user_id', $user->id);
+            });
+        }
+        $materis = $query->get();
+
+        if ($materis->isEmpty()) {
+            return redirect()->route('guru.materi.index')->with('error', 'Tidak ada modul materi yang dapat dihapus.');
+        }
+
+        $filesToDelete = [];
+        $deletedCount = 0;
+
+        DB::transaction(function () use ($materis, &$filesToDelete, &$deletedCount) {
+            foreach ($materis as $materi) {
+                if ($materi->gambar_materi) {
+                    $filesToDelete[] = $materi->gambar_materi;
+                }
+                if ($materi->audio_materi) {
+                    $filesToDelete[] = $materi->audio_materi;
+                }
+                foreach ($materi->soals as $soal) {
+                    if ($soal->audio_soal) {
+                        $filesToDelete[] = $soal->audio_soal;
+                    }
+                }
+
+                $materi->soals()->delete();
+                $materi->progresSiswa()->delete();
+                $materi->delete();
+                $deletedCount++;
+            }
+        });
+
+        foreach ($filesToDelete as $filePath) {
+            if (Storage::disk('public')->exists($filePath)) {
+                Storage::disk('public')->delete($filePath);
+            }
+        }
+
+        return redirect()->route('guru.materi.index')
+            ->with('success', "Berhasil menghapus {$deletedCount} modul materi terpilih beserta seluruh butir soalnya.");
+    }
+
+    /**
      * Helper untuk memproses penyimpanan butir soal latihan pemahaman.
      *
      * @param  array<int, string>  $newFiles

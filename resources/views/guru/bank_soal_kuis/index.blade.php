@@ -125,9 +125,18 @@
             <table class="w-full table-fixed text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-50/75 border-b border-slate-200/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                        <th class="py-3 px-4 w-[36%] whitespace-nowrap">Nama Paket Kuis</th>
+                        <th class="py-3 px-3.5 w-10 text-center whitespace-nowrap">
+                            <div class="flex items-center justify-center">
+                                <input type="checkbox" 
+                                       id="selectAllCheckbox" 
+                                       onchange="togglePilihSemua(this)" 
+                                       title="Centang untuk memilih seluruh paket kuis di halaman ini"
+                                       class="w-4 h-4 rounded text-[#4EA87D] focus:ring-[#4EA87D]/20 border-slate-300 cursor-pointer transition-all">
+                            </div>
+                        </th>
+                        <th class="py-3 px-4 w-[33%] whitespace-nowrap">Nama Paket Kuis</th>
                         <th class="py-3 px-3 w-[13%] whitespace-nowrap">Kategori & Kelas</th>
-                        <th class="py-3 px-3 w-[13%] whitespace-nowrap">Jumlah Soal</th>
+                        <th class="py-3 px-3 w-[12%] whitespace-nowrap">Jumlah Soal</th>
                         <th class="py-3 px-3 w-[11%] whitespace-nowrap">Durasi</th>
                         <th class="py-3 px-3 w-[11%] whitespace-nowrap">Status</th>
                         <th class="py-3 px-3 w-[16%] text-center whitespace-nowrap">Aksi</th>
@@ -135,7 +144,17 @@
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-xs font-medium text-slate-700">
                     @forelse ($quizzes as $quiz)
-                        <tr class="hover:bg-slate-50/60 transition-colors">
+                        <tr class="hover:bg-slate-50/60 transition-colors" id="row-quiz-{{ $quiz->id }}">
+                            <td class="py-3.5 px-3.5 text-center whitespace-nowrap">
+                                <div class="flex items-center justify-center">
+                                    <input type="checkbox" 
+                                           name="quiz_ids[]" 
+                                           value="{{ $quiz->id }}" 
+                                           data-judul="{{ $quiz->judul }}"
+                                           onchange="onItemCheckboxChange()"
+                                           class="quiz-item-checkbox w-4 h-4 rounded text-[#4EA87D] focus:ring-[#4EA87D]/20 border-slate-300 cursor-pointer transition-all">
+                                </div>
+                            </td>
                             <td class="py-3 px-4">
                                 <div class="flex items-center gap-3 min-w-0">
                                     <div class="w-9 h-9 rounded-xl bg-[#EAF5EF] text-[#4EA87D] flex items-center justify-center font-bold text-xs shrink-0">
@@ -207,7 +226,7 @@
                         </tr>
                     @empty
                         <x-empty-state 
-                            colspan="6" 
+                            colspan="7" 
                             icon="quiz" 
                             title="Belum ada paket kuis" 
                             subtitle="Buat paket kuis dan bagikan kode room ujian kepada siswa Anda."
@@ -225,6 +244,16 @@
             </div>
         @endif
     </div>
+
+    <!-- Floating Bar Aksi Massal & Modal Hapus Kuis -->
+    <x-bulk-delete-bar 
+        :action="route('guru.quiz.bulk_destroy')"
+        checkboxClass="quiz-item-checkbox"
+        inputName="quiz_ids[]"
+        itemLabel="paket kuis"
+        :totalPageCount="$quizzes->count()"
+        warningText="Seluruh butir soal ujian, riwayat pengerjaan, dan skor siswa pada paket kuis terpilih akan dihapus permanen."
+    />
 
     <!-- Script Salin Kode Room -->
     <script>

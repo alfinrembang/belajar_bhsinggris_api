@@ -63,9 +63,18 @@
             <table class="w-full table-fixed text-left text-xs text-slate-600 border-collapse">
                 <thead class="bg-slate-50/75 text-slate-500 font-semibold uppercase text-[11px] tracking-wider border-b border-slate-200/70">
                     <tr>
+                        <th class="py-3 px-3.5 w-10 text-center whitespace-nowrap">
+                            <div class="flex items-center justify-center">
+                                <input type="checkbox" 
+                                       id="selectAllCheckbox" 
+                                       onchange="togglePilihSemua(this)" 
+                                       title="Centang untuk memilih seluruh kategori di halaman ini"
+                                       class="w-4 h-4 rounded text-[#4EA87D] focus:ring-[#4EA87D]/20 border-slate-300 cursor-pointer transition-all">
+                            </div>
+                        </th>
                         <th class="py-3 px-4 w-[22%] whitespace-nowrap">Kategori & Visual</th>
                         <th class="py-3 px-3 w-[11%] whitespace-nowrap">Ikon</th>
-                        <th class="py-3 px-3 w-[32%] whitespace-nowrap">Deskripsi Pembelajaran</th>
+                        <th class="py-3 px-3 w-[30%] whitespace-nowrap">Deskripsi Pembelajaran</th>
                         <th class="py-3 px-3 w-[12%] whitespace-nowrap">Jumlah Modul</th>
                         <th class="py-3 px-3 w-[9%] whitespace-nowrap">Status</th>
                         <th class="py-3 px-3 w-[14%] text-right whitespace-nowrap">Aksi</th>
@@ -73,7 +82,17 @@
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                     @forelse($kategoris as $kategori)
-                        <tr class="hover:bg-slate-50/70 transition-colors">
+                        <tr class="hover:bg-slate-50/70 transition-colors" id="row-kategori-{{ $kategori->id }}">
+                            <td class="py-3 px-3.5 text-center whitespace-nowrap">
+                                <div class="flex items-center justify-center">
+                                    <input type="checkbox" 
+                                           name="kategori_ids[]" 
+                                           value="{{ $kategori->id }}" 
+                                           data-nama="{{ $kategori->nama }}"
+                                           onchange="onItemCheckboxChange()"
+                                           class="kategori-item-checkbox w-4 h-4 rounded text-[#4EA87D] focus:ring-[#4EA87D]/20 border-slate-300 cursor-pointer transition-all">
+                                </div>
+                            </td>
                             <td class="py-3 px-4 whitespace-nowrap">
                                 <div class="flex items-center gap-2.5">
                                     <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs shadow-xs shrink-0" style="background-color: {{ $kategori->warna_hex ?: '#4EA87D' }};">
@@ -155,7 +174,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="py-12 text-center text-slate-400">
+                            <td colspan="7" class="py-12 text-center text-slate-400">
                                 <div class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-3 text-xl">
                                     🏷️
                                 </div>
@@ -174,4 +193,14 @@
             </div>
         @endif
     </div>
+
+    <!-- Floating Bar Aksi Massal & Modal Hapus Kategori -->
+    <x-bulk-delete-bar 
+        :action="route('guru.kategori.bulk_destroy')"
+        checkboxClass="kategori-item-checkbox"
+        inputName="kategori_ids[]"
+        itemLabel="kategori materi"
+        :totalPageCount="$kategoris->count()"
+        warningText="Kategori materi yang dipilih akan dihapus permanen. Pastikan kategori tidak sedang digunakan oleh modul materi."
+    />
 </x-layout>

@@ -222,4 +222,76 @@ class MateriManagementTest extends TestCase
         $this->assertDatabaseMissing('materis', ['id' => $materi->id]);
         $this->assertDatabaseMissing('materi_soals', ['id' => $soal->id]);
     }
+
+    /**
+     * Guru dapat membuat materi dengan satu dropdown terpadu target_rombel (tingkat:10, 10 DKV 1, atau Semua Kelas).
+     */
+    public function test_guru_can_create_materi_using_unified_target_rombel_dropdown(): void
+    {
+        // 1. Pilih 'tingkat:10' -> disimpan tingkat_kelas = '10', target_rombel = null
+        $responseTingkat = $this->actingAs($this->guru)->post('/materi/store', [
+            'judul' => 'Materi Seluruh Tingkat 10',
+            'kategori' => 'Grammar',
+            'target_rombel' => 'tingkat:10',
+            'penjelasan' => 'Penjelasan untuk seluruh kelas 10.',
+            'status' => 'aktif',
+        ]);
+        $responseTingkat->assertRedirect(route('guru.materi.index'));
+        $this->assertDatabaseHas('materis', [
+            'judul' => 'Materi Seluruh Tingkat 10',
+            'tingkat_kelas' => '10',
+            'target_rombel' => null,
+        ]);
+
+        // 2. Pilih '10 DKV 1' -> disimpan tingkat_kelas = '10', target_rombel = '10 DKV 1'
+        $responseRombel = $this->actingAs($this->guru)->post('/materi/store', [
+            'judul' => 'Materi Khusus 10 DKV 1',
+            'kategori' => 'Vocabulary',
+            'target_rombel' => '10 DKV 1',
+            'penjelasan' => 'Penjelasan khusus rombel 10 DKV 1.',
+            'status' => 'aktif',
+        ]);
+        $responseRombel->assertRedirect(route('guru.materi.index'));
+        $this->assertDatabaseHas('materis', [
+            'judul' => 'Materi Khusus 10 DKV 1',
+            'tingkat_kelas' => '10',
+            'target_rombel' => '10 DKV 1',
+        ]);
+
+        // 3. Pilih '' (Semua Kelas) -> disimpan tingkat_kelas = 'Semua Kelas', target_rombel = null
+        $responseSemua = $this->actingAs($this->guru)->post('/materi/store', [
+            'judul' => 'Materi Umum Semua Kelas',
+            'kategori' => 'Reading',
+            'target_rombel' => '',
+            'penjelasan' => 'Penjelasan untuk semua siswa.',
+            'status' => 'aktif',
+        ]);
+        $responseSemua->assertRedirect(route('guru.materi.index'));
+        $this->assertDatabaseHas('materis', [
+            'judul' => 'Materi Umum Semua Kelas',
+            'tingkat_kelas' => 'Semua Kelas',
+            'target_rombel' => null,
+        ]);
+    }
+
+    /**
+     * Guru dapat menghapus banyak materi sekaligus (bulk delete).
+     */
+    public function test_guru_can_bulk_delete_materi(): void
+    {
+        $materi1 = Materi::factory()->create(['judul' => 'Materi Bulk 1']);
+        $materi2 = Materi::factory()->create(['judul' => 'Materi Bulk 2']);
+        $materi3 = Materi::factory()->create(['judul' => 'Materi Keep 3']);
+
+        $response = $this->actingAs($this->guru)->delete('/materi/bulk-destroy', [
+            'materi_ids' => [$materi1->id, $materi2->id],
+        ]);
+
+        $response->assertRedirect(route('guru.materi.index'));
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseMissing('materis', ['id' => $materi1->id]);
+        $this->assertDatabaseMissing('materis', ['id' => $materi2->id]);
+        $this->assertDatabaseHas('materis', ['id' => $materi3->id]);
+    }
 }

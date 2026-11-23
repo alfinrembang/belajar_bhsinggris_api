@@ -286,6 +286,59 @@ class QuizController extends Controller
     }
 
     /**
+     * Menghapus beberapa paket kuis sekaligus beserta butir soal dan audio terkait (Bulk Delete).
+     */
+    public function bulkDestroy(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'quiz_ids' => ['required', 'array', 'min:1'],
+            'quiz_ids.*' => ['required', 'integer', 'exists:quizzes,id'],
+        ]);
+
+        $quizIds = $validated['quiz_ids'];
+        $user = auth()->user();
+
+        $query = Quiz::whereIn('id', $quizIds)->with('soals');
+        if ($user && $user->role === 'guru') {
+            $query->where(function ($q) use ($user) {
+                $q->whereNull('user_id')->orWhere('user_id', $user->id);
+            });
+        }
+        $quizzes = $query->get();
+
+        if ($quizzes->isEmpty()) {
+            return redirect()->route('guru.quiz.index')->with('error', 'Tidak ada paket kuis yang dapat dihapus.');
+        }
+
+        $filesToDelete = [];
+        $deletedCount = 0;
+
+        DB::transaction(function () use ($quizzes, &$filesToDelete, &$deletedCount) {
+            foreach ($quizzes as $quiz) {
+                foreach ($quiz->soals as $soal) {
+                    if ($soal->audio_file) {
+                        $filesToDelete[] = $soal->audio_file;
+                    }
+                }
+
+                $quiz->soals()->delete();
+                $quiz->progresSiswa()->delete();
+                $quiz->delete();
+                $deletedCount++;
+            }
+        });
+
+        foreach ($filesToDelete as $filePath) {
+            if (Storage::disk('public')->exists($filePath)) {
+                Storage::disk('public')->delete($filePath);
+            }
+        }
+
+        return redirect()->route('guru.quiz.index')
+            ->with('success', "Berhasil menghapus {$deletedCount} paket kuis terpilih beserta seluruh butir soalnya.");
+    }
+
+    /**
      * Helper untuk memproses butir soal kuis (Pilgan, Reading, Listening).
      *
      * @param  array<int, string>  $newFiles

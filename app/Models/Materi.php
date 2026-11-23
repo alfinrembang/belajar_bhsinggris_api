@@ -44,6 +44,14 @@ class Materi extends Model
     }
 
     /**
+     * Relasi ke riwayat pengerjaan modul materi oleh siswa.
+     */
+    public function progresSiswa(): HasMany
+    {
+        return $this->hasMany(SiswaMateriProgres::class, 'materi_id');
+    }
+
+    /**
      * URL lengkap file audio materi untuk browser & Flutter.
      */
     public function getAudioUrlAttribute(): ?string

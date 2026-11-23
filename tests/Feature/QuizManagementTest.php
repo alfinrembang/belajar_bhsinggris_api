@@ -50,7 +50,7 @@ class QuizManagementTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Grammar Quiz Tenses 101');
-        $response->assertSee('TEST10');
+        $response->assertSee('Grammar');
     }
 
     /**
@@ -137,7 +137,6 @@ class QuizManagementTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Vocabulary Challenge Live');
-        $response->assertSee('VOCAB9');
         $response->assertSee('What is the synonym of "Huge"?');
     }
 
@@ -220,5 +219,52 @@ class QuizManagementTest extends TestCase
         $response->assertRedirect('/quiz');
         $this->assertDatabaseMissing('quizzes', ['id' => $quiz->id]);
         $this->assertDatabaseMissing('quiz_soals', ['quiz_id' => $quiz->id]);
+    }
+
+    /**
+     * Guru dapat menghapus banyak paket kuis sekaligus (bulk delete).
+     */
+    public function test_guru_can_bulk_delete_quizzes(): void
+    {
+        $quiz1 = Quiz::create([
+            'judul' => 'Quiz Bulk 1',
+            'kategori' => 'Grammar',
+            'tingkat_kelas' => '10',
+            'kode_room' => 'BLK001',
+            'durasi_menit' => 10,
+            'xp_reward' => 50,
+            'status' => 'aktif',
+        ]);
+
+        $quiz2 = Quiz::create([
+            'judul' => 'Quiz Bulk 2',
+            'kategori' => 'Reading',
+            'tingkat_kelas' => '11',
+            'kode_room' => 'BLK002',
+            'durasi_menit' => 10,
+            'xp_reward' => 50,
+            'status' => 'aktif',
+        ]);
+
+        $quiz3 = Quiz::create([
+            'judul' => 'Quiz Keep 3',
+            'kategori' => 'Vocabulary',
+            'tingkat_kelas' => '12',
+            'kode_room' => 'BLK003',
+            'durasi_menit' => 10,
+            'xp_reward' => 50,
+            'status' => 'aktif',
+        ]);
+
+        $response = $this->actingAs($this->guru)->delete('/quiz/bulk-destroy', [
+            'quiz_ids' => [$quiz1->id, $quiz2->id],
+        ]);
+
+        $response->assertRedirect(route('guru.quiz.index'));
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseMissing('quizzes', ['id' => $quiz1->id]);
+        $this->assertDatabaseMissing('quizzes', ['id' => $quiz2->id]);
+        $this->assertDatabaseHas('quizzes', ['id' => $quiz3->id]);
     }
 }

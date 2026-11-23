@@ -37,6 +37,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/materi', [MateriController::class, 'index'])->name('guru.materi.index');
     Route::get('/materi/create', [MateriController::class, 'create'])->name('guru.materi.create');
     Route::post('/materi/store', [MateriController::class, 'store'])->name('guru.materi.store');
+    Route::match(['post', 'delete'], '/materi/bulk-destroy', [MateriController::class, 'bulkDestroy'])->name('guru.materi.bulk_destroy');
     Route::get('/materi/{materi}', [MateriController::class, 'show'])->name('guru.materi.show');
     Route::get('/materi/{materi}/edit', [MateriController::class, 'edit'])->name('guru.materi.edit');
     Route::match(['post', 'put'], '/materi/{materi}/update', [MateriController::class, 'update'])->name('guru.materi.update');
@@ -46,6 +47,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/kategori', [KategoriMateriController::class, 'index'])->name('guru.kategori.index');
     Route::get('/kategori/create', [KategoriMateriController::class, 'create'])->name('guru.kategori.create');
     Route::post('/kategori/store', [KategoriMateriController::class, 'store'])->name('guru.kategori.store');
+    Route::match(['post', 'delete'], '/kategori/bulk-destroy', [KategoriMateriController::class, 'bulkDestroy'])->name('guru.kategori.bulk_destroy');
     Route::get('/kategori/{kategori}', [KategoriMateriController::class, 'show'])->name('guru.kategori.show');
     Route::get('/kategori/{kategori}/edit', [KategoriMateriController::class, 'edit'])->name('guru.kategori.edit');
     Route::match(['post', 'put'], '/kategori/{kategori}/update', [KategoriMateriController::class, 'update'])->name('guru.kategori.update');
@@ -55,6 +57,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/listening', [ModulListeningController::class, 'index'])->name('guru.listening.index');
     Route::get('/listening/create', [ModulListeningController::class, 'create'])->name('guru.listening.create');
     Route::post('/listening/store', [ModulListeningController::class, 'store'])->name('guru.listening.store');
+    Route::match(['post', 'delete'], '/listening/bulk-destroy', [ModulListeningController::class, 'bulkDestroy'])->name('guru.listening.bulk_destroy');
     Route::get('/listening/{listening}', [ModulListeningController::class, 'show'])->name('guru.listening.show');
     Route::get('/listening/{listening}/edit', [ModulListeningController::class, 'edit'])->name('guru.listening.edit');
     Route::match(['post', 'put'], '/listening/{listening}/update', [ModulListeningController::class, 'update'])->name('guru.listening.update');
@@ -64,6 +67,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/quiz', [QuizController::class, 'index'])->name('guru.quiz.index');
     Route::get('/quiz/create', [QuizController::class, 'create'])->name('guru.quiz.create');
     Route::post('/quiz/store', [QuizController::class, 'store'])->name('guru.quiz.store');
+    Route::match(['post', 'delete'], '/quiz/bulk-destroy', [QuizController::class, 'bulkDestroy'])->name('guru.quiz.bulk_destroy');
     Route::get('/quiz/{quiz}', [QuizController::class, 'show'])->name('guru.quiz.show');
     Route::get('/quiz/{quiz}/edit', [QuizController::class, 'edit'])->name('guru.quiz.edit');
     Route::match(['post', 'put'], '/quiz/{quiz}/update', [QuizController::class, 'update'])->name('guru.quiz.update');

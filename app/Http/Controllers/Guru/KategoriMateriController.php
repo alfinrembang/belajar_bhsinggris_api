@@ -161,4 +161,32 @@ class KategoriMateriController extends Controller
 
         return redirect()->route('guru.kategori.index')->with('success', "Kategori '{$nama}' berhasil dihapus.");
     }
+
+    /**
+     * Menghapus beberapa kategori materi sekaligus (Bulk Delete).
+     */
+    public function bulkDestroy(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'kategori_ids' => ['required', 'array', 'min:1'],
+            'kategori_ids.*' => ['required', 'integer', 'exists:kategori_materis,id'],
+        ]);
+
+        $kategoriIds = $validated['kategori_ids'];
+        $categories = KategoriMateri::whereIn('id', $kategoriIds)->withCount('materis')->get();
+
+        $inUse = $categories->where('materis_count', '>', 0);
+        if ($inUse->isNotEmpty()) {
+            $names = $inUse->pluck('nama')->implode(', ');
+
+            return redirect()->route('guru.kategori.index')
+                ->with('error', "Kategori ({$names}) tidak dapat dihapus karena masih digunakan oleh modul materi!");
+        }
+
+        $count = $categories->count();
+        KategoriMateri::whereIn('id', $kategoriIds)->delete();
+
+        return redirect()->route('guru.kategori.index')
+            ->with('success', "Berhasil menghapus {$count} kategori materi terpilih.");
+    }
 }

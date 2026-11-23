@@ -112,17 +112,36 @@
             <table class="w-full table-fixed text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-50/75 border-b border-slate-200/70 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-                        <th class="py-3 px-4 w-[34%]">Modul & Judul Materi</th>
+                        <th class="py-3 px-3.5 w-10 text-center whitespace-nowrap">
+                            <div class="flex items-center justify-center">
+                                <input type="checkbox" 
+                                       id="selectAllCheckbox" 
+                                       onchange="togglePilihSemua(this)" 
+                                       title="Centang untuk memilih seluruh materi di halaman ini"
+                                       class="w-4 h-4 rounded text-[#4EA87D] focus:ring-[#4EA87D]/20 border-slate-300 cursor-pointer transition-all">
+                            </div>
+                        </th>
+                        <th class="py-3 px-4 w-[32%]">Modul & Judul Materi</th>
                         <th class="py-3 px-2.5 w-[13%]">Kategori</th>
                         <th class="py-3 px-2.5 w-[13%]">Tingkat Kelas</th>
-                        <th class="py-3 px-2.5 w-[15%]">Konten & Fitur</th>
+                        <th class="py-3 px-2.5 w-[14%]">Konten & Fitur</th>
                         <th class="py-3 px-2.5 w-[11%]">Status</th>
-                        <th class="py-3 px-3 w-[14%] text-center">Aksi</th>
+                        <th class="py-3 px-3 w-[13%] text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-xs font-medium text-slate-700">
                     @forelse($materis as $index => $materi)
-                        <tr class="hover:bg-slate-50/70 transition-colors">
+                        <tr class="hover:bg-slate-50/70 transition-colors" id="row-materi-{{ $materi->id }}">
+                            <td class="py-3.5 px-3.5 text-center whitespace-nowrap">
+                                <div class="flex items-center justify-center">
+                                    <input type="checkbox" 
+                                           name="materi_ids[]" 
+                                           value="{{ $materi->id }}" 
+                                           data-judul="{{ $materi->judul }}"
+                                           onchange="onItemCheckboxChange()"
+                                           class="materi-item-checkbox w-4 h-4 rounded text-[#4EA87D] focus:ring-[#4EA87D]/20 border-slate-300 cursor-pointer transition-all">
+                                </div>
+                            </td>
                             <td class="py-3 px-4">
                                 <div class="flex items-center gap-2.5 min-w-0">
                                     <div class="w-8 h-8 rounded-lg bg-[#EAF5EF] text-[#4EA87D] flex items-center justify-center font-bold text-xs shrink-0 border border-[#D7EDE1]">
@@ -175,7 +194,7 @@
                         </tr>
                     @empty
                         <x-empty-state 
-                            colspan="6" 
+                            colspan="7" 
                             icon="📖" 
                             title="Belum ada modul materi pembelajaran." 
                             subtitle="Klik tombol + Tambah Materi Baru untuk membuat modul pembelajaran pertama."
@@ -194,6 +213,16 @@
             </div>
         @endif
     </div>
+
+    <!-- Floating Bar Aksi Massal & Modal Hapus Materi -->
+    <x-bulk-delete-bar 
+        :action="route('guru.materi.bulk_destroy')"
+        checkboxClass="materi-item-checkbox"
+        inputName="materi_ids[]"
+        itemLabel="modul materi"
+        :totalPageCount="$materis->count()"
+        warningText="Seluruh butir soal latihan pemahaman dan riwayat progres siswa pada modul materi terpilih akan dihapus permanen."
+    />
 
     <!-- Modal Reusable Import Dokumen AI -->
     <x-ai-import-modal />

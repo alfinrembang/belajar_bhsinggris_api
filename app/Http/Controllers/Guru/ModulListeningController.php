@@ -434,4 +434,61 @@ class ModulListeningController extends Controller
 
         return redirect()->route('guru.listening.index')->with('success', "Modul listening '{$judul}' berhasil dihapus.");
     }
+
+    /**
+     * Menghapus beberapa modul listening sekaligus beserta file audio dan butir soalnya (Bulk Delete).
+     */
+    public function bulkDestroy(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'listening_ids' => ['required', 'array', 'min:1'],
+            'listening_ids.*' => ['required', 'integer', 'exists:modul_listenings,id'],
+        ]);
+
+        $listeningIds = $validated['listening_ids'];
+        $user = auth()->user();
+
+        $query = ModulListening::whereIn('id', $listeningIds)->with(['audios', 'soals']);
+        if ($user && $user->role === 'guru') {
+            $query->where(function ($q) use ($user) {
+                $q->whereNull('user_id')->orWhere('user_id', $user->id);
+            });
+        }
+        $listenings = $query->get();
+
+        if ($listenings->isEmpty()) {
+            return redirect()->route('guru.listening.index')->with('error', 'Tidak ada modul listening yang dapat dihapus.');
+        }
+
+        $filesToDelete = [];
+        $deletedCount = 0;
+
+        DB::transaction(function () use ($listenings, &$filesToDelete, &$deletedCount) {
+            foreach ($listenings as $listening) {
+                if ($listening->audio_file && ! str_starts_with($listening->audio_file, 'http')) {
+                    $filesToDelete[] = $listening->audio_file;
+                }
+                foreach ($listening->audios as $audio) {
+                    if ($audio->audio_file && ! str_starts_with($audio->audio_file, 'http')) {
+                        $filesToDelete[] = $audio->audio_file;
+                    }
+                }
+
+                $listening->soals()->delete();
+                $listening->audios()->delete();
+                $listening->progresSiswa()->delete();
+                $listening->delete();
+                $deletedCount++;
+            }
+        });
+
+        foreach ($filesToDelete as $filePath) {
+            if (Storage::disk('public')->exists($filePath)) {
+                Storage::disk('public')->delete($filePath);
+            }
+        }
+
+        return redirect()->route('guru.listening.index')
+            ->with('success', "Berhasil menghapus {$deletedCount} modul listening terpilih beserta seluruh track audionya.");
+    }
 }
