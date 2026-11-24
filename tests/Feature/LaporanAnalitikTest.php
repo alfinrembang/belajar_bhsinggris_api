@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Materi;
 use App\Models\ModulListening;
+use App\Models\PengaturanAkademik;
 use App\Models\Quiz;
 use App\Models\Siswa;
 use App\Models\SiswaListeningProgres;
@@ -25,6 +26,16 @@ class LaporanAnalitikTest extends TestCase
         $this->guru = User::factory()->create([
             'role' => 'guru',
         ]);
+
+        PengaturanAkademik::updateOrCreate(
+            ['id' => 1],
+            [
+                'bobot_materi' => 30,
+                'bobot_listening' => 30,
+                'bobot_quiz' => 40,
+                'kkm_default' => 75,
+            ]
+        );
     }
 
     /**
@@ -165,7 +176,6 @@ class LaporanAnalitikTest extends TestCase
     {
         Siswa::factory()->create([
             'nama_lengkap' => 'Budi Ekspor Excel',
-            'nis' => '112233',
         ]);
 
         $response = $this->actingAs($this->guru)->get('/laporan/export-excel');

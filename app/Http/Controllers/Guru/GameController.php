@@ -40,7 +40,7 @@ class GameController extends Controller
 
         // 2. Ambil Data Siswa (Dapat difilter berdasarkan rombel/kelas) & Hitung Leaderboard Aktual
         $siswaQuery = Siswa::latest();
-        if (!empty($rombelFilter)) {
+        if (! empty($rombelFilter)) {
             if (str_starts_with($rombelFilter, 'tingkat:')) {
                 $tingkat = substr($rombelFilter, 8);
                 $siswaQuery->where('kelas', $tingkat);
@@ -48,12 +48,12 @@ class GameController extends Controller
                 $parts = explode(' ', $rombelFilter);
                 if (count($parts) >= 3) {
                     $siswaQuery->where('kelas', $parts[0])
-                               ->where('jurusan', $parts[1])
-                               ->where('no_kelas', $parts[2]);
+                        ->where('jurusan', $parts[1])
+                        ->where('no_kelas', $parts[2]);
                 } else {
-                    $siswaQuery->where(function($q) use ($rombelFilter) {
+                    $siswaQuery->where(function ($q) use ($rombelFilter) {
                         $q->where('kelas', $rombelFilter)
-                          ->orWhere('jurusan', $rombelFilter);
+                            ->orWhere('jurusan', $rombelFilter);
                     });
                 }
             }

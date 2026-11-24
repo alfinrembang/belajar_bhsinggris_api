@@ -92,22 +92,28 @@ class DashboardController extends Controller
         $rataQuiz = $quizSkors->isNotEmpty() ? round($quizSkors->avg(), 1) : 0;
         $totalQuizSelesai = (clone $quizQuery)->where('status', 'selesai')->count();
 
+        // Pengaturan Akademik Aktif & Komposisi Bobot Nilai
+        $pengaturanAkademik = PengaturanAkademik::getActiveSetting();
+        $bobotMateriPersen = ($pengaturanAkademik->bobot_materi ?? 30) / 100;
+        $bobotListeningPersen = ($pengaturanAkademik->bobot_listening ?? 30) / 100;
+        $bobotQuizPersen = ($pengaturanAkademik->bobot_quiz ?? 40) / 100;
+
         $totalAktivitasSelesai = $totalMateriSelesai + $totalListeningSelesai + $totalQuizSelesai;
-        $rataKeseluruhan = round(($rataMateri * 0.3) + ($rataListening * 0.3) + ($rataQuiz * 0.4), 1);
+        $rataKeseluruhan = round(($rataMateri * $bobotMateriPersen) + ($rataListening * $bobotListeningPersen) + ($rataQuiz * $bobotQuizPersen), 1);
 
         // Derajat pembagian segmen Donut Chart (360 derajat)
-        $bobotMateri = $rataMateri * 0.3;
-        $bobotListening = $rataListening * 0.3;
-        $bobotQuiz = $rataQuiz * 0.4;
+        $bobotMateri = $rataMateri * $bobotMateriPersen;
+        $bobotListening = $rataListening * $bobotListeningPersen;
+        $bobotQuiz = $rataQuiz * $bobotQuizPersen;
         $totalBobot = $bobotMateri + $bobotListening + $bobotQuiz;
 
         if ($totalBobot > 0) {
             $degMateri = round(($bobotMateri / $totalBobot) * 360, 1);
             $degListening = round((($bobotMateri + $bobotListening) / $totalBobot) * 360, 1);
         } else {
-            // Proporsi default berbobot jika belum ada skor (30%, 30%, 40%)
-            $degMateri = 108.0;
-            $degListening = 216.0;
+            // Proporsi default berbobot jika belum ada skor
+            $degMateri = round($bobotMateriPersen * 360, 1);
+            $degListening = round(($bobotMateriPersen + $bobotListeningPersen) * 360, 1);
         }
 
         // 4. Siswa Paling Unggul (Top 5 Siswa dengan Akumulasi XP Tertinggi)
@@ -119,7 +125,7 @@ class DashboardController extends Controller
         $topSiswa = $topSiswaQuery
             ->with(['materiProgres', 'listeningProgres', 'quizProgres'])
             ->get()
-            ->map(function (Siswa $siswa): array {
+            ->map(function (Siswa $siswa) use ($bobotMateriPersen, $bobotListeningPersen, $bobotQuizPersen): array {
                 $totalXp = ($siswa->materiProgres->sum('xp_didapat') ?? 0)
                     + ($siswa->listeningProgres->sum('xp_didapat') ?? 0)
                     + ($siswa->quizProgres->sum('xp_didapat') ?? 0);
@@ -131,7 +137,7 @@ class DashboardController extends Controller
                 $rM = $mSkor->isNotEmpty() ? $mSkor->avg() : 0;
                 $rL = $lSkor->isNotEmpty() ? $lSkor->avg() : 0;
                 $rQ = $qSkor->isNotEmpty() ? $qSkor->avg() : 0;
-                $nilaiAkhir = round(($rM * 0.3) + ($rL * 0.3) + ($rQ * 0.4), 1);
+                $nilaiAkhir = round(($rM * $bobotMateriPersen) + ($rL * $bobotListeningPersen) + ($rQ * $bobotQuizPersen), 1);
 
                 return [
                     'id' => $siswa->id,
@@ -148,9 +154,6 @@ class DashboardController extends Controller
 
         // 5. Modul Pembelajaran Materi Terbaru (Dipaginate 5 materi per halaman)
         $materiTerbaru = Materi::latest()->paginate(5)->fragment('modul-terbaru')->withQueryString();
-
-        // 6. Pengaturan Akademik Aktif
-        $pengaturanAkademik = PengaturanAkademik::first();
 
         return view('guru.dashboard_utama.index', compact(
             'totalSiswa',

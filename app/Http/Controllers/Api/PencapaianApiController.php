@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\PengaturanAkademik;
 use App\Models\Siswa;
 use App\Models\SiswaFishingProgres;
 use App\Models\SiswaListeningProgres;
@@ -59,10 +60,12 @@ class PencapaianApiController extends Controller
             ->where('status', 'selesai')
             ->count();
 
+        $kkm = (int) (PengaturanAkademik::getActiveSetting()->kkm_default ?? 75);
+
         // Progres Kuis
         $quizProgresList = SiswaQuizProgres::where('siswa_id', $sid)->get();
         $completedQuizCount = $quizProgresList->count();
-        $passedQuizCount = $quizProgresList->where('skor', '>=', 75)->count();
+        $passedQuizCount = $quizProgresList->where('skor', '>=', $kkm)->count();
         $hasPerfectScore = $quizProgresList->where('skor', '>=', 100)->isNotEmpty();
         $avgQuizScore = $completedQuizCount > 0 ? (float) $quizProgresList->avg('skor') : 0.0;
         $totalQuizBenar = (int) $quizProgresList->sum('jumlah_benar');
@@ -345,7 +348,7 @@ class PencapaianApiController extends Controller
         $badges[] = [
             'id' => 'quiz_champion',
             'title' => 'Quiz Champion',
-            'description' => 'Menyelesaikan minimal 5 paket kuis tuntas di atas KKM (≥ 75)',
+            'description' => "Menyelesaikan minimal 5 paket kuis tuntas di atas KKM (≥ {$kkm})",
             'info' => $isQuizChampUnlocked ? '5 Kuis Tuntas' : "$passedQuizCount / $targetQuizPassed Kuis",
             'kategori' => $isQuizChampUnlocked ? 'Terbuka' : 'Terkunci',
             'status' => $isQuizChampUnlocked ? 'Terbuka' : 'Terkunci',
@@ -361,7 +364,7 @@ class PencapaianApiController extends Controller
             'tentang' => 'Lencana bagi siswa tangguh yang konsisten menuntaskan paket soal evaluasi dengan nilai yang melampaui standar kelulusan KKM.',
             'kriteria' => [
                 'Mengerjakan berbagai paket kuis materi bahasa Inggris',
-                'Mencapai skor minimal 75 pada setiap kuis yang dikerjakan',
+                "Mencapai skor minimal {$kkm} pada setiap kuis yang dikerjakan",
                 'Menyelesaikan sedikitnya 5 paket kuis evaluasi',
             ],
             'pencapaian_terkait' => ['score_100', 'academic_star', 'first_step'],
