@@ -40,18 +40,26 @@
                            class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
                 </div>
 
-                <!-- Kategori Kuis -->
+                <!-- Kategori Kuis (Dinamis Sesuai Manajemen Kategori) -->
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">
                         Kategori Soal <span class="text-rose-500">*</span>
                     </label>
                     <select name="kategori" required class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-medium focus:bg-white focus:border-[#4EA87D] outline-none">
                         <option value="">Pilih Kategori...</option>
-                        <option value="Grammar" {{ old('kategori') == 'Grammar' ? 'selected' : '' }}>Grammar Test</option>
-                        <option value="Vocabulary" {{ old('kategori') == 'Vocabulary' ? 'selected' : '' }}>Vocabulary Challenge</option>
-                        <option value="Reading" {{ old('kategori') == 'Reading' ? 'selected' : '' }}>Reading Comprehension</option>
-                        <option value="Speaking" {{ old('kategori') == 'Speaking' ? 'selected' : '' }}>Speaking & Expression</option>
-                        <option value="General" {{ old('kategori') == 'General' ? 'selected' : '' }}>General English</option>
+                        @if(isset($kategoriList) && $kategoriList->isNotEmpty())
+                            @foreach($kategoriList as $kat)
+                                @php $kNama = is_object($kat) ? $kat->nama : $kat; @endphp
+                                <option value="{{ $kNama }}" {{ old('kategori') == $kNama ? 'selected' : '' }}>
+                                    {{ $kNama }}
+                                </option>
+                            @endforeach
+                        @else
+                            <option value="Reading" {{ old('kategori') == 'Reading' ? 'selected' : '' }}>Reading</option>
+                            <option value="Grammar" {{ old('kategori') == 'Grammar' ? 'selected' : '' }}>Grammar</option>
+                            <option value="Conversation" {{ old('kategori') == 'Conversation' ? 'selected' : '' }}>Conversation</option>
+                            <option value="Vocabulary" {{ old('kategori') == 'Vocabulary' ? 'selected' : '' }}>Vocabulary</option>
+                        @endif
                     </select>
                 </div>
 

@@ -38,6 +38,14 @@ class Quiz extends Model
     ];
 
     /**
+     * Inisial 2 huruf kategori kuis untuk avatar icon.
+     */
+    public function getKategoriInisialAttribute(): string
+    {
+        return strtoupper(substr($this->kategori ?? 'QZ', 0, 2));
+    }
+
+    /**
      * Auto-generate kode room unik sebelum disimpan jika belum diisi.
      */
     protected static function booted(): void
