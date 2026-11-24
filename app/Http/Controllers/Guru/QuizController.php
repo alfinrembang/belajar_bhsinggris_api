@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Guru;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Guru\StoreQuizRequest;
 use App\Http\Requests\Guru\UpdateQuizRequest;
+use App\Models\KategoriMateri;
 use App\Models\Quiz;
 use App\Models\QuizSoal;
 use App\Models\Siswa;
@@ -41,23 +42,44 @@ class QuizController extends Controller
         // Filter Rombel Kelas Terpadu (Dinamis Berdasarkan Data Siswa Nyata)
         if ($request->filled('rombel')) {
             $rombel = trim((string) $request->input('rombel'));
-            if (str_starts_with($rombel, 'tingkat:')) {
+            if ($rombel === 'umum' || $rombel === 'Semua Kelas') {
+                $query->where('tingkat_kelas', 'Semua Kelas');
+            } elseif (str_starts_with($rombel, 'tingkat:')) {
                 $tingkat = str_replace('tingkat:', '', $rombel);
                 $query->where(function ($q) use ($tingkat) {
-                    $q->where('tingkat_kelas', $tingkat)
-                        ->orWhere('tingkat_kelas', 'Semua Kelas');
+                    $q->where(function ($k) use ($tingkat) {
+                        $k->where('tingkat_kelas', $tingkat)
+                            ->orWhere('tingkat_kelas', 'Kelas '.$tingkat);
+                    })->orWhere('target_rombel', 'like', "{$tingkat} %");
                 });
             } else {
-                $query->where(function ($q) use ($rombel) {
-                    $q->where('target_rombel', $rombel)
-                        ->orWhereNull('target_rombel');
+                $parts = explode(' ', $rombel);
+                $tingkat = $parts[0] ?? '';
+                $query->where(function ($q) use ($rombel, $tingkat) {
+                    $q->where('target_rombel', $rombel);
+                    if (! empty($tingkat)) {
+                        $q->orWhere(function ($sub) use ($tingkat) {
+                            $sub->whereNull('target_rombel')
+                                ->where(function ($k) use ($tingkat) {
+                                    $k->where('tingkat_kelas', $tingkat)
+                                        ->orWhere('tingkat_kelas', 'Kelas '.$tingkat);
+                                });
+                        });
+                    }
                 });
             }
         } elseif ($request->filled('kelas')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('tingkat_kelas', $request->kelas)
-                    ->orWhere('tingkat_kelas', 'Semua Kelas');
-            });
+            $kelas = trim((string) $request->input('kelas'));
+            if ($kelas === 'Semua Kelas' || $kelas === 'umum') {
+                $query->where('tingkat_kelas', 'Semua Kelas');
+            } else {
+                $query->where(function ($q) use ($kelas) {
+                    $q->where(function ($k) use ($kelas) {
+                        $k->where('tingkat_kelas', $kelas)
+                            ->orWhere('tingkat_kelas', 'Kelas '.$kelas);
+                    })->orWhere('target_rombel', 'like', "{$kelas} %");
+                });
+            }
         }
 
         // Pencarian Judul atau Kode Room
@@ -93,6 +115,7 @@ class QuizController extends Controller
         $totalQuiz = $totalQuizQuery->count();
         $totalAktif = $totalAktifQuery->count();
         $totalSoal = $totalSoalQuery->count();
+        $kategoriList = KategoriMateri::where('is_aktif', true)->orderBy('urutan')->get();
         $daftarRombelGrouped = Siswa::getDaftarRombelGrouped();
         $daftarKelas = Siswa::getDaftarKelas();
 
@@ -101,6 +124,7 @@ class QuizController extends Controller
             'totalQuiz',
             'totalAktif',
             'totalSoal',
+            'kategoriList',
             'daftarRombelGrouped',
             'daftarKelas'
         ));
@@ -114,8 +138,9 @@ class QuizController extends Controller
         $defaultRoomCode = Quiz::generateUniqueRoomCode();
         $daftarKelas = Siswa::getDaftarKelas();
         $daftarRombelGrouped = Siswa::getDaftarRombelGrouped();
+        $kategoriList = KategoriMateri::where('is_aktif', true)->orderBy('urutan')->get();
 
-        return view('guru.bank_soal_kuis.create', compact('defaultRoomCode', 'daftarKelas', 'daftarRombelGrouped'));
+        return view('guru.bank_soal_kuis.create', compact('defaultRoomCode', 'daftarKelas', 'daftarRombelGrouped', 'kategoriList'));
     }
 
     /**
@@ -189,11 +214,13 @@ class QuizController extends Controller
         $quiz->load('soals');
         $daftarKelas = Siswa::getDaftarKelas();
         $daftarRombelGrouped = Siswa::getDaftarRombelGrouped();
+        $kategoriList = KategoriMateri::where('is_aktif', true)->orderBy('urutan')->get();
 
         return view('guru.bank_soal_kuis.edit', compact(
             'quiz',
             'daftarKelas',
-            'daftarRombelGrouped'
+            'daftarRombelGrouped',
+            'kategoriList'
         ));
     }
 

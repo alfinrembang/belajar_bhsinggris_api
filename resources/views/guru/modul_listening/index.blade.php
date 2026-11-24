@@ -50,6 +50,9 @@
             <!-- Filter Rombel Kelas Terpadu -->
             <select name="rombel" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
                 <option value="">Semua Kelas & Rombel</option>
+                <option value="umum" {{ request('rombel') === 'umum' || request('rombel') === 'Semua Kelas' ? 'selected' : '' }}>
+                    🌐 Umum (Semua Tingkat)
+                </option>
                 @if(isset($daftarRombelGrouped) && !empty($daftarRombelGrouped))
                     @foreach($daftarRombelGrouped as $tingkat => $rombelList)
                         <optgroup label="Tingkat Kelas {{ $tingkat }}">
@@ -147,9 +150,16 @@
                                         </svg>
                                     </div>
                                     <div class="min-w-0 flex-1">
-                                        <a href="{{ route('guru.listening.show', $item->id) }}" class="font-bold text-slate-800 hover:text-[#4EA87D] transition-colors truncate block text-xs" title="{{ $item->judul }}">
-                                            {{ $item->judul }}
-                                        </a>
+                                        <div class="flex items-center gap-2">
+                                            <a href="{{ route('guru.listening.show', $item->id) }}" class="font-bold text-slate-800 hover:text-[#4EA87D] transition-colors truncate block text-xs" title="{{ $item->judul }}">
+                                                {{ $item->judul }}
+                                            </a>
+                                            @if($item->target_rombel)
+                                                <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60 shrink-0">{{ $item->target_rombel }}</span>
+                                            @elseif($item->tingkat_kelas && $item->tingkat_kelas !== 'Semua Kelas')
+                                                <span class="text-[10px] font-semibold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200/60 shrink-0">Kelas {{ str_replace('Kelas ', '', $item->tingkat_kelas) }}</span>
+                                            @endif
+                                        </div>
                                         <p class="text-[11px] text-slate-400 truncate mt-0.5" title="{{ $item->deskripsi }}">
                                             {{ $item->deskripsi ?? 'Tidak ada ringkasan deskripsi' }}
                                         </p>

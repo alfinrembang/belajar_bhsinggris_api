@@ -37,6 +37,9 @@
             <!-- Filter Rombel Kelas Terpadu -->
             <select name="rombel" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
                 <option value="">Semua Kelas & Rombel</option>
+                <option value="umum" {{ request('rombel') === 'umum' || request('rombel') === 'Semua Kelas' ? 'selected' : '' }}>
+                    🌐 Umum (Semua Tingkat)
+                </option>
                 @if(isset($daftarRombelGrouped) && !empty($daftarRombelGrouped))
                     @foreach($daftarRombelGrouped as $tingkat => $rombelList)
                         <optgroup label="Tingkat Kelas {{ $tingkat }}">
@@ -157,7 +160,13 @@
                                 <x-badge-kategori :kategori="$materi->kategori" size="text-[11px] px-2.5 py-0.5" />
                             </td>
                             <td class="py-3 px-2.5 whitespace-nowrap text-slate-700 font-semibold text-xs">
-                                <span class="whitespace-nowrap">{{ $materi->tingkat_kelas === 'Semua Kelas' ? 'Semua Kelas' : 'Kelas ' . $materi->tingkat_kelas }}</span>
+                                @if($materi->target_rombel)
+                                    <span class="whitespace-nowrap font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60">{{ $materi->target_rombel }}</span>
+                                @elseif($materi->tingkat_kelas === 'Semua Kelas')
+                                    <span class="whitespace-nowrap text-slate-500">Semua Kelas</span>
+                                @else
+                                    <span class="whitespace-nowrap text-slate-700 font-semibold">Kelas {{ str_replace('Kelas ', '', $materi->tingkat_kelas) }}</span>
+                                @endif
                             </td>
                             <td class="py-3 px-2.5 whitespace-nowrap">
                                 <div class="flex flex-col gap-0.5 text-[11px]">

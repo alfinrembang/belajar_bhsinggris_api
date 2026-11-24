@@ -32,10 +32,10 @@
     @endif
 
     <!-- Bar Aksi Atas: Pencarian, Filter & Tombol Aksi -->
-    <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 bg-white p-4 lg:p-5 rounded-3xl border border-slate-100 shadow-xs">
-        <form method="GET" action="{{ route('guru.quiz.index') }}" class="flex flex-wrap items-center gap-2.5 w-full xl:w-auto flex-1 min-w-0">
+    <div class="flex flex-col 2xl:flex-row 2xl:items-center justify-between gap-3.5 bg-white p-4 lg:p-5 rounded-3xl border border-slate-100 shadow-xs">
+        <form method="GET" action="{{ route('guru.quiz.index') }}" class="flex flex-wrap sm:flex-nowrap items-center gap-2.5 w-full 2xl:w-auto flex-1 min-w-0">
             <!-- Pencarian Kuis -->
-            <div class="relative w-full sm:w-56 md:w-60">
+            <div class="relative w-full sm:w-52 md:w-56 lg:w-60 shrink min-w-[140px]">
                 <svg class="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -47,19 +47,31 @@
                        class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#4EA87D] focus:ring-2 focus:ring-[#4EA87D]/15 outline-none transition-all">
             </div>
 
-            <!-- Filter Kategori -->
-            <select name="kategori" onchange="this.form.submit()" class="px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
+            <!-- Filter Kategori (Dinamis Sesuai Manajemen Kategori) -->
+            <select name="kategori" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D] shrink-0">
                 <option value="">Semua Kategori</option>
-                <option value="Grammar" {{ request('kategori') == 'Grammar' ? 'selected' : '' }}>Grammar Test</option>
-                <option value="Vocabulary" {{ request('kategori') == 'Vocabulary' ? 'selected' : '' }}>Vocabulary Challenge</option>
-                <option value="Reading" {{ request('kategori') == 'Reading' ? 'selected' : '' }}>Reading Comprehension</option>
-                <option value="Speaking" {{ request('kategori') == 'Speaking' ? 'selected' : '' }}>Speaking & Expression</option>
-                <option value="General" {{ request('kategori') == 'General' ? 'selected' : '' }}>General English</option>
+                @if(isset($kategoriList) && $kategoriList->isNotEmpty())
+                    @foreach($kategoriList as $kat)
+                        @php $kNama = is_object($kat) ? $kat->nama : $kat; @endphp
+                        <option value="{{ $kNama }}" {{ request('kategori') == $kNama ? 'selected' : '' }}>{{ $kNama }}</option>
+                    @endforeach
+                @else
+                    <option value="Reading" {{ request('kategori') == 'Reading' ? 'selected' : '' }}>Reading</option>
+                    <option value="Grammar" {{ request('kategori') == 'Grammar' ? 'selected' : '' }}>Grammar</option>
+                    <option value="Conversation" {{ request('kategori') == 'Conversation' ? 'selected' : '' }}>Conversation</option>
+                    <option value="Vocabulary" {{ request('kategori') == 'Vocabulary' ? 'selected' : '' }}>Vocabulary</option>
+                @endif
+                @if(request('kategori') && (!isset($kategoriList) || !$kategoriList->pluck('nama')->contains(request('kategori'))))
+                    <option value="{{ request('kategori') }}" selected>{{ request('kategori') }}</option>
+                @endif
             </select>
 
             <!-- Filter Rombel Kelas Terpadu -->
-            <select name="rombel" onchange="this.form.submit()" class="px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
+            <select name="rombel" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D] shrink-0">
                 <option value="">Semua Kelas & Rombel</option>
+                <option value="umum" {{ request('rombel') === 'umum' || request('rombel') === 'Semua Kelas' ? 'selected' : '' }}>
+                    🌐 Umum (Semua Tingkat)
+                </option>
                 @if(isset($daftarRombelGrouped) && !empty($daftarRombelGrouped))
                     @foreach($daftarRombelGrouped as $tingkat => $rombelList)
                         <optgroup label="Tingkat Kelas {{ $tingkat }}">
@@ -83,16 +95,16 @@
             </select>
 
             @if(request('q') || request('kategori') || request('rombel') || request('kelas'))
-                <a href="{{ route('guru.quiz.index') }}" class="text-xs text-rose-600 hover:underline font-semibold py-2 px-1">
+                <a href="{{ route('guru.quiz.index') }}" class="text-xs text-rose-600 hover:underline font-semibold py-2 px-1 shrink-0">
                     Reset
                 </a>
             @endif
         </form>
 
         <!-- Tombol Aksi: Import via AI, Rekap Nilai & Buat Paket Kuis -->
-        <div class="flex items-center gap-2.5 shrink-0 self-start xl:self-auto">
+        <div class="flex items-center gap-2.5 flex-wrap shrink-0 self-start sm:self-end 2xl:self-auto">
             <a href="{{ route('guru.laporan.quiz') }}" 
-               class="px-4 py-2.5 rounded-2xl bg-[#EAF5EF] hover:bg-[#D7EDE1] text-[#2E7352] text-xs font-bold transition-all flex items-center gap-2">
+               class="px-3.5 py-2.5 rounded-2xl bg-[#EAF5EF] hover:bg-[#D7EDE1] text-[#2E7352] text-xs font-bold transition-all flex items-center gap-1.5 shrink-0">
                 <svg class="w-4 h-4 text-[#2E7352]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
                 </svg>
@@ -176,7 +188,13 @@
                                         {{ $quiz->kategori }}
                                     </span>
                                     <span class="text-[11px] text-slate-400 whitespace-nowrap">
-                                        Kelas: {{ $quiz->tingkat_kelas }}
+                                        @if($quiz->target_rombel)
+                                            Rombel: <strong class="text-emerald-700 font-semibold">{{ $quiz->target_rombel }}</strong>
+                                        @elseif($quiz->tingkat_kelas === 'Semua Kelas')
+                                            Semua Kelas
+                                        @else
+                                            Kelas: {{ str_replace('Kelas ', '', $quiz->tingkat_kelas) }}
+                                        @endif
                                     </span>
                                 </div>
                             </td>
