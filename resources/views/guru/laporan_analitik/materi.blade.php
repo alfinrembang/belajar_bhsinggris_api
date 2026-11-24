@@ -2,40 +2,60 @@
     title="Nilai per Materi & Kategori - Study English Prima" 
     pageTitle="Laporan Nilai per Modul Materi" 
     pageSubtitle="Analisis detail perolehan nilai latihan pemahaman siswa berdasarkan modul materi dan kategori pembelajaran." 
-    active="laporan"
+    active="materi"
 >
-    <!-- Tab Navigasi Sub-Modul Laporan & Analitik -->
+    <!-- Tab Navigasi Sub-Modul Manajemen Materi -->
     <div class="flex flex-wrap items-center justify-between gap-3 mb-6 bg-white p-3 rounded-2xl border border-slate-100 shadow-xs">
         <div class="flex items-center gap-1.5 flex-wrap">
-            <a href="{{ route('guru.laporan.index') }}" 
+            <a href="{{ route('guru.materi.index') }}" 
                class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all flex items-center gap-2">
-                <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="20" x2="18" y2="10"></line>
-                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
                 </svg>
-                <span>Leger Nilai Kolektif</span>
+                <span>Daftar Modul Materi</span>
             </a>
             <a href="{{ route('guru.laporan.materi') }}" 
                class="px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 bg-[#4EA87D] text-white shadow-xs">
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
                 </svg>
                 <span>Nilai per Materi & Kategori</span>
             </a>
-            <a href="{{ route('guru.laporan.quiz') }}" 
-               class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all flex items-center gap-2">
-                <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
-                </svg>
-                <span>Rekap Nilai Kuis</span>
-            </a>
         </div>
 
-        <span class="text-xs font-semibold text-slate-500 px-3 py-1 bg-slate-50 border border-slate-100 rounded-xl">
-            Standar KKM: <strong class="text-slate-800">{{ $kkm }}</strong>
-        </span>
+        <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-xs font-semibold text-slate-500 px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl hidden sm:inline-flex items-center">
+                Standar KKM: <strong class="text-slate-800 ml-1">{{ $kkm }}</strong>
+            </span>
+
+            <a href="{{ route('guru.laporan.materi.export_excel', request()->query()) }}" 
+               class="px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200/90 text-emerald-800 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shadow-2xs">
+                <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="8" y1="13" x2="16" y2="13"></line>
+                    <line x1="8" y1="17" x2="16" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                <span>Export Excel (.xlsx)</span>
+            </a>
+
+            <a href="{{ route('guru.laporan.materi.cetak', request()->query()) }}" 
+               target="_blank"
+               class="px-4 py-2 rounded-xl bg-[#4EA87D] hover:bg-[#43966E] text-white text-xs font-bold shadow-[0_4px_14px_rgba(78,168,125,0.25)] transition-all flex items-center gap-2 cursor-pointer">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                    <rect x="6" y="14" width="12" height="8"></rect>
+                </svg>
+                <span>Cetak Rekap Materi</span>
+            </a>
+        </div>
     </div>
 
     <!-- Filter & Pencarian -->

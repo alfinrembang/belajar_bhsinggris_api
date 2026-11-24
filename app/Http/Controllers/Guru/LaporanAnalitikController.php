@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Guru;
 
 use App\Exports\LaporanSiswaExport;
+use App\Exports\MateriNilaiExport;
+use App\Exports\QuizNilaiExport;
 use App\Http\Controllers\Controller;
 use App\Models\KategoriMateri;
 use App\Models\Materi;
@@ -31,10 +33,10 @@ class LaporanAnalitikController extends Controller
     public function index(Request $request): View
     {
         $setting = PengaturanAkademik::getActiveSetting();
-        $bobotMateri = (int) ($setting->bobot_materi ?? 30);
-        $bobotListening = (int) ($setting->bobot_listening ?? 30);
-        $bobotQuiz = (int) ($setting->bobot_quiz ?? 40);
-        $kkm = (int) ($setting->kkm_default ?? self::KKM);
+        $bobotMateri = $request->filled('bobot_materi') ? (int) $request->input('bobot_materi') : (int) ($setting->bobot_materi ?? 30);
+        $bobotListening = $request->filled('bobot_listening') ? (int) $request->input('bobot_listening') : (int) ($setting->bobot_listening ?? 30);
+        $bobotQuiz = $request->filled('bobot_quiz') ? (int) $request->input('bobot_quiz') : (int) ($setting->bobot_quiz ?? 40);
+        $kkm = $request->filled('kkm') ? (int) $request->input('kkm') : (int) ($setting->kkm_default ?? self::KKM);
 
         $semuaSiswa = $this->getProcessedSiswaCollection($request);
 
@@ -156,7 +158,7 @@ class LaporanAnalitikController extends Controller
     public function materi(Request $request): View
     {
         $setting = PengaturanAkademik::getActiveSetting();
-        $kkm = (int) ($setting->kkm_default ?? self::KKM);
+        $kkm = $request->filled('kkm') ? (int) $request->input('kkm') : (int) ($setting->kkm_default ?? self::KKM);
 
         $daftarKategori = KategoriMateri::orderBy('nama')->pluck('nama')->toArray();
         if (empty($daftarKategori)) {
@@ -168,62 +170,7 @@ class LaporanAnalitikController extends Controller
         $daftarKelas = Siswa::getDaftarKelas();
         $daftarJurusan = Siswa::getDaftarJurusan();
 
-        $query = SiswaMateriProgres::with(['siswa', 'materi']);
-
-        if ($request->filled('materi_id')) {
-            $query->where('materi_id', $request->input('materi_id'));
-        }
-
-        if ($request->filled('kategori')) {
-            $kategori = $request->input('kategori');
-            $query->whereHas('materi', function ($q) use ($kategori) {
-                $q->where('kategori', $kategori);
-            });
-        }
-
-        if ($request->filled('rombel')) {
-            $rombel = trim((string) $request->input('rombel'));
-            if (str_starts_with($rombel, 'tingkat:')) {
-                $tingkat = str_replace('tingkat:', '', $rombel);
-                $query->whereHas('siswa', function ($q) use ($tingkat) {
-                    $q->where('kelas', $tingkat);
-                });
-            } else {
-                $parts = explode(' ', $rombel);
-                $query->whereHas('siswa', function ($q) use ($parts) {
-                    if (count($parts) >= 3) {
-                        $q->where('kelas', $parts[0])
-                            ->where('jurusan', $parts[1])
-                            ->where('no_kelas', $parts[2]);
-                    } elseif (count($parts) === 2) {
-                        $q->where('kelas', $parts[0])
-                            ->where('jurusan', $parts[1]);
-                    } elseif (! empty($parts[0])) {
-                        $q->where('kelas', $parts[0]);
-                    }
-                });
-            }
-        } elseif ($request->filled('kelas')) {
-            $kelas = $request->input('kelas');
-            $query->whereHas('siswa', function ($q) use ($kelas) {
-                $q->where('kelas', $kelas);
-            });
-        }
-
-        if ($request->filled('jurusan') && ! $request->filled('rombel')) {
-            $jurusan = $request->input('jurusan');
-            $query->whereHas('siswa', function ($q) use ($jurusan) {
-                $q->where('jurusan', $jurusan);
-            });
-        }
-
-        if ($request->filled('q')) {
-            $q = trim((string) $request->input('q'));
-            $query->whereHas('siswa', function ($sq) use ($q) {
-                $sq->where('nama_lengkap', 'like', "%{$q}%")
-                    ->orWhere('nis', 'like', "%{$q}%");
-            });
-        }
+        $query = $this->getFilteredMateriQuery($request, $kkm);
 
         $semuaProgres = (clone $query)->get();
         $totalProgres = $semuaProgres->count();
@@ -246,6 +193,71 @@ class LaporanAnalitikController extends Controller
             'totalSelesai',
             'totalTuntas'
         ));
+    }
+
+    /**
+     * Lembar Cetak Rekapitulasi Nilai Latihan Materi Resmi Siap Cetak (Print-Ready Layout).
+     */
+    public function cetakMateri(Request $request): View
+    {
+        $setting = PengaturanAkademik::getActiveSetting();
+        $kkm = $request->filled('kkm') ? (int) $request->input('kkm') : (int) ($setting->kkm_default ?? self::KKM);
+
+        $query = $this->getFilteredMateriQuery($request, $kkm);
+        $progresList = $query->latest('completed_at')->get();
+        $totalProgres = $progresList->count();
+        $rataRataSkor = $totalProgres > 0 ? round($progresList->whereNotNull('skor')->avg('skor'), 1) : 0;
+        $totalTuntas = $progresList->where('skor', '>=', $kkm)->count();
+        $totalRemedial = $totalProgres - $totalTuntas;
+
+        $materiPilihan = $request->filled('materi_id') ? Materi::find($request->input('materi_id')) : null;
+        $kategoriPilihan = $request->input('kategori');
+
+        return view('guru.laporan_analitik.materi_cetak', compact(
+            'progresList',
+            'kkm',
+            'totalProgres',
+            'rataRataSkor',
+            'totalTuntas',
+            'totalRemedial',
+            'materiPilihan',
+            'kategoriPilihan'
+        ));
+    }
+
+    /**
+     * Mengekspor rekapitulasi nilai modul materi siswa ke format Excel (.xlsx).
+     */
+    public function exportMateriExcel(Request $request): BinaryFileResponse
+    {
+        $setting = PengaturanAkademik::getActiveSetting();
+        $kkm = $request->filled('kkm') ? (int) $request->input('kkm') : (int) ($setting->kkm_default ?? self::KKM);
+
+        $query = $this->getFilteredMateriQuery($request, $kkm);
+        $progresList = $query->latest('completed_at')->get();
+        $totalProgres = $progresList->count();
+        $rataRataSkor = $totalProgres > 0 ? round($progresList->whereNotNull('skor')->avg('skor'), 1) : 0;
+        $totalTuntas = $progresList->where('skor', '>=', $kkm)->count();
+        $totalRemedial = $totalProgres - $totalTuntas;
+
+        $materiPilihan = $request->filled('materi_id') ? Materi::find($request->input('materi_id')) : null;
+        $kategoriPilihan = $request->input('kategori');
+
+        $filename = 'rekap_nilai_materi_'.date('Y-m-d_His').'.xlsx';
+
+        return Excel::download(
+            new MateriNilaiExport(
+                $progresList,
+                $kkm,
+                $totalProgres,
+                $totalTuntas,
+                $totalRemedial,
+                $rataRataSkor,
+                $materiPilihan,
+                $kategoriPilihan
+            ),
+            $filename
+        );
     }
 
     /**
@@ -348,62 +360,9 @@ class LaporanAnalitikController extends Controller
     public function cetakQuiz(Request $request): View
     {
         $setting = PengaturanAkademik::getActiveSetting();
-        $kkm = (int) ($setting->kkm_default ?? self::KKM);
+        $kkm = $request->filled('kkm') ? (int) $request->input('kkm') : (int) ($setting->kkm_default ?? self::KKM);
 
-        $query = SiswaQuizProgres::with(['siswa', 'quiz']);
-
-        if ($request->filled('quiz_id')) {
-            $query->where('quiz_id', $request->input('quiz_id'));
-        }
-        if ($request->filled('rombel')) {
-            $rombel = trim((string) $request->input('rombel'));
-            if (str_starts_with($rombel, 'tingkat:')) {
-                $tingkat = str_replace('tingkat:', '', $rombel);
-                $query->whereHas('siswa', function ($q) use ($tingkat) {
-                    $q->where('kelas', $tingkat);
-                });
-            } else {
-                $parts = explode(' ', $rombel);
-                $query->whereHas('siswa', function ($q) use ($parts) {
-                    if (count($parts) >= 3) {
-                        $q->where('kelas', $parts[0])
-                            ->where('jurusan', $parts[1])
-                            ->where('no_kelas', $parts[2]);
-                    } elseif (count($parts) === 2) {
-                        $q->where('kelas', $parts[0])
-                            ->where('jurusan', $parts[1]);
-                    } elseif (! empty($parts[0])) {
-                        $q->where('kelas', $parts[0]);
-                    }
-                });
-            }
-        } elseif ($request->filled('kelas')) {
-            $kelas = $request->input('kelas');
-            $query->whereHas('siswa', function ($q) use ($kelas) {
-                $q->where('kelas', $kelas);
-            });
-        }
-        if ($request->filled('jurusan') && ! $request->filled('rombel')) {
-            $jurusan = $request->input('jurusan');
-            $query->whereHas('siswa', function ($q) use ($jurusan) {
-                $q->where('jurusan', $jurusan);
-            });
-        }
-        if ($request->filled('status')) {
-            $status = $request->input('status');
-            if ($status === 'tuntas') {
-                $query->where('skor', '>=', $kkm);
-            } elseif ($status === 'remedial') {
-                $query->where('skor', '<', $kkm);
-            }
-        }
-        if ($request->filled('q')) {
-            $q = trim((string) $request->input('q'));
-            $query->whereHas('siswa', function ($sq) use ($q) {
-                $sq->where('nama_lengkap', 'like', "%{$q}%")
-                    ->orWhere('nis', 'like', "%{$q}%");
-            });
-        }
+        $query = $this->getFilteredQuizQuery($request, $kkm);
 
         $riwayatQuiz = $query->latest('completed_at')->get();
         $totalRiwayat = $riwayatQuiz->count();
@@ -425,15 +384,47 @@ class LaporanAnalitikController extends Controller
     }
 
     /**
+     * Mengekspor rekapitulasi nilai evaluasi kuis siswa ke format Excel (.xlsx).
+     */
+    public function exportQuizExcel(Request $request): BinaryFileResponse
+    {
+        $setting = PengaturanAkademik::getActiveSetting();
+        $kkm = $request->filled('kkm') ? (int) $request->input('kkm') : (int) ($setting->kkm_default ?? self::KKM);
+
+        $query = $this->getFilteredQuizQuery($request, $kkm);
+        $riwayatQuiz = $query->latest('completed_at')->get();
+        $totalRiwayat = $riwayatQuiz->count();
+        $rataRataSkor = $totalRiwayat > 0 ? round($riwayatQuiz->avg('skor'), 1) : 0;
+        $totalTuntas = $riwayatQuiz->where('skor', '>=', $kkm)->count();
+        $totalRemedial = $totalRiwayat - $totalTuntas;
+
+        $quizPilihan = $request->filled('quiz_id') ? Quiz::find($request->input('quiz_id')) : null;
+        $filename = 'rekap_nilai_kuis_'.date('Y-m-d_His').'.xlsx';
+
+        return Excel::download(
+            new QuizNilaiExport(
+                $riwayatQuiz,
+                $kkm,
+                $totalRiwayat,
+                $totalTuntas,
+                $totalRemedial,
+                $rataRataSkor,
+                $quizPilihan
+            ),
+            $filename
+        );
+    }
+
+    /**
      * Mengekspor rekapitulasi nilai kolektif siswa ke format Excel (.xlsx) resmi dengan styling rapi.
      */
     public function exportExcel(Request $request): BinaryFileResponse
     {
         $setting = PengaturanAkademik::getActiveSetting();
-        $bobotMateri = (int) ($setting->bobot_materi ?? 30);
-        $bobotListening = (int) ($setting->bobot_listening ?? 30);
-        $bobotQuiz = (int) ($setting->bobot_quiz ?? 40);
-        $kkm = (int) ($setting->kkm_default ?? self::KKM);
+        $bobotMateri = $request->filled('bobot_materi') ? (int) $request->input('bobot_materi') : (int) ($setting->bobot_materi ?? 30);
+        $bobotListening = $request->filled('bobot_listening') ? (int) $request->input('bobot_listening') : (int) ($setting->bobot_listening ?? 30);
+        $bobotQuiz = $request->filled('bobot_quiz') ? (int) $request->input('bobot_quiz') : (int) ($setting->bobot_quiz ?? 40);
+        $kkm = $request->filled('kkm') ? (int) $request->input('kkm') : (int) ($setting->kkm_default ?? self::KKM);
 
         $siswaCollection = $this->getProcessedSiswaCollection($request);
 
@@ -466,10 +457,10 @@ class LaporanAnalitikController extends Controller
     public function exportCsv(Request $request): StreamedResponse
     {
         $setting = PengaturanAkademik::getActiveSetting();
-        $bobotMateri = (int) ($setting->bobot_materi ?? 30);
-        $bobotListening = (int) ($setting->bobot_listening ?? 30);
-        $bobotQuiz = (int) ($setting->bobot_quiz ?? 40);
-        $kkm = (int) ($setting->kkm_default ?? self::KKM);
+        $bobotMateri = $request->filled('bobot_materi') ? (int) $request->input('bobot_materi') : (int) ($setting->bobot_materi ?? 30);
+        $bobotListening = $request->filled('bobot_listening') ? (int) $request->input('bobot_listening') : (int) ($setting->bobot_listening ?? 30);
+        $bobotQuiz = $request->filled('bobot_quiz') ? (int) $request->input('bobot_quiz') : (int) ($setting->bobot_quiz ?? 40);
+        $kkm = $request->filled('kkm') ? (int) $request->input('kkm') : (int) ($setting->kkm_default ?? self::KKM);
 
         $siswaCollection = $this->getProcessedSiswaCollection($request);
         $filename = 'rekap_nilai_siswa_'.date('Y-m-d_His').'.csv';
@@ -529,10 +520,10 @@ class LaporanAnalitikController extends Controller
     public function cetak(Request $request): View
     {
         $setting = PengaturanAkademik::getActiveSetting();
-        $bobotMateri = (int) ($setting->bobot_materi ?? 30);
-        $bobotListening = (int) ($setting->bobot_listening ?? 30);
-        $bobotQuiz = (int) ($setting->bobot_quiz ?? 40);
-        $kkm = (int) ($setting->kkm_default ?? self::KKM);
+        $bobotMateri = $request->filled('bobot_materi') ? (int) $request->input('bobot_materi') : (int) ($setting->bobot_materi ?? 30);
+        $bobotListening = $request->filled('bobot_listening') ? (int) $request->input('bobot_listening') : (int) ($setting->bobot_listening ?? 30);
+        $bobotQuiz = $request->filled('bobot_quiz') ? (int) $request->input('bobot_quiz') : (int) ($setting->bobot_quiz ?? 40);
+        $kkm = $request->filled('kkm') ? (int) $request->input('kkm') : (int) ($setting->kkm_default ?? self::KKM);
 
         $siswaCollection = $this->getProcessedSiswaCollection($request);
 
@@ -562,10 +553,10 @@ class LaporanAnalitikController extends Controller
     private function getProcessedSiswaCollection(Request $request): Collection
     {
         $setting = PengaturanAkademik::getActiveSetting();
-        $bobotMateri = (int) ($setting->bobot_materi ?? 30);
-        $bobotListening = (int) ($setting->bobot_listening ?? 30);
-        $bobotQuiz = (int) ($setting->bobot_quiz ?? 40);
-        $kkm = (int) ($setting->kkm_default ?? self::KKM);
+        $bobotMateri = $request->filled('bobot_materi') ? (int) $request->input('bobot_materi') : (int) ($setting->bobot_materi ?? 30);
+        $bobotListening = $request->filled('bobot_listening') ? (int) $request->input('bobot_listening') : (int) ($setting->bobot_listening ?? 30);
+        $bobotQuiz = $request->filled('bobot_quiz') ? (int) $request->input('bobot_quiz') : (int) ($setting->bobot_quiz ?? 40);
+        $kkm = $request->filled('kkm') ? (int) $request->input('kkm') : (int) ($setting->kkm_default ?? self::KKM);
 
         $query = Siswa::query()->latest()->with([
             'materiProgres',
@@ -654,5 +645,142 @@ class LaporanAnalitikController extends Controller
                 'is_tuntas' => $isTuntas,
             ];
         });
+    }
+
+    /**
+     * Helper privat untuk memfilter query progres materi siswa.
+     */
+    private function getFilteredMateriQuery(Request $request, int $kkm)
+    {
+        $query = SiswaMateriProgres::with(['siswa', 'materi']);
+
+        if ($request->filled('materi_id')) {
+            $query->where('materi_id', $request->input('materi_id'));
+        }
+
+        if ($request->filled('kategori')) {
+            $kategori = $request->input('kategori');
+            $query->whereHas('materi', function ($q) use ($kategori) {
+                $q->where('kategori', $kategori);
+            });
+        }
+
+        if ($request->filled('rombel')) {
+            $rombel = trim((string) $request->input('rombel'));
+            if (str_starts_with($rombel, 'tingkat:')) {
+                $tingkat = str_replace('tingkat:', '', $rombel);
+                $query->whereHas('siswa', function ($q) use ($tingkat) {
+                    $q->where('kelas', $tingkat);
+                });
+            } else {
+                $parts = explode(' ', $rombel);
+                $query->whereHas('siswa', function ($q) use ($parts) {
+                    if (count($parts) >= 3) {
+                        $q->where('kelas', $parts[0])
+                            ->where('jurusan', $parts[1])
+                            ->where('no_kelas', $parts[2]);
+                    } elseif (count($parts) === 2) {
+                        $q->where('kelas', $parts[0])
+                            ->where('jurusan', $parts[1]);
+                    } elseif (! empty($parts[0])) {
+                        $q->where('kelas', $parts[0]);
+                    }
+                });
+            }
+        } elseif ($request->filled('kelas')) {
+            $kelas = $request->input('kelas');
+            $query->whereHas('siswa', function ($q) use ($kelas) {
+                $q->where('kelas', $kelas);
+            });
+        }
+
+        if ($request->filled('jurusan') && ! $request->filled('rombel')) {
+            $jurusan = $request->input('jurusan');
+            $query->whereHas('siswa', function ($q) use ($jurusan) {
+                $q->where('jurusan', $jurusan);
+            });
+        }
+
+        if ($request->filled('status')) {
+            $status = $request->input('status');
+            if ($status === 'tuntas') {
+                $query->where('skor', '>=', $kkm);
+            } elseif ($status === 'remedial') {
+                $query->where('skor', '<', $kkm);
+            }
+        }
+
+        if ($request->filled('q')) {
+            $q = trim((string) $request->input('q'));
+            $query->whereHas('siswa', function ($sq) use ($q) {
+                $sq->where('nama_lengkap', 'like', "%{$q}%")
+                    ->orWhere('nis', 'like', "%{$q}%");
+            });
+        }
+
+        return $query;
+    }
+
+    /**
+     * Helper privat untuk memfilter query riwayat kuis siswa.
+     */
+    private function getFilteredQuizQuery(Request $request, int $kkm)
+    {
+        $query = SiswaQuizProgres::with(['siswa', 'quiz']);
+
+        if ($request->filled('quiz_id')) {
+            $query->where('quiz_id', $request->input('quiz_id'));
+        }
+        if ($request->filled('rombel')) {
+            $rombel = trim((string) $request->input('rombel'));
+            if (str_starts_with($rombel, 'tingkat:')) {
+                $tingkat = str_replace('tingkat:', '', $rombel);
+                $query->whereHas('siswa', function ($q) use ($tingkat) {
+                    $q->where('kelas', $tingkat);
+                });
+            } else {
+                $parts = explode(' ', $rombel);
+                $query->whereHas('siswa', function ($q) use ($parts) {
+                    if (count($parts) >= 3) {
+                        $q->where('kelas', $parts[0])
+                            ->where('jurusan', $parts[1])
+                            ->where('no_kelas', $parts[2]);
+                    } elseif (count($parts) === 2) {
+                        $q->where('kelas', $parts[0])
+                            ->where('jurusan', $parts[1]);
+                    } elseif (! empty($parts[0])) {
+                        $q->where('kelas', $parts[0]);
+                    }
+                });
+            }
+        } elseif ($request->filled('kelas')) {
+            $kelas = $request->input('kelas');
+            $query->whereHas('siswa', function ($q) use ($kelas) {
+                $q->where('kelas', $kelas);
+            });
+        }
+        if ($request->filled('jurusan') && ! $request->filled('rombel')) {
+            $jurusan = $request->input('jurusan');
+            $query->whereHas('siswa', function ($q) use ($jurusan) {
+                $q->where('jurusan', $jurusan);
+            });
+        }
+        if ($request->filled('status')) {
+            $status = $request->input('status');
+            if ($status === 'tuntas') {
+                $query->where('skor', '>=', $kkm);
+            } elseif ($status === 'remedial') {
+                $query->where('skor', '<', $kkm);
+            }
+        }
+        if ($request->filled('q')) {
+            $q = trim((string) $request->input('q'));
+            $query->whereHas('siswa', function ($sq) use ($q) {
+                $sq->where('nama_lengkap', 'like', "%{$q}%")
+                    ->orWhere('nis', 'like', "%{$q}%");
+            });
+        }
+
+        return $query;
     }
 }

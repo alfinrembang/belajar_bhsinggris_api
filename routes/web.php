@@ -104,8 +104,11 @@ Route::middleware(['auth'])->group(function () {
     // MODUL 5: LAPORAN & ANALITIK GURU
     Route::get('/laporan', [LaporanAnalitikController::class, 'index'])->name('guru.laporan.index');
     Route::get('/laporan/materi', [LaporanAnalitikController::class, 'materi'])->name('guru.laporan.materi');
+    Route::get('/laporan/materi/cetak', [LaporanAnalitikController::class, 'cetakMateri'])->name('guru.laporan.materi.cetak');
+    Route::get('/laporan/materi/export-excel', [LaporanAnalitikController::class, 'exportMateriExcel'])->name('guru.laporan.materi.export_excel');
     Route::get('/laporan/quiz', [LaporanAnalitikController::class, 'quiz'])->name('guru.laporan.quiz');
     Route::get('/laporan/quiz/cetak', [LaporanAnalitikController::class, 'cetakQuiz'])->name('guru.laporan.quiz.cetak');
+    Route::get('/laporan/quiz/export-excel', [LaporanAnalitikController::class, 'exportQuizExcel'])->name('guru.laporan.quiz.export_excel');
     Route::get('/laporan/export-excel', [LaporanAnalitikController::class, 'exportExcel'])->name('guru.laporan.export_excel');
     Route::get('/laporan/export-csv', [LaporanAnalitikController::class, 'exportCsv'])->name('guru.laporan.export_csv');
     Route::get('/laporan/cetak', [LaporanAnalitikController::class, 'cetak'])->name('guru.laporan.cetak');

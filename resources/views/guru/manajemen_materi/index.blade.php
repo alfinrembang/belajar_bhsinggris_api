@@ -17,6 +17,35 @@
         </div>
     @endif
 
+    <!-- Tab Navigasi Sub-Modul Manajemen Materi -->
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-6 bg-white p-3 rounded-2xl border border-slate-100 shadow-xs">
+        <div class="flex items-center gap-1.5 flex-wrap">
+            <a href="{{ route('guru.materi.index') }}" 
+               class="px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 bg-[#4EA87D] text-white shadow-xs">
+                <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                </svg>
+                <span>Daftar Modul Materi</span>
+            </a>
+            <a href="{{ route('guru.laporan.materi') }}" 
+               class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all flex items-center gap-2">
+                <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                <span>Nilai per Materi & Kategori</span>
+            </a>
+        </div>
+
+        <span class="text-xs font-semibold text-slate-500 px-3 py-1.5 bg-slate-50 border border-slate-100 rounded-xl">
+            Modul Materi Pembelajaran
+        </span>
+    </div>
+
     <!-- Bar Aksi Atas: Pencarian, Filter Kategori & Kelas, serta Tombol Aksi -->
     <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 bg-white p-4 lg:p-5 rounded-3xl border border-slate-100 shadow-xs">
         <!-- Form Pencarian & Filter -->
