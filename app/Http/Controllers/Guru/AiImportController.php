@@ -91,9 +91,8 @@ class AiImportController extends Controller
         $kategoriList = KategoriMateri::where('is_aktif', true)->orderBy('urutan')->get();
         $daftarRombelGrouped = Siswa::getDaftarRombelGrouped();
         $daftarKelas = Siswa::getDaftarKelas();
-        $kelasDiampu = $user->kelas_diampu ?? [];
 
-        return view('guru.ai_import.review', compact('aiImport', 'hasil', 'kategoriList', 'kelasDiampu', 'daftarRombelGrouped', 'daftarKelas'));
+        return view('guru.ai_import.review', compact('aiImport', 'hasil', 'kategoriList', 'daftarRombelGrouped', 'daftarKelas'));
     }
 
     /**

@@ -66,10 +66,10 @@
             <!-- Filter Rombel Kelas Terpadu -->
             <select name="rombel" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D]">
                 <option value="">Semua Kelas & Rombel</option>
-                <option value="umum" {{ request('rombel') === 'umum' || request('rombel') === 'Semua Kelas' ? 'selected' : '' }}>
-                    🌐 Umum (Semua Tingkat)
-                </option>
                 @if(isset($daftarRombelGrouped) && !empty($daftarRombelGrouped))
+                    <option value="umum" {{ request('rombel') === 'umum' || request('rombel') === 'Semua Kelas' ? 'selected' : '' }}>
+                        🌐 Umum (Semua Tingkat)
+                    </option>
                     @foreach($daftarRombelGrouped as $tingkat => $rombelList)
                         <optgroup label="Tingkat Kelas {{ $tingkat }}">
                             <option value="tingkat:{{ $tingkat }}" {{ request('rombel') === 'tingkat:'.$tingkat || request('kelas') === (string)$tingkat ? 'selected' : '' }}>
@@ -81,12 +81,6 @@
                                 </option>
                             @endforeach
                         </optgroup>
-                    @endforeach
-                @else
-                    @foreach($daftarKelas as $k)
-                        <option value="tingkat:{{ $k }}" {{ request('rombel') === 'tingkat:'.$k || request('kelas') === (string)$k ? 'selected' : '' }}>
-                            Kelas {{ $k }}
-                        </option>
                     @endforeach
                 @endif
             </select>
@@ -188,9 +182,13 @@
                             <td class="py-3 px-2.5 whitespace-nowrap">
                                 <x-badge-kategori :kategori="$materi->kategori" size="text-[11px] px-2.5 py-0.5" />
                             </td>
-                            <td class="py-3 px-2.5 whitespace-nowrap text-slate-700 font-semibold text-xs">
-                                @if($materi->target_rombel)
-                                    <span class="whitespace-nowrap font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60">{{ $materi->target_rombel }}</span>
+                            <td class="py-3 px-2.5 text-slate-700 font-semibold text-xs">
+                                @if(!empty($materi->target_rombel_list))
+                                    <div class="flex flex-wrap gap-1 max-w-[170px]">
+                                        @foreach($materi->target_rombel_list as $rBadge)
+                                            <span class="whitespace-nowrap font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60 text-[11px]">{{ $rBadge }}</span>
+                                        @endforeach
+                                    </div>
                                 @elseif($materi->tingkat_kelas === 'Semua Kelas')
                                     <span class="whitespace-nowrap text-slate-500">Semua Kelas</span>
                                 @else

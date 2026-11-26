@@ -97,10 +97,10 @@
             <!-- Filter Rombel Kelas Terpadu -->
             <select name="rombel" onchange="this.form.submit()" class="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-[#4EA87D] shrink-0">
                 <option value="">Semua Kelas & Rombel</option>
-                <option value="umum" {{ request('rombel') === 'umum' || request('rombel') === 'Semua Kelas' ? 'selected' : '' }}>
-                    🌐 Umum (Semua Tingkat)
-                </option>
                 @if(isset($daftarRombelGrouped) && !empty($daftarRombelGrouped))
+                    <option value="umum" {{ request('rombel') === 'umum' || request('rombel') === 'Semua Kelas' ? 'selected' : '' }}>
+                        🌐 Umum (Semua Tingkat)
+                    </option>
                     @foreach($daftarRombelGrouped as $tingkat => $rombelList)
                         <optgroup label="Tingkat Kelas {{ $tingkat }}">
                             <option value="tingkat:{{ $tingkat }}" {{ request('rombel') === 'tingkat:'.$tingkat || request('kelas') === (string)$tingkat ? 'selected' : '' }}>
@@ -112,12 +112,6 @@
                                 </option>
                             @endforeach
                         </optgroup>
-                    @endforeach
-                @else
-                    @foreach($daftarKelas as $k)
-                        <option value="tingkat:{{ $k }}" {{ request('rombel') === 'tingkat:'.$k || request('kelas') === (string)$k ? 'selected' : '' }}>
-                            Kelas {{ $k }}
-                        </option>
                     @endforeach
                 @endif
             </select>
@@ -207,15 +201,21 @@
                                     <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-semibold whitespace-nowrap border border-slate-200/60">
                                         {{ $quiz->kategori }}
                                     </span>
-                                    <span class="text-[11px] text-slate-400 whitespace-nowrap">
-                                        @if($quiz->target_rombel)
-                                            Rombel: <strong class="text-emerald-700 font-semibold">{{ $quiz->target_rombel }}</strong>
-                                        @elseif($quiz->tingkat_kelas === 'Semua Kelas')
-                                            Semua Kelas
-                                        @else
-                                            Kelas: {{ str_replace('Kelas ', '', $quiz->tingkat_kelas) }}
-                                        @endif
-                                    </span>
+                                    @if(!empty($quiz->target_rombel_list))
+                                        <div class="flex flex-wrap gap-1 max-w-[170px] mt-0.5">
+                                            @foreach($quiz->target_rombel_list as $rBadge)
+                                                <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60 whitespace-nowrap">{{ $rBadge }}</span>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <span class="text-[11px] text-slate-400 whitespace-nowrap">
+                                            @if($quiz->tingkat_kelas === 'Semua Kelas')
+                                                Semua Kelas
+                                            @else
+                                                Kelas: {{ str_replace('Kelas ', '', $quiz->tingkat_kelas) }}
+                                            @endif
+                                        </span>
+                                    @endif
                                 </div>
                             </td>
                             <td class="py-3 px-3 text-slate-700 font-semibold whitespace-nowrap">

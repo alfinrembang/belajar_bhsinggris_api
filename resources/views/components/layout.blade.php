@@ -64,5 +64,6 @@
     <!-- Modal Pop-up Konfirmasi Reset Password Siswa Universal -->
     <x-modal-reset-password />
 
+    @stack('scripts')
 </body>
 </html>

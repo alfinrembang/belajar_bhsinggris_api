@@ -55,34 +55,12 @@
                               class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none transition-all">{{ old('deskripsi', $listening->deskripsi) }}</textarea>
                 </div>
 
-                <!-- Target Kelas & Rombel (Dinamis Satu Dropdown Terpadu) -->
-                @php
-                    $selectedRombel = old('target_rombel', $listening->target_rombel ?? ($listening->tingkat_kelas && $listening->tingkat_kelas !== 'Semua Kelas' ? 'tingkat:'.$listening->tingkat_kelas : ''));
-                @endphp
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">
-                        Target Kelas & Rombel Siswa <span class="text-rose-500">*</span>
-                    </label>
-                    <select name="target_rombel" class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none">
-                        <option value="" {{ $selectedRombel === '' || $selectedRombel === 'Semua Kelas' ? 'selected' : '' }}>
-                            Semua Kelas (Umum / Bisa Diakses Seluruh Siswa)
-                        </option>
-                        @if(isset($daftarRombelGrouped) && !empty($daftarRombelGrouped))
-                            @foreach($daftarRombelGrouped as $tingkat => $rombelList)
-                                <optgroup label="Tingkat Kelas {{ $tingkat }}">
-                                    <option value="tingkat:{{ $tingkat }}" {{ $selectedRombel === 'tingkat:'.$tingkat ? 'selected' : '' }}>
-                                        Semua Kelas {{ $tingkat }} (Seluruh Rombel)
-                                    </option>
-                                    @foreach($rombelList as $rombel)
-                                        <option value="{{ $rombel }}" {{ $selectedRombel === $rombel ? 'selected' : '' }}>
-                                            Khusus Rombel {{ $rombel }}
-                                        </option>
-                                    @endforeach
-                                </optgroup>
-                            @endforeach
-                        @endif
-                    </select>
-                </div>
+                <!-- Target Kelas & Rombel -->
+                <x-target-rombel-picker
+                    :daftar-rombel-grouped="$daftarRombelGrouped ?? []"
+                    :selected="$listening->target_rombel"
+                    :tingkat-kelas="$listening->tingkat_kelas"
+                />
 
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">

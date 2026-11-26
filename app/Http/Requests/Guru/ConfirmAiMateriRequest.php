@@ -37,8 +37,10 @@ class ConfirmAiMateriRequest extends FormRequest
         return [
             'judul' => ['required', 'string', 'max:255'],
             'kategori' => ['required', 'string', 'max:100'],
-            'tingkat_kelas' => ['required', 'string', 'max:50'],
-            'target_rombel' => ['nullable', 'string', 'max:100'],
+            'tingkat_kelas' => ['required', 'string', 'max:255'],
+            'target_rombel' => ['nullable', 'string', 'max:2000'],
+            'target_rombels' => ['nullable', 'array'],
+            'target_rombels.*' => ['string', 'max:100'],
             'deskripsi_singkat' => ['required', 'string'],
             'penjelasan' => ['required', 'string'],
             'contoh_teks' => ['nullable', 'string'],
