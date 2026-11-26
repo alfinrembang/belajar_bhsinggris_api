@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Materi;
 use App\Models\MateriSoal;
+use App\Models\Siswa;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
@@ -21,6 +22,11 @@ class MateriManagementTest extends TestCase
         parent::setUp();
         $this->guru = User::factory()->create([
             'role' => 'guru',
+        ]);
+        Siswa::factory()->create([
+            'kelas' => '10',
+            'jurusan' => 'DKV',
+            'no_kelas' => '1',
         ]);
     }
 
@@ -258,11 +264,11 @@ class MateriManagementTest extends TestCase
             'target_rombel' => '10 DKV 1',
         ]);
 
-        // 3. Pilih '' (Semua Kelas) -> disimpan tingkat_kelas = 'Semua Kelas', target_rombel = null
+        // 3. Pilih 'Semua Kelas' -> disimpan tingkat_kelas = 'Semua Kelas', target_rombel = null
         $responseSemua = $this->actingAs($this->guru)->post('/materi/store', [
             'judul' => 'Materi Umum Semua Kelas',
             'kategori' => 'Reading',
-            'target_rombel' => '',
+            'target_rombel' => 'Semua Kelas',
             'penjelasan' => 'Penjelasan untuk semua siswa.',
             'status' => 'aktif',
         ]);
@@ -271,6 +277,22 @@ class MateriManagementTest extends TestCase
             'judul' => 'Materi Umum Semua Kelas',
             'tingkat_kelas' => 'Semua Kelas',
             'target_rombel' => null,
+        ]);
+
+        // 4. Pilih '__multi__' dengan target_rombels[] -> disimpan multi-rombel dipisah koma
+        $responseMulti = $this->actingAs($this->guru)->post('/materi/store', [
+            'judul' => 'Materi Multi Rombel 10 DKV',
+            'kategori' => 'Grammar',
+            'target_rombel' => '__multi__',
+            'target_rombels' => ['10 DKV 1', '10 DKV 2'],
+            'penjelasan' => 'Penjelasan khusus rombel 10 DKV 1 dan 2.',
+            'status' => 'aktif',
+        ]);
+        $responseMulti->assertRedirect(route('guru.materi.index'));
+        $this->assertDatabaseHas('materis', [
+            'judul' => 'Materi Multi Rombel 10 DKV',
+            'tingkat_kelas' => '10',
+            'target_rombel' => '10 DKV 1, 10 DKV 2',
         ]);
     }
 

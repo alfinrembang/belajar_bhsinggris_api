@@ -9,6 +9,7 @@ use App\Models\Siswa;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class TeacherClassIsolationTest extends TestCase
@@ -41,7 +42,6 @@ class TeacherClassIsolationTest extends TestCase
             'name' => 'Guru A - DKV',
             'email' => 'gurua_'.uniqid().'@mail.com',
             'password' => Hash::make('password123'),
-            'kelas_diampu' => ['10 DKV 1'],
         ]);
 
         $this->guruB = User::factory()->create([
@@ -49,7 +49,6 @@ class TeacherClassIsolationTest extends TestCase
             'name' => 'Guru B - RPL',
             'email' => 'gurub_'.uniqid().'@mail.com',
             'password' => Hash::make('password123'),
-            'kelas_diampu' => ['10 RPL 1'],
         ]);
 
         $this->siswaDKV = Siswa::factory()->create([
@@ -70,40 +69,30 @@ class TeacherClassIsolationTest extends TestCase
     }
 
     /**
-     * Admin dapat menentukan kelas yang diampu guru saat membuat dan mengedit guru.
+     * Admin mendaftarkan dan mengedit akun guru tanpa pilihan kelas_diampu dan tanpa rombel dummy.
      */
-    public function test_admin_can_assign_and_update_kelas_diampu_to_guru(): void
+    public function test_admin_manages_guru_without_kelas_diampu(): void
     {
         $newEmail = 'guru_ajar_'.uniqid().'@mail.com';
 
-        // 1. Simpan Guru Baru beserta kelas_diampu
         $response = $this->actingAs($this->admin)->post(route('admin.guru.store'), [
-            'name' => 'Guru Baru Penugasan',
+            'name' => 'Guru Baru Bahasa Inggris',
             'email' => $newEmail,
             'nip' => '19876543210',
             'password' => 'secret123',
-            'kelas_diampu' => ['10 DKV 1', '11 RPL 2'],
         ]);
 
         $response->assertRedirect(route('admin.dashboard'));
         $this->assertDatabaseHas('users', [
             'email' => $newEmail,
-            'name' => 'Guru Baru Penugasan',
+            'name' => 'Guru Baru Bahasa Inggris',
+            'role' => 'guru',
         ]);
 
-        $createdGuru = User::where('email', $newEmail)->firstOrFail();
-        $this->assertEquals(['10 DKV 1', '11 RPL 2'], $createdGuru->kelas_diampu);
-
-        // 2. Update kelas_diampu Guru
-        $updateResponse = $this->actingAs($this->admin)->post(route('admin.guru.update', $createdGuru), [
-            'name' => 'Guru Baru Penugasan Updated',
-            'email' => $newEmail,
-            'kelas_diampu' => ['12 RPL 1'],
-        ]);
-
-        $updateResponse->assertRedirect(route('admin.dashboard'));
-        $createdGuru->refresh();
-        $this->assertEquals(['12 RPL 1'], $createdGuru->kelas_diampu);
+        $dashboardResponse = $this->actingAs($this->admin)->get(route('admin.dashboard'));
+        $dashboardResponse->assertStatus(200);
+        $dashboardResponse->assertDontSee('Kelas Diampu');
+        $dashboardResponse->assertDontSee('kelas_diampu[]');
     }
 
     /**
@@ -117,7 +106,7 @@ class TeacherClassIsolationTest extends TestCase
             'tingkat_kelas' => '10',
         ]);
 
-        $materiB = Materi::factory()->create([
+        Materi::factory()->create([
             'user_id' => $this->guruB->id,
             'judul' => 'Materi Rahasia Guru B',
             'tingkat_kelas' => '10',
@@ -126,7 +115,7 @@ class TeacherClassIsolationTest extends TestCase
         $response = $this->actingAs($this->guruA)->get(route('guru.materi.index'));
 
         $response->assertStatus(200);
-        $response->assertSee('Materi Unik Guru A');
+        $response->assertSee($materiA->judul);
         $response->assertDontSee('Materi Rahasia Guru B');
     }
 
@@ -141,17 +130,14 @@ class TeacherClassIsolationTest extends TestCase
             'tingkat_kelas' => '10',
         ]);
 
-        // 1. Coba show
         $this->actingAs($this->guruA)
             ->get(route('guru.materi.show', $materiB))
             ->assertStatus(403);
 
-        // 2. Coba edit
         $this->actingAs($this->guruA)
             ->get(route('guru.materi.edit', $materiB))
             ->assertStatus(403);
 
-        // 3. Coba update
         $this->actingAs($this->guruA)
             ->put(route('guru.materi.update', $materiB), [
                 'judul' => 'Materi Diubah Ilegal',
@@ -162,7 +148,6 @@ class TeacherClassIsolationTest extends TestCase
             ])
             ->assertStatus(403);
 
-        // 4. Coba delete
         $this->actingAs($this->guruA)
             ->delete(route('guru.materi.destroy', $materiB))
             ->assertStatus(403);
@@ -189,7 +174,6 @@ class TeacherClassIsolationTest extends TestCase
             'status' => 'aktif',
         ]);
 
-        // Cek Quiz
         $this->actingAs($this->guruA)
             ->get(route('guru.quiz.edit', $quizB))
             ->assertStatus(403);
@@ -198,7 +182,6 @@ class TeacherClassIsolationTest extends TestCase
             ->delete(route('guru.quiz.destroy', $quizB))
             ->assertStatus(403);
 
-        // Cek Listening
         $this->actingAs($this->guruA)
             ->get(route('guru.listening.edit', $listeningB))
             ->assertStatus(403);
@@ -209,137 +192,169 @@ class TeacherClassIsolationTest extends TestCase
     }
 
     /**
-     * Saat Guru membuat materi baru, user_id dan target_rombel tercatat otomatis di database.
+     * Saat Guru membuat materi baru dengan multi-rombel, target_rombel dan user_id tersimpan akurat.
      */
-    public function test_guru_stores_materi_with_user_id_and_target_rombel(): void
+    public function test_guru_stores_materi_with_user_id_and_multi_target_rombel(): void
     {
         $response = $this->actingAs($this->guruA)->post(route('guru.materi.store'), [
-            'judul' => 'Materi Baru Guru A dengan Rombel',
+            'judul' => 'Materi Multi Rombel Guru A',
             'kategori' => 'Grammar',
-            'tingkat_kelas' => '10',
-            'target_rombel' => '10 DKV 1',
-            'penjelasan' => 'Materi khusus siswa 10 DKV 1',
+            'target_rombel' => '__multi__',
+            'target_rombels' => ['10 DKV 1', '10 DKV 2'],
+            'penjelasan' => 'Materi khusus 10 DKV 1 dan 10 DKV 2',
             'status' => 'aktif',
         ]);
 
         $response->assertRedirect(route('guru.materi.index'));
         $this->assertDatabaseHas('materis', [
-            'judul' => 'Materi Baru Guru A dengan Rombel',
+            'judul' => 'Materi Multi Rombel Guru A',
             'user_id' => $this->guruA->id,
+            'tingkat_kelas' => '10',
+            'target_rombel' => '10 DKV 1, 10 DKV 2',
+        ]);
+    }
+
+    /**
+     * API Siswa: Konten target rombel terisolasi ketat di HP siswa dan mendukung multi-rombel serta rombel tanpa nomor kelas.
+     */
+    public function test_student_api_isolates_materi_by_target_rombel_strictly(): void
+    {
+        $siswaRPLNoNum = Siswa::factory()->create([
+            'kelas' => '12',
+            'jurusan' => 'RPL',
+            'no_kelas' => null,
+            'nama_lengkap' => 'Siswa 12 RPL Tanpa Nomor',
+        ]);
+
+        $siswaRPL1 = Siswa::factory()->create([
+            'kelas' => '12',
+            'jurusan' => 'RPL',
+            'no_kelas' => '1',
+            'nama_lengkap' => 'Siswa 12 RPL 1',
+        ]);
+
+        $materiMultiDKV = Materi::factory()->create([
+            'user_id' => $this->guruA->id,
+            'judul' => 'Materi Multi DKV 1 & 2',
+            'tingkat_kelas' => '10',
+            'target_rombel' => '10 DKV 1, 10 DKV 2',
+            'status' => 'aktif',
+        ]);
+
+        $materiRPL = Materi::factory()->create([
+            'user_id' => $this->guruB->id,
+            'judul' => 'Materi Khusus 10 RPL 1',
+            'tingkat_kelas' => '10',
+            'target_rombel' => '10 RPL 1',
+            'status' => 'aktif',
+        ]);
+
+        $materi12Rpl = Materi::factory()->create([
+            'user_id' => $this->guruA->id,
+            'judul' => 'Materi Khusus 12 RPL Tanpa Nomor',
+            'tingkat_kelas' => '12',
+            'target_rombel' => '12 RPL',
+            'status' => 'aktif',
+        ]);
+
+        // Siswa 10 DKV 1 melihat materi multi DKV, tidak melihat materi 10 RPL 1
+        $resDKV = $this->getJson("/api/materi?siswa_id={$this->siswaDKV->id}");
+        $idsDKV = collect($resDKV->json('data'))->pluck('id')->all();
+        $this->assertContains($materiMultiDKV->id, $idsDKV);
+        $this->assertNotContains($materiRPL->id, $idsDKV);
+
+        // Siswa 10 RPL 1 melihat materi 10 RPL 1, tidak melihat materi multi DKV
+        $resRPL = $this->getJson("/api/materi?siswa_id={$this->siswaRPL->id}");
+        $idsRPL = collect($resRPL->json('data'))->pluck('id')->all();
+        $this->assertContains($materiRPL->id, $idsRPL);
+        $this->assertNotContains($materiMultiDKV->id, $idsRPL);
+
+        // Siswa 12 RPL melihat materi '12 RPL', tetapi Siswa 12 RPL 1 TIDAK bocor melihatnya
+        $res12Rpl = $this->getJson("/api/materi?siswa_id={$siswaRPLNoNum->id}");
+        $this->assertContains($materi12Rpl->id, collect($res12Rpl->json('data'))->pluck('id')->all());
+
+        $res12Rpl1 = $this->getJson("/api/materi?siswa_id={$siswaRPL1->id}");
+        $this->assertNotContains($materi12Rpl->id, collect($res12Rpl1->json('data'))->pluck('id')->all());
+    }
+
+    /**
+     * API Siswa: Listening dan Quiz juga terisolasi ketat berdasarkan target_rombel di HP siswa.
+     */
+    public function test_student_api_isolates_listening_and_quiz_by_target_rombel(): void
+    {
+        $listeningDKV = ModulListening::create([
+            'user_id' => $this->guruA->id,
+            'judul' => 'Listening DKV',
+            'tingkat_kesulitan' => 'Beginner',
+            'tingkat_kelas' => '10',
             'target_rombel' => '10 DKV 1',
-        ]);
-    }
-
-    /**
-     * API Siswa: Siswa 10 DKV 1 hanya menerima materi dari Guru A (pengampu kelasnya) dan tidak menerima materi Guru B.
-     */
-    public function test_student_dkv_only_receives_materi_from_assigned_teacher(): void
-    {
-        $materiA = Materi::factory()->create([
-            'user_id' => $this->guruA->id,
-            'judul' => 'Materi Grammar 10 DKV 1',
-            'tingkat_kelas' => '10',
             'status' => 'aktif',
         ]);
 
-        $materiB = Materi::factory()->create([
+        $listeningRPL = ModulListening::create([
             'user_id' => $this->guruB->id,
-            'judul' => 'Materi Grammar 10 RPL 1',
-            'tingkat_kelas' => '10',
-            'status' => 'aktif',
-        ]);
-
-        // Siswa DKV merequest materi dengan parameter siswa_id
-        $response = $this->getJson("/api/materi?siswa_id={$this->siswaDKV->id}");
-
-        $response->assertStatus(200);
-        $materiIds = collect($response->json('data'))->pluck('id')->all();
-
-        $this->assertContains($materiA->id, $materiIds);
-        $this->assertNotContains($materiB->id, $materiIds);
-    }
-
-    /**
-     * API Siswa: Siswa 10 RPL 1 hanya menerima materi dari Guru B dan tidak menerima materi Guru A.
-     */
-    public function test_student_rpl_only_receives_materi_from_assigned_teacher(): void
-    {
-        $materiA = Materi::factory()->create([
-            'user_id' => $this->guruA->id,
-            'judul' => 'Materi DKV Khusus',
-            'tingkat_kelas' => '10',
-            'status' => 'aktif',
-        ]);
-
-        $materiB = Materi::factory()->create([
-            'user_id' => $this->guruB->id,
-            'judul' => 'Materi RPL Khusus',
-            'tingkat_kelas' => '10',
-            'status' => 'aktif',
-        ]);
-
-        // Siswa RPL merequest materi
-        $response = $this->getJson("/api/materi?siswa_id={$this->siswaRPL->id}");
-
-        $response->assertStatus(200);
-        $materiIds = collect($response->json('data'))->pluck('id')->all();
-
-        $this->assertContains($materiB->id, $materiIds);
-        $this->assertNotContains($materiA->id, $materiIds);
-    }
-
-    /**
-     * API Siswa: Isolasi listening audio dan kuis kuesioner berjalan sesuai guru pengampu kelas.
-     */
-    public function test_student_only_receives_listening_and_quiz_from_assigned_teacher(): void
-    {
-        // Listening
-        $listeningA = ModulListening::create([
-            'user_id' => $this->guruA->id,
-            'judul' => 'Listening Track Guru A',
+            'judul' => 'Listening RPL',
             'tingkat_kesulitan' => 'Beginner',
             'tingkat_kelas' => '10',
+            'target_rombel' => '10 RPL 1',
             'status' => 'aktif',
         ]);
 
-        $listeningB = ModulListening::create([
-            'user_id' => $this->guruB->id,
-            'judul' => 'Listening Track Guru B',
-            'tingkat_kesulitan' => 'Beginner',
-            'tingkat_kelas' => '10',
-            'status' => 'aktif',
-        ]);
-
-        // Quiz
-        $quizA = Quiz::factory()->create([
+        $quizDKV = Quiz::factory()->create([
             'user_id' => $this->guruA->id,
-            'judul' => 'Quiz Guru A',
+            'judul' => 'Quiz DKV',
             'tingkat_kelas' => '10',
+            'target_rombel' => '10 DKV 1',
             'status' => 'aktif',
         ]);
 
-        $quizB = Quiz::factory()->create([
+        $quizRPL = Quiz::factory()->create([
             'user_id' => $this->guruB->id,
-            'judul' => 'Quiz Guru B',
+            'judul' => 'Quiz RPL',
             'tingkat_kelas' => '10',
+            'target_rombel' => '10 RPL 1',
             'status' => 'aktif',
         ]);
 
-        // 1. Uji endpoint listening untuk Siswa DKV
-        $responseListening = $this->getJson("/api/listening?siswa_id={$this->siswaDKV->id}");
-        $listeningIds = collect($responseListening->json('data'))->pluck('id')->all();
-        $this->assertContains($listeningA->id, $listeningIds);
-        $this->assertNotContains($listeningB->id, $listeningIds);
+        $resListening = $this->getJson("/api/listening?siswa_id={$this->siswaDKV->id}");
+        $listeningIds = collect($resListening->json('data'))->pluck('id')->all();
+        $this->assertContains($listeningDKV->id, $listeningIds);
+        $this->assertNotContains($listeningRPL->id, $listeningIds);
 
-        // 2. Uji endpoint quiz untuk Siswa DKV
-        $responseQuiz = $this->getJson("/api/quiz?siswa_id={$this->siswaDKV->id}");
-        $quizIds = collect($responseQuiz->json('data'))->pluck('id')->all();
-        $this->assertContains($quizA->id, $quizIds);
-        $this->assertNotContains($quizB->id, $quizIds);
+        $resQuiz = $this->getJson("/api/quiz?siswa_id={$this->siswaDKV->id}");
+        $quizIds = collect($resQuiz->json('data'))->pluck('id')->all();
+        $this->assertContains($quizDKV->id, $quizIds);
+        $this->assertNotContains($quizRPL->id, $quizIds);
     }
 
     /**
-     * Materi umum sekolah (tanpa user_id atau dibuat oleh Super Admin) tetap dapat diakses oleh seluruh siswa.
+     * Jika belum ada siswa sama sekali, dropdown target rombel kosong dan pembuatan konten ditolak validasi.
+     */
+    public function test_dropdown_is_empty_and_creation_is_blocked_when_no_students_exist(): void
+    {
+        Schema::disableForeignKeyConstraints();
+        Siswa::query()->delete();
+        Schema::enableForeignKeyConstraints();
+
+        $createMateriView = $this->actingAs($this->guruA)->get(route('guru.materi.create'));
+        $createMateriView->assertStatus(200);
+        $createMateriView->assertSee('Belum ada siswa terdaftar di sistem');
+        $createMateriView->assertDontSee('Semua Kelas (Umum');
+        $createMateriView->assertDontSee('Khusus Jurusan');
+
+        $postResponse = $this->actingAs($this->guruA)->post(route('guru.materi.store'), [
+            'judul' => 'Materi Tanpa Siswa',
+            'kategori' => 'Grammar',
+            'target_rombel' => 'Semua Kelas',
+            'penjelasan' => 'Isi penjelasan.',
+            'status' => 'aktif',
+        ]);
+
+        $postResponse->assertSessionHasErrors(['target_rombel']);
+    }
+
+    /**
+     * Materi umum sekolah ('Semua Kelas') tetap dapat diakses oleh seluruh siswa.
      */
     public function test_common_school_material_is_available_to_all_students(): void
     {
@@ -347,24 +362,26 @@ class TeacherClassIsolationTest extends TestCase
             'user_id' => null,
             'judul' => 'Materi Umum Sekolah untuk Semua',
             'tingkat_kelas' => 'Semua Kelas',
+            'target_rombel' => null,
             'status' => 'aktif',
         ]);
 
-        $materiAdmin = Materi::factory()->create([
-            'user_id' => $this->admin->id,
-            'judul' => 'Materi Resmi Administrator Sekolah',
+        $materiGuruUmum = Materi::factory()->create([
+            'user_id' => $this->guruA->id,
+            'judul' => 'Materi Bersama Semua Kelas',
             'tingkat_kelas' => 'Semua Kelas',
+            'target_rombel' => null,
             'status' => 'aktif',
         ]);
 
         $responseDKV = $this->getJson("/api/materi?siswa_id={$this->siswaDKV->id}");
         $idsDKV = collect($responseDKV->json('data'))->pluck('id')->all();
         $this->assertContains($materiUmum->id, $idsDKV);
-        $this->assertContains($materiAdmin->id, $idsDKV);
+        $this->assertContains($materiGuruUmum->id, $idsDKV);
 
         $responseRPL = $this->getJson("/api/materi?siswa_id={$this->siswaRPL->id}");
         $idsRPL = collect($responseRPL->json('data'))->pluck('id')->all();
         $this->assertContains($materiUmum->id, $idsRPL);
-        $this->assertContains($materiAdmin->id, $idsRPL);
+        $this->assertContains($materiGuruUmum->id, $idsRPL);
     }
 }

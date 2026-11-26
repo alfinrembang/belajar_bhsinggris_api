@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Quiz;
 use App\Models\QuizSoal;
+use App\Models\Siswa;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
@@ -19,6 +20,11 @@ class QuizManagementTest extends TestCase
         parent::setUp();
         $this->guru = User::factory()->create([
             'role' => 'guru',
+        ]);
+        Siswa::factory()->create([
+            'kelas' => '11',
+            'jurusan' => 'RPL',
+            'no_kelas' => '1',
         ]);
     }
 

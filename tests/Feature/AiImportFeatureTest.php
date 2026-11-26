@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Jobs\ProcessAiDocumentJob;
 use App\Models\AiImport;
+use App\Models\Siswa;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
@@ -22,6 +23,11 @@ class AiImportFeatureTest extends TestCase
         parent::setUp();
         $this->guru = User::factory()->create([
             'role' => 'guru',
+        ]);
+        Siswa::factory()->create([
+            'kelas' => '10',
+            'jurusan' => 'DKV',
+            'no_kelas' => '1',
         ]);
     }
 

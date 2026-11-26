@@ -155,4 +155,25 @@ class UnifiedRombelFilterTest extends TestCase
         $response->assertSee('Audio Percakapan 10 DKV 1 Test');
         $response->assertDontSee('Audio Percakapan Kelas 11 Test');
     }
+
+    /**
+     * Materi bertarget multi-rombel muncul saat memfilter salah satu rombelnya dan tidak bocor ke rombel lain.
+     */
+    public function test_materi_multi_rombel_filters_accurately(): void
+    {
+        Materi::factory()->create([
+            'judul' => 'Materi Multi DKV 1 Dan 2',
+            'tingkat_kelas' => '10',
+            'target_rombel' => '10 DKV 1, 10 DKV 2',
+            'user_id' => $this->guru->id,
+        ]);
+
+        $resMatch = $this->actingAs($this->guru)->get('/materi?rombel=10+DKV+2');
+        $resMatch->assertStatus(200);
+        $resMatch->assertSee('Materi Multi DKV 1 Dan 2');
+
+        $resOther = $this->actingAs($this->guru)->get('/materi?rombel=10+RPL+1');
+        $resOther->assertStatus(200);
+        $resOther->assertDontSee('Materi Multi DKV 1 Dan 2');
+    }
 }

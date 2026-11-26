@@ -108,34 +108,25 @@ class GuruDashboardTest extends TestCase
     }
 
     /**
-     * Dashboard memfilter skor ketuntasan secara dinamis untuk kelas yang diampu oleh guru.
+     * Dashboard menampilkan ringkasan ketuntasan seluruh siswa terdaftar tanpa batasan kelas diampu.
      */
-    public function test_dashboard_filters_ketuntasan_for_guru_assigned_classes(): void
+    public function test_dashboard_displays_school_wide_ketuntasan_summary(): void
     {
-        $guruDenganKelas = User::factory()->create([
+        $guru = User::factory()->create([
             'role' => 'guru',
-            'kelas_diampu' => ['10 TKKR 3'],
         ]);
 
-        $siswaDiampu = Siswa::factory()->create([
+        $siswaPertama = Siswa::factory()->create([
             'kelas' => '10',
             'jurusan' => 'TKKR',
             'no_kelas' => '3',
-            'nama_lengkap' => 'Siswa Kelas Diampu',
-        ]);
-
-        $siswaLain = Siswa::factory()->create([
-            'kelas' => '12',
-            'jurusan' => 'RPL',
-            'no_kelas' => '2',
-            'nama_lengkap' => 'Siswa Kelas Lain',
+            'nama_lengkap' => 'Siswa Kelas Sepuluh',
         ]);
 
         $materi = Materi::factory()->create();
 
-        // Siswa diampu dapat skor 90
         SiswaMateriProgres::create([
-            'siswa_id' => $siswaDiampu->id,
+            'siswa_id' => $siswaPertama->id,
             'materi_id' => $materi->id,
             'status' => 'selesai',
             'skor' => 90,
@@ -143,21 +134,10 @@ class GuruDashboardTest extends TestCase
             'completed_at' => now(),
         ]);
 
-        // Siswa kelas lain dapat skor 40 (tidak boleh mempengaruhi agregasi guru ini)
-        SiswaMateriProgres::create([
-            'siswa_id' => $siswaLain->id,
-            'materi_id' => $materi->id,
-            'status' => 'selesai',
-            'skor' => 40,
-            'xp_didapat' => 50,
-            'completed_at' => now(),
-        ]);
-
-        $response = $this->actingAs($guruDenganKelas)->get(route('guru.dashboard'));
+        $response = $this->actingAs($guru)->get(route('guru.dashboard'));
 
         $response->assertStatus(200);
-        $response->assertSee('Kelas Diampu: 10 TKKR 3');
-        $response->assertSee('Memantau 1 siswa dari kelas yang diampu');
-        $response->assertSee('90');
+        $response->assertSee('Seluruh Siswa Terdaftar');
+        $response->assertDontSee('Kelas Diampu:');
     }
 }

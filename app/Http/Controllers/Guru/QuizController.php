@@ -38,49 +38,8 @@ class QuizController extends Controller
             $query->where('kategori', $request->kategori);
         }
 
-        // Filter Kelas
         // Filter Rombel Kelas Terpadu (Dinamis Berdasarkan Data Siswa Nyata)
-        if ($request->filled('rombel')) {
-            $rombel = trim((string) $request->input('rombel'));
-            if ($rombel === 'umum' || $rombel === 'Semua Kelas') {
-                $query->where('tingkat_kelas', 'Semua Kelas');
-            } elseif (str_starts_with($rombel, 'tingkat:')) {
-                $tingkat = str_replace('tingkat:', '', $rombel);
-                $query->where(function ($q) use ($tingkat) {
-                    $q->where(function ($k) use ($tingkat) {
-                        $k->where('tingkat_kelas', $tingkat)
-                            ->orWhere('tingkat_kelas', 'Kelas '.$tingkat);
-                    })->orWhere('target_rombel', 'like', "{$tingkat} %");
-                });
-            } else {
-                $parts = explode(' ', $rombel);
-                $tingkat = $parts[0] ?? '';
-                $query->where(function ($q) use ($rombel, $tingkat) {
-                    $q->where('target_rombel', $rombel);
-                    if (! empty($tingkat)) {
-                        $q->orWhere(function ($sub) use ($tingkat) {
-                            $sub->whereNull('target_rombel')
-                                ->where(function ($k) use ($tingkat) {
-                                    $k->where('tingkat_kelas', $tingkat)
-                                        ->orWhere('tingkat_kelas', 'Kelas '.$tingkat);
-                                });
-                        });
-                    }
-                });
-            }
-        } elseif ($request->filled('kelas')) {
-            $kelas = trim((string) $request->input('kelas'));
-            if ($kelas === 'Semua Kelas' || $kelas === 'umum') {
-                $query->where('tingkat_kelas', 'Semua Kelas');
-            } else {
-                $query->where(function ($q) use ($kelas) {
-                    $q->where(function ($k) use ($kelas) {
-                        $k->where('tingkat_kelas', $kelas)
-                            ->orWhere('tingkat_kelas', 'Kelas '.$kelas);
-                    })->orWhere('target_rombel', 'like', "{$kelas} %");
-                });
-            }
-        }
+        $query->filterByRombelRequest($request->input('rombel'), $request->input('kelas'));
 
         // Pencarian Judul atau Kode Room
         if ($request->filled('q')) {
