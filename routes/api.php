@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AktivitasApiController;
 use App\Http\Controllers\Api\AuthSiswaController;
 use App\Http\Controllers\Api\FishingApiController;
 use App\Http\Controllers\Api\KategoriMateriApiController;
@@ -85,6 +86,10 @@ Route::get('/game/leaderboard', [FishingApiController::class, 'getLeaderboard'])
 
 // 2G. PENCAPAIAN / LENCANA PRESTASI SISWA DINAMIS (FLUTTER SISWA)
 Route::get('/pencapaian', [PencapaianApiController::class, 'index']);
+
+// 2H. RIWAYAT AKTIVITAS TERBARU SISWA DINAMIS (MATERI, LISTENING, KUIS, GAME)
+Route::get('/siswa/aktivitas-terbaru', [AktivitasApiController::class, 'index']);
+Route::get('/aktivitas-terbaru', [AktivitasApiController::class, 'index']);
 
 // 3. RUTE TERPROTEKSI SISWA (Wajib Token Siswa)
 Route::middleware('auth.siswa')->group(function () {
