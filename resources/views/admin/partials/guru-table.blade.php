@@ -56,7 +56,6 @@
                 <tr class="bg-slate-50/75 border-b border-slate-200/70 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
                     <th class="py-3 px-4 w-12 text-center whitespace-nowrap">No</th>
                     <th class="py-3 px-4 whitespace-nowrap">Nama Guru</th>
-                    <th class="py-3 px-4 whitespace-nowrap">Kelas Diampu</th>
                     <th class="py-3 px-4 whitespace-nowrap">Email Login</th>
                     <th class="py-3 px-4 whitespace-nowrap">NIP Pegawai</th>
                     <th class="py-3 px-4 whitespace-nowrap">Status</th>
@@ -83,21 +82,6 @@
                                     <span class="text-[11px] text-slate-400 font-normal">Guru Pengajar</span>
                                 </div>
                             </div>
-                        </td>
-
-                        <!-- Kelas Diampu (Dipastikan Tidak Menumpuk / Full Lurus) -->
-                        <td class="py-3.5 px-4">
-                            @if(!empty($guru->kelas_diampu) && count($guru->kelas_diampu) > 0)
-                                <div class="flex flex-wrap items-center gap-1.5 min-w-[150px]">
-                                    @foreach($guru->kelas_diampu as $k)
-                                        <span class="whitespace-nowrap px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[11px] font-semibold border border-slate-200/80 inline-flex items-center">
-                                            {{ $k }}
-                                        </span>
-                                    @endforeach
-                                </div>
-                            @else
-                                <span class="text-slate-400 italic text-[11px] whitespace-nowrap">- Belum diplot -</span>
-                            @endif
                         </td>
 
                         <!-- Email Login -->
@@ -171,7 +155,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="py-12 px-6 text-center text-slate-400">
+                        <td colspan="7" class="py-12 px-6 text-center text-slate-400">
                             <div class="flex flex-col items-center justify-center">
                                 <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mb-3">
                                     <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">

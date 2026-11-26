@@ -27,8 +27,6 @@ class StoreGuruRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'nip' => ['nullable', 'string', 'max:50', 'unique:users,nip'],
             'password' => ['required', 'string', 'min:6'],
-            'kelas_diampu' => ['nullable', 'array'],
-            'kelas_diampu.*' => ['string'],
         ];
     }
 

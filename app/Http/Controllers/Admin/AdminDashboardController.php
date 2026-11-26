@@ -41,24 +41,6 @@ class AdminDashboardController extends Controller
         $totalSiswa = Siswa::count();
         $totalMateri = Materi::count();
 
-        // Ambil rombel dari database siswa & sediakan daftar rombel sekolah
-        $rombelDariSiswa = Siswa::select('kelas', 'jurusan', 'no_kelas')
-            ->distinct()
-            ->get()
-            ->map->kelas_lengkap
-            ->filter()
-            ->values()
-            ->toArray();
-
-        $defaultRombels = [
-            '10 RPL 1', '10 RPL 2', '10 DKV 1', '10 DKV 2', '10 TSM 1', '10 BD 1', '10 MPLB 1',
-            '11 RPL 1', '11 RPL 2', '11 DKV 1', '11 DKV 2', '11 TSM 1', '11 BD 1', '11 MPLB 1',
-            '12 RPL 1', '12 RPL 2', '12 DKV 1', '12 DKV 2', '12 TSM 1', '12 BD 1', '12 MPLB 1',
-        ];
-
-        $daftarRombel = array_values(array_unique(array_merge($rombelDariSiswa, $defaultRombels)));
-        sort($daftarRombel);
-
         $pengaturanAkademik = PengaturanAkademik::getActiveSetting();
 
         return view('admin.dashboard', compact(
@@ -68,7 +50,6 @@ class AdminDashboardController extends Controller
             'totalSiswa',
             'totalMateri',
             'search',
-            'daftarRombel',
             'pengaturanAkademik'
         ));
     }
@@ -84,7 +65,6 @@ class AdminDashboardController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'nip' => $validated['nip'] ?? null,
-            'kelas_diampu' => $validated['kelas_diampu'] ?? [],
             'role' => 'guru',
             'password' => Hash::make($validated['password']),
         ]);
@@ -107,7 +87,6 @@ class AdminDashboardController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'nip' => $validated['nip'] ?? null,
-            'kelas_diampu' => $validated['kelas_diampu'] ?? [],
         ]);
 
         return redirect()->route('admin.dashboard')->with('success', "Data akun guru '{$guru->name}' berhasil diperbarui!");

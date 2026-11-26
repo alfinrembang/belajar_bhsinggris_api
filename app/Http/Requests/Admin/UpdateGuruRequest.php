@@ -29,8 +29,6 @@ class UpdateGuruRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($guruId)],
             'nip' => ['nullable', 'string', 'max:50', Rule::unique('users', 'nip')->ignore($guruId)],
-            'kelas_diampu' => ['nullable', 'array'],
-            'kelas_diampu.*' => ['string'],
         ];
     }
 

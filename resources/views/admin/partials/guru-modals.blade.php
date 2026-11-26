@@ -60,24 +60,6 @@
                        class="w-full px-4 py-2.5 rounded-xl text-xs bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#4EA87D] focus:bg-white transition-all">
             </div>
 
-            <!-- Input Kelas & Rombel yang Diampu -->
-            <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1.5">
-                    Kelas & Rombel yang Diampu <span class="text-slate-400 font-normal">(Pilih satu atau lebih)</span>
-                </label>
-                <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl max-h-36 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    @if(isset($daftarRombel))
-                        @foreach($daftarRombel as $rombel)
-                            <label class="flex items-center gap-2 p-1.5 rounded-xl hover:bg-white text-xs text-slate-700 cursor-pointer transition-colors">
-                                <input type="checkbox" name="kelas_diampu[]" value="{{ $rombel }}" class="rounded text-[#4EA87D] focus:ring-[#4EA87D]">
-                                <span class="font-medium text-[11px]">{{ $rombel }}</span>
-                            </label>
-                        @endforeach
-                    @endif
-                </div>
-                <p class="text-[11px] text-slate-400 mt-1">Siswa di kelas ini hanya akan menerima materi yang dibuat oleh guru ini.</p>
-            </div>
-
             <!-- Input Kata Sandi -->
             <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1.5">Kata Sandi Awal <span class="text-rose-500">*</span></label>
@@ -166,24 +148,6 @@
                        id="editGuruNip" 
                        name="nip" 
                        class="w-full px-4 py-2.5 rounded-xl text-xs bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#4EA87D] focus:bg-white transition-all">
-            </div>
-
-            <!-- Input Kelas & Rombel yang Diampu -->
-            <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1.5">
-                    Kelas & Rombel yang Diampu <span class="text-slate-400 font-normal">(Pilih satu atau lebih)</span>
-                </label>
-                <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl max-h-36 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    @if(isset($daftarRombel))
-                        @foreach($daftarRombel as $rombel)
-                            <label class="flex items-center gap-2 p-1.5 rounded-xl hover:bg-white text-xs text-slate-700 cursor-pointer transition-colors">
-                                <input type="checkbox" name="kelas_diampu[]" value="{{ $rombel }}" class="edit-kelas-checkbox rounded text-[#4EA87D] focus:ring-[#4EA87D]">
-                                <span class="font-medium text-[11px]">{{ $rombel }}</span>
-                            </label>
-                        @endforeach
-                    @endif
-                </div>
-                <p class="text-[11px] text-slate-400 mt-1">Perubahan kelas akan langsung menyinkronkan materi ke aplikasi mobile siswa.</p>
             </div>
 
             <!-- Modal Footer Buttons -->
@@ -362,11 +326,6 @@
         document.getElementById('editGuruName').value = guru.name || '';
         document.getElementById('editGuruEmail').value = guru.email || '';
         document.getElementById('editGuruNip').value = guru.nip || '';
-
-        const assigned = Array.isArray(guru.kelas_diampu) ? guru.kelas_diampu : [];
-        document.querySelectorAll('.edit-kelas-checkbox').forEach(cb => {
-            cb.checked = assigned.includes(cb.value);
-        });
 
         modal.classList.remove('opacity-0', 'pointer-events-none');
         card.classList.remove('scale-95');

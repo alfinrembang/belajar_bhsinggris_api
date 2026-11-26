@@ -14,17 +14,10 @@
             <div>
                 <div class="flex flex-wrap items-center gap-2">
                     <h3 class="font-bold text-slate-900 text-base">Ketuntasan & Rerata Nilai Siswa</h3>
-                    @if ($isFilterKelas)
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EAF5EF] text-[#2E7352] border border-[#D7EDE1]">
-                            <span class="w-1.5 h-1.5 rounded-full bg-[#4EA87D] animate-pulse"></span>
-                            Kelas Diampu: {{ $labelKelasDiampu }}
-                        </span>
-                    @else
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600 border border-slate-200">
-                            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-                            Seluruh Kelas
-                        </span>
-                    @endif
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EAF5EF] text-[#2E7352] border border-[#D7EDE1]">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#4EA87D] animate-pulse"></span>
+                        Seluruh Siswa Terdaftar
+                    </span>
                 </div>
                 <p class="text-xs text-slate-400 mt-0.5">Ringkasan capaian belajar siswa pada seluruh modul pembelajaran aktif</p>
             </div>
@@ -107,11 +100,7 @@
             <span>Total <strong class="text-slate-800 font-bold">{{ $totalAktivitasSelesai }}</strong> sesi belajar telah dituntaskan oleh siswa</span>
         </div>
         <span class="text-[11px] text-slate-400 font-medium">
-            @if ($isFilterKelas)
-                Memantau {{ $totalSiswaDiampu }} siswa dari kelas yang diampu
-            @else
-                Memantau seluruh {{ $totalSiswa }} siswa terdaftar
-            @endif
+            Memantau seluruh {{ $totalSiswa }} siswa terdaftar
         </span>
     </div>
 
