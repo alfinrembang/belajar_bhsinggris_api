@@ -109,6 +109,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/laporan/quiz', [LaporanAnalitikController::class, 'quiz'])->name('guru.laporan.quiz');
     Route::get('/laporan/quiz/cetak', [LaporanAnalitikController::class, 'cetakQuiz'])->name('guru.laporan.quiz.cetak');
     Route::get('/laporan/quiz/export-excel', [LaporanAnalitikController::class, 'exportQuizExcel'])->name('guru.laporan.quiz.export_excel');
+    Route::get('/laporan/listening', [LaporanAnalitikController::class, 'listening'])->name('guru.laporan.listening');
+    Route::get('/laporan/listening/cetak', [LaporanAnalitikController::class, 'cetakListening'])->name('guru.laporan.listening.cetak');
+    Route::get('/laporan/listening/export-excel', [LaporanAnalitikController::class, 'exportListeningExcel'])->name('guru.laporan.listening.export_excel');
     Route::get('/laporan/export-excel', [LaporanAnalitikController::class, 'exportExcel'])->name('guru.laporan.export_excel');
     Route::get('/laporan/export-csv', [LaporanAnalitikController::class, 'exportCsv'])->name('guru.laporan.export_csv');
     Route::get('/laporan/cetak', [LaporanAnalitikController::class, 'cetak'])->name('guru.laporan.cetak');

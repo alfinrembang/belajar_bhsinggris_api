@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Guru;
 
 use App\Exports\LaporanSiswaExport;
+use App\Exports\ListeningNilaiExport;
 use App\Exports\MateriNilaiExport;
 use App\Exports\QuizNilaiExport;
 use App\Http\Controllers\Controller;
@@ -416,6 +417,104 @@ class LaporanAnalitikController extends Controller
     }
 
     /**
+     * Rekapitulasi Lengkap Nilai Modul Listening Siswa.
+     */
+    public function listening(Request $request): View
+    {
+        $setting = PengaturanAkademik::getActiveSetting();
+        $kkm = $request->filled('kkm') ? (int) $request->input('kkm') : (int) ($setting->kkm_default ?? self::KKM);
+
+        $daftarModulListening = ModulListening::select('id', 'judul', 'tingkat_kesulitan', 'tingkat_kelas')->latest()->get();
+        $daftarRombelGrouped = Siswa::getDaftarRombelGrouped();
+        $daftarKelas = Siswa::getDaftarKelas();
+        $daftarJurusan = Siswa::getDaftarJurusan();
+
+        $query = $this->getFilteredListeningQuery($request, $kkm);
+
+        $semuaRiwayat = (clone $query)->get();
+        $totalRiwayat = $semuaRiwayat->count();
+        $rataRataSkor = $totalRiwayat > 0 ? round($semuaRiwayat->avg('skor'), 1) : 0;
+        $totalTuntas = $semuaRiwayat->where('skor', '>=', $kkm)->count();
+        $totalRemedial = $totalRiwayat - $totalTuntas;
+
+        $riwayatListening = $query->latest('completed_at')->paginate(15)->withQueryString();
+
+        return view('guru.laporan_analitik.listening', compact(
+            'riwayatListening',
+            'daftarModulListening',
+            'daftarRombelGrouped',
+            'daftarKelas',
+            'daftarJurusan',
+            'kkm',
+            'totalRiwayat',
+            'rataRataSkor',
+            'totalTuntas',
+            'totalRemedial'
+        ));
+    }
+
+    /**
+     * Lembar Cetak Rekapitulasi Nilai Listening Resmi (Print-Ready Layout).
+     */
+    public function cetakListening(Request $request): View
+    {
+        $setting = PengaturanAkademik::getActiveSetting();
+        $kkm = $request->filled('kkm') ? (int) $request->input('kkm') : (int) ($setting->kkm_default ?? self::KKM);
+
+        $query = $this->getFilteredListeningQuery($request, $kkm);
+
+        $riwayatListening = $query->latest('completed_at')->get();
+        $totalRiwayat = $riwayatListening->count();
+        $rataRataSkor = $totalRiwayat > 0 ? round($riwayatListening->avg('skor'), 1) : 0;
+        $totalTuntas = $riwayatListening->where('skor', '>=', $kkm)->count();
+        $totalRemedial = $totalRiwayat - $totalTuntas;
+
+        $listeningPilihan = $request->filled('modul_listening_id') ? ModulListening::find($request->input('modul_listening_id')) : null;
+
+        return view('guru.laporan_analitik.listening_cetak', compact(
+            'riwayatListening',
+            'kkm',
+            'totalRiwayat',
+            'rataRataSkor',
+            'totalTuntas',
+            'totalRemedial',
+            'listeningPilihan'
+        ));
+    }
+
+    /**
+     * Mengekspor rekapitulasi nilai evaluasi listening siswa ke format Excel (.xlsx).
+     */
+    public function exportListeningExcel(Request $request): BinaryFileResponse
+    {
+        $setting = PengaturanAkademik::getActiveSetting();
+        $kkm = $request->filled('kkm') ? (int) $request->input('kkm') : (int) ($setting->kkm_default ?? self::KKM);
+
+        $query = $this->getFilteredListeningQuery($request, $kkm);
+        $riwayatListening = $query->latest('completed_at')->get();
+        $totalRiwayat = $riwayatListening->count();
+        $rataRataSkor = $totalRiwayat > 0 ? round($riwayatListening->avg('skor'), 1) : 0;
+        $totalTuntas = $riwayatListening->where('skor', '>=', $kkm)->count();
+        $totalRemedial = $totalRiwayat - $totalTuntas;
+
+        $listeningPilihan = $request->filled('modul_listening_id') ? ModulListening::find($request->input('modul_listening_id')) : null;
+        $filename = 'rekap_nilai_listening_'.date('Y-m-d_His').'.xlsx';
+
+        return Excel::download(
+            new ListeningNilaiExport(
+                $riwayatListening,
+                $kkm,
+                $totalRiwayat,
+                $totalTuntas,
+                $totalRemedial,
+                $rataRataSkor,
+                $listeningPilihan
+            ),
+            $filename
+        );
+    }
+
+    /**
      * Mengekspor rekapitulasi nilai kolektif siswa ke format Excel (.xlsx) resmi dengan styling rapi.
      */
     public function exportExcel(Request $request): BinaryFileResponse
@@ -715,6 +814,70 @@ class LaporanAnalitikController extends Controller
             $query->whereHas('siswa', function ($sq) use ($q) {
                 $sq->where('nama_lengkap', 'like', "%{$q}%")
                     ->orWhere('nis', 'like', "%{$q}%");
+            });
+        }
+
+        return $query;
+    }
+
+    /**
+     * Helper privat untuk memfilter query riwayat modul listening siswa.
+     */
+    private function getFilteredListeningQuery(Request $request, int $kkm)
+    {
+        $query = SiswaListeningProgres::with(['siswa', 'modulListening']);
+
+        if ($request->filled('modul_listening_id')) {
+            $query->where('modul_listening_id', $request->input('modul_listening_id'));
+        }
+        if ($request->filled('rombel')) {
+            $rombel = trim((string) $request->input('rombel'));
+            if (str_starts_with($rombel, 'tingkat:')) {
+                $tingkat = str_replace('tingkat:', '', $rombel);
+                $query->whereHas('siswa', function ($q) use ($tingkat) {
+                    $q->where('kelas', $tingkat);
+                });
+            } else {
+                $parts = explode(' ', $rombel);
+                $query->whereHas('siswa', function ($q) use ($parts) {
+                    if (count($parts) >= 3) {
+                        $q->where('kelas', $parts[0])
+                            ->where('jurusan', $parts[1])
+                            ->where('no_kelas', $parts[2]);
+                    } elseif (count($parts) === 2) {
+                        $q->where('kelas', $parts[0])
+                            ->where('jurusan', $parts[1]);
+                    } elseif (! empty($parts[0])) {
+                        $q->where('kelas', $parts[0]);
+                    }
+                });
+            }
+        } elseif ($request->filled('kelas')) {
+            $kelas = $request->input('kelas');
+            $query->whereHas('siswa', function ($q) use ($kelas) {
+                $q->where('kelas', $kelas);
+            });
+        }
+        if ($request->filled('jurusan') && ! $request->filled('rombel')) {
+            $jurusan = $request->input('jurusan');
+            $query->whereHas('siswa', function ($q) use ($jurusan) {
+                $q->where('jurusan', $jurusan);
+            });
+        }
+        if ($request->filled('status')) {
+            $status = $request->input('status');
+            if ($status === 'tuntas') {
+                $query->where('skor', '>=', $kkm);
+            } elseif ($status === 'remedial') {
+                $query->where('skor', '<', $kkm);
+            }
+        }
+        if ($request->filled('q')) {
+            $q = trim((string) $request->input('q'));
+            $query->whereHas('siswa', function ($sq) use ($q) {
+                $sq->where('nama_lengkap', 'like', "%{$q}%")
+                    ->orWhere('nis', 'like', "%{$q}%")
+                    ->orWhere('nisn', 'like', "%{$q}%");
             });
         }
 
