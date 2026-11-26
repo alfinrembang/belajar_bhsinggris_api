@@ -198,4 +198,38 @@ class Siswa extends Authenticatable
 
         return $grouped;
     }
+
+    /**
+     * Mengekstrak konteks kelas, tingkat, dan rombel siswa untuk penyaringan konten API mobile.
+     *
+     * @return array{siswa: ?self, rawKelas: ?string, tingkat: ?string, rombel: ?string}
+     */
+    public static function resolveApiClassContext(mixed $siswaId, ?string $kelasParam): array
+    {
+        $siswa = $siswaId ? static::find($siswaId) : null;
+        $rombel = $siswa ? ($siswa->kelas_lengkap ?: null) : null;
+        $tingkat = $siswa && $siswa->kelas ? (string) $siswa->kelas : null;
+        $rawKelas = $kelasParam !== null && trim($kelasParam) !== '' ? trim($kelasParam) : $tingkat;
+
+        if (! $rombel && $kelasParam !== null && trim($kelasParam) !== '') {
+            $trimmed = trim($kelasParam);
+            if (preg_match('/\b(10|11|12)\b/', $trimmed, $matches)) {
+                $tingkat = $matches[1];
+            } elseif (preg_match('/\b(XII|XI|X)\b/i', $trimmed, $matches)) {
+                $romanMap = ['X' => '10', 'XI' => '11', 'XII' => '12'];
+                $tingkat = $romanMap[strtoupper($matches[1])] ?? null;
+            }
+
+            if (preg_match('/^(10|11|12)\s+[A-Za-z0-9]+(?:\s+\d+)?$/', $trimmed)) {
+                $rombel = $trimmed;
+            }
+        }
+
+        return [
+            'siswa' => $siswa,
+            'rawKelas' => $rawKelas,
+            'tingkat' => $tingkat,
+            'rombel' => $rombel,
+        ];
+    }
 }
