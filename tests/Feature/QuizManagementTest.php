@@ -273,4 +273,112 @@ class QuizManagementTest extends TestCase
         $this->assertDatabaseMissing('quizzes', ['id' => $quiz2->id]);
         $this->assertDatabaseHas('quizzes', ['id' => $quiz3->id]);
     }
+
+    /**
+     * Guru dapat membuat, melihat pratinjau, dan mengedit soal tipe True/False (1 tabel 3 pernyataan).
+     */
+    public function test_guru_can_create_view_and_update_true_false_table_quiz(): void
+    {
+        $uniqueRoom = 'TF'.rand(1000, 9999);
+
+        $response = $this->actingAs($this->guru)->post('/quiz/store', [
+            'judul' => 'Kuis Pernyataan True False',
+            'kategori' => 'Reading',
+            'target_rombel' => 'tingkat:11',
+            'kode_room' => $uniqueRoom,
+            'durasi_menit' => 15,
+            'xp_reward' => 60,
+            'status' => 'aktif',
+            'soals' => [
+                [
+                    'tipe_soal' => 'true_false',
+                    'pertanyaan' => 'Determine whether each statement is True or False:',
+                    'pernyataan_items' => [
+                        ['teks' => 'Jakarta is the capital of Indonesia.', 'kunci' => 'true'],
+                        ['teks' => 'Penguins can fly in the sky.', 'kunci' => 'false'],
+                        ['teks' => 'Water freezes at zero degrees Celsius.', 'kunci' => 'true'],
+                    ],
+                    'pembahasan' => 'Perhatikan fakta umum pada masing-masing pernyataan.',
+                ],
+            ],
+        ]);
+
+        $response->assertRedirect('/quiz');
+
+        $quiz = Quiz::where('kode_room', $uniqueRoom)->with('soals')->firstOrFail();
+        $this->assertCount(1, $quiz->soals);
+
+        $soal = $quiz->soals->first();
+        $this->assertEquals('true_false', $soal->tipe_soal);
+        $this->assertCount(3, $soal->pernyataan_items);
+        $this->assertEquals('TRUE, FALSE, TRUE', $soal->kunci_jawaban);
+        $this->assertNull($soal->pilihan_a);
+
+        // Pastikan halaman detail menampilkan tabel 3 pernyataan
+        $showRes = $this->actingAs($this->guru)->get(route('guru.quiz.show', $quiz));
+        $showRes->assertStatus(200);
+        $showRes->assertSee('True / False (Tabel Pernyataan)');
+        $showRes->assertSee('Jakarta is the capital of Indonesia.');
+        $showRes->assertSee('Penguins can fly in the sky.');
+
+        // Pastikan halaman edit memuat 3 baris pernyataan
+        $editRes = $this->actingAs($this->guru)->get(route('guru.quiz.edit', $quiz));
+        $editRes->assertStatus(200);
+        $editRes->assertSee('Water freezes at zero degrees Celsius.');
+
+        // Update 3 pernyataan True / False
+        $updateRes = $this->actingAs($this->guru)->post("/quiz/{$quiz->id}/update", [
+            'judul' => 'Kuis Pernyataan True False Updated',
+            'kategori' => 'Reading',
+            'target_rombel' => 'tingkat:11',
+            'kode_room' => $uniqueRoom,
+            'durasi_menit' => 20,
+            'status' => 'aktif',
+            'soals' => [
+                [
+                    'tipe_soal' => 'true_false',
+                    'pertanyaan' => 'Check the updated statements:',
+                    'pernyataan_items' => [
+                        ['teks' => 'The earth orbits the sun.', 'kunci' => 'true'],
+                        ['teks' => 'Monday comes after Wednesday.', 'kunci' => 'false'],
+                        ['teks' => 'Dogs are reptiles.', 'kunci' => 'false'],
+                    ],
+                ],
+            ],
+        ]);
+
+        $updateRes->assertRedirect('/quiz');
+        $updatedSoal = $quiz->fresh('soals')->soals->first();
+        $this->assertNotNull($updatedSoal);
+        $this->assertEquals('TRUE, FALSE, FALSE', $updatedSoal->kunci_jawaban);
+        $this->assertEquals('The earth orbits the sun.', $updatedSoal->pernyataan_items[0]['teks']);
+    }
+
+    /**
+     * Validasi menolak soal True/False jika judul diisi tetapi tabel pernyataan kosong semua.
+     */
+    public function test_validation_rejects_true_false_without_any_statement(): void
+    {
+        $response = $this->actingAs($this->guru)->post('/quiz/store', [
+            'judul' => 'Kuis TF Kosong',
+            'kategori' => 'Grammar',
+            'target_rombel' => 'tingkat:11',
+            'kode_room' => 'TFEMPTY',
+            'durasi_menit' => 15,
+            'status' => 'aktif',
+            'soals' => [
+                [
+                    'tipe_soal' => 'true_false',
+                    'pertanyaan' => 'Evaluate these statements:',
+                    'pernyataan_items' => [
+                        ['teks' => '', 'kunci' => 'true'],
+                        ['teks' => '', 'kunci' => 'false'],
+                        ['teks' => '', 'kunci' => 'true'],
+                    ],
+                ],
+            ],
+        ]);
+
+        $response->assertSessionHasErrors(['soals.0.pernyataan_items']);
+    }
 }

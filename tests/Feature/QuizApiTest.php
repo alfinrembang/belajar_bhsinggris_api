@@ -280,4 +280,68 @@ class QuizApiTest extends TestCase
             ->assertJsonPath('data.0.judul_quiz', 'History Quiz Track')
             ->assertJsonPath('data.0.skor', 85);
     }
+
+    /**
+     * API detail kuis menyertakan pernyataan True/False tanpa membocorkan kunci dan mengevaluasi 3 pernyataan di server.
+     */
+    public function test_api_handles_true_false_table_quiz_detail_and_evaluation(): void
+    {
+        $quiz = Quiz::create([
+            'judul' => 'API True False Challenge',
+            'kategori' => 'Reading',
+            'tingkat_kelas' => '10',
+            'kode_room' => 'APITF1',
+            'durasi_menit' => 15,
+            'xp_reward' => 60,
+            'status' => 'aktif',
+        ]);
+
+        $soalTf = QuizSoal::create([
+            'quiz_id' => $quiz->id,
+            'nomor_soal' => 1,
+            'tipe_soal' => 'true_false',
+            'pertanyaan' => 'Check the statements below:',
+            'pernyataan_items' => [
+                ['no' => 1, 'teks' => 'English has 26 letters.', 'kunci' => 'true'],
+                ['no' => 2, 'teks' => 'A week has 5 days.', 'kunci' => 'false'],
+                ['no' => 3, 'teks' => 'Ice is cold.', 'kunci' => 'true'],
+            ],
+            'kunci_jawaban' => 'TRUE, FALSE, TRUE',
+        ]);
+
+        // 1. Detail kuis tidak membocorkan kunci per baris
+        $detailRes = $this->getJson("/api/quiz/{$quiz->id}");
+        $detailRes->assertStatus(200)
+            ->assertJsonPath('data.soals.0.tipe_soal', 'true_false')
+            ->assertJsonCount(3, 'data.soals.0.pernyataan_items')
+            ->assertJsonPath('data.soals.0.pernyataan_items.0.teks', 'English has 26 letters.')
+            ->assertJsonMissing(['kunci' => 'true']);
+
+        // 2. Pengiriman ditolak (422) jika hanya mengisi 2 dari 3 pernyataan
+        $incompleteRes = $this->postJson("/api/quiz/{$quiz->id}/submit", [
+            'siswa_id' => $this->siswa->id,
+            'jawaban' => [
+                $soalTf->id => ['true', 'false'],
+            ],
+        ]);
+        $incompleteRes->assertStatus(422);
+
+        // 3. Pengiriman tepat untuk ke-3 pernyataan mendapat skor 100 & review detail
+        $submitRes = $this->postJson("/api/quiz/{$quiz->id}/submit", [
+            'siswa_id' => $this->siswa->id,
+            'jawaban' => [
+                $soalTf->id => ['true', 'false', 'true'],
+            ],
+            'waktu_pengerjaan_detik' => 90,
+        ]);
+
+        $submitRes->assertStatus(200)
+            ->assertJsonPath('status', 'success')
+            ->assertJsonPath('data.skor', 100)
+            ->assertJsonPath('data.jumlah_benar', 1)
+            ->assertJsonPath('data.review.0.is_benar', true)
+            ->assertJsonCount(3, 'data.review.0.pernyataan_review')
+            ->assertJsonPath('data.review.0.pernyataan_review.1.is_benar', true)
+            ->assertJsonPath('data.review.0.pernyataan_review.1.kunci_jawaban', 'FALSE');
+    }
 }
