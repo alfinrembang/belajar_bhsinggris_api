@@ -197,14 +197,26 @@ ATURAN EKSTRAKSI KUIS:
 3. "tingkat_kelas": Estimasi kelas yang cocok ("Kelas 7", "Kelas 8", "Kelas 9", "Kelas 10", "Kelas 11", atau "Kelas 12").
 4. "deskripsi": Petunjuk pengerjaan atau deskripsi kuis untuk siswa.
 5. "durasi_menit": Estimasi durasi waktu pengerjaan kuis yang wajar (integer dalam menit, misalnya 15, 20, atau 30).
-6. "soals": Daftar butir soal pilihan ganda yang diekstrak dari dokumen.
+6. "soals": Daftar butir soal yang diekstrak dari dokumen.
    - "nomor_soal": Nomor urut integer (1, 2, 3, dst).
-   - "tipe_soal": "multiple_choice" atau "reading".
+   - "tipe_soal": Pilih salah satu:
+     * "multiple_choice": Soal pilihan ganda biasa dengan 4 opsi (A, B, C, D).
+     * "reading": Soal pilihan ganda (A, B, C, D) yang merujuk pada teks bacaan/dialog.
+     * "true_false": Soal pernyataan Benar/Salah (True/False), baik berupa daftar/tabel beberapa pernyataan maupun soal tunggal yang jawabannya True atau False (BUKAN soal pilihan ganda 4 opsi A-D).
    - "reading_passage": Jika soal terkait bacaan teks/dialog, cantumkan teks bacaannya di sini. Jika soal mandiri, isi null.
-   - "pertanyaan": Kalimat pertanyaan.
-   - "pilihan_a", "pilihan_b", "pilihan_c", "pilihan_d": Opsi jawaban.
-   - "kunci_jawaban": Huruf kunci jawaban ('a', 'b', 'c', atau 'd').
-   - "pembahasan": Penjelasan singkat mengapa pilihan tersebut benar.
+   - "pertanyaan": Kalimat pertanyaan atau instruksi tabel pernyataan (contoh untuk true_false: "Determine whether the following statements are True or False based on the text:").
+   - Untuk "multiple_choice" dan "reading":
+     * "pilihan_a", "pilihan_b", "pilihan_c", "pilihan_d": Opsi jawaban.
+     * "kunci_jawaban": Huruf kunci jawaban ('a', 'b', 'c', atau 'd').
+     * "pernyataan_items": []
+   - Untuk "true_false":
+     * "pilihan_a", "pilihan_b", "pilihan_c", "pilihan_d": null
+     * "kunci_jawaban": null
+     * "pernyataan_items": Array berisi daftar pernyataan bernomor, masing-masing memiliki:
+       - "no": Nomor urut integer (1, 2, 3, ...)
+       - "teks": Kalimat pernyataan dalam bahasa Inggris
+       - "kunci": "true" atau "false"
+   - "pembahasan": Penjelasan singkat mengenai jawaban yang benar.
 
 FORMAT OUTPUT HARUS BERUPA JSON VALID SESUAI SKEMA BERIKUT:
 {
@@ -216,14 +228,21 @@ FORMAT OUTPUT HARUS BERUPA JSON VALID SESUAI SKEMA BERIKUT:
   "soals": [
     {
       "nomor_soal": 1,
-      "tipe_soal": "multiple_choice",
+      "tipe_soal": "multiple_choice|reading|true_false",
       "reading_passage": null,
       "pertanyaan": "string",
-      "pilihan_a": "string",
-      "pilihan_b": "string",
-      "pilihan_c": "string",
-      "pilihan_d": "string",
-      "kunci_jawaban": "a|b|c|d",
+      "pilihan_a": "string|null",
+      "pilihan_b": "string|null",
+      "pilihan_c": "string|null",
+      "pilihan_d": "string|null",
+      "kunci_jawaban": "a|b|c|d|null",
+      "pernyataan_items": [
+        {
+          "no": 1,
+          "teks": "string",
+          "kunci": "true|false"
+        }
+      ],
       "pembahasan": "string"
     }
   ]
@@ -279,16 +298,61 @@ PROMPT;
                     continue;
                 }
 
+                $rawTipe = strtolower(trim((string) ($soal['tipe_soal'] ?? 'multiple_choice')));
+                $readingPassage = isset($soal['reading_passage']) && trim((string) $soal['reading_passage']) !== ''
+                    ? trim((string) $soal['reading_passage'])
+                    : null;
+                $pertanyaan = trim((string) ($soal['pertanyaan'] ?? ''));
+
+                $isTrueFalse = $targetType === 'quiz' && (
+                    in_array($rawTipe, ['true_false', 'true/false', 'truefalse', 'benar_salah'], true)
+                    || (! empty($soal['pernyataan_items']) && is_array($soal['pernyataan_items']))
+                );
+
+                if ($isTrueFalse) {
+                    $pernyataanItems = $this->normalizeTrueFalseItems(
+                        $soal['pernyataan_items'] ?? [],
+                        $pertanyaan,
+                        $soal['kunci_jawaban'] ?? null
+                    );
+
+                    $summaryKeys = implode(', ', array_map(
+                        fn (array $row): string => strtoupper($row['kunci']),
+                        $pernyataanItems
+                    ));
+
+                    $soals[] = [
+                        'nomor_soal' => (int) ($soal['nomor_soal'] ?? $nomor),
+                        'tipe_soal' => 'true_false',
+                        'reading_passage' => $readingPassage,
+                        'pertanyaan' => $pertanyaan !== ''
+                            ? $pertanyaan
+                            : 'Tentukan apakah setiap pernyataan berikut Benar (True) atau Salah (False):',
+                        'pernyataan_items' => $pernyataanItems,
+                        'pilihan_a' => '',
+                        'pilihan_b' => '',
+                        'pilihan_c' => '',
+                        'pilihan_d' => '',
+                        'kunci_jawaban' => $summaryKeys ?: 'TRUE',
+                        'pembahasan' => trim((string) ($soal['pembahasan'] ?? '')),
+                    ];
+                    $nomor++;
+                    continue;
+                }
+
                 $kunci = strtolower(trim((string) ($soal['kunci_jawaban'] ?? 'a')));
                 if (! in_array($kunci, ['a', 'b', 'c', 'd'], true)) {
                     $kunci = 'a';
                 }
 
+                $normalizedTipe = $rawTipe === 'reading' ? 'reading' : 'multiple_choice';
+
                 $soals[] = [
                     'nomor_soal' => (int) ($soal['nomor_soal'] ?? $nomor),
-                    'tipe_soal' => (string) ($soal['tipe_soal'] ?? 'multiple_choice'),
-                    'reading_passage' => isset($soal['reading_passage']) && trim((string) $soal['reading_passage']) !== '' ? trim((string) $soal['reading_passage']) : null,
-                    'pertanyaan' => trim((string) ($soal['pertanyaan'] ?? '')),
+                    'tipe_soal' => $normalizedTipe,
+                    'reading_passage' => $readingPassage,
+                    'pertanyaan' => $pertanyaan,
+                    'pernyataan_items' => [],
                     'pilihan_a' => trim((string) ($soal['pilihan_a'] ?? '')),
                     'pilihan_b' => trim((string) ($soal['pilihan_b'] ?? '')),
                     'pilihan_c' => trim((string) ($soal['pilihan_c'] ?? '')),
@@ -302,6 +366,48 @@ PROMPT;
         $data['soals'] = $soals;
 
         return $data;
+    }
+
+    /**
+     * Menormalisasi array pernyataan True/False dari output AI.
+     *
+     * @return list<array{no: int, teks: string, kunci: string}>
+     */
+    protected function normalizeTrueFalseItems(
+        mixed $rawItems,
+        string $fallbackPertanyaan,
+        mixed $fallbackKunci
+    ): array {
+        $items = [];
+        if (is_array($rawItems)) {
+            $rowNo = 1;
+            foreach ($rawItems as $row) {
+                if (! is_array($row)) {
+                    continue;
+                }
+                $teks = trim((string) ($row['teks'] ?? $row['pernyataan'] ?? $row['statement'] ?? ''));
+                if ($teks === '') {
+                    continue;
+                }
+                $kunci = \App\Models\QuizSoal::normalizeTrueFalseValue($row['kunci'] ?? $row['jawaban'] ?? 'true') ?? 'true';
+                $items[] = [
+                    'no' => $rowNo++,
+                    'teks' => $teks,
+                    'kunci' => $kunci,
+                ];
+            }
+        }
+
+        if (empty($items) && $fallbackPertanyaan !== '') {
+            $kunci = \App\Models\QuizSoal::normalizeTrueFalseValue($fallbackKunci) ?? 'true';
+            $items[] = [
+                'no' => 1,
+                'teks' => $fallbackPertanyaan,
+                'kunci' => $kunci,
+            ];
+        }
+
+        return $items;
     }
 
     /**

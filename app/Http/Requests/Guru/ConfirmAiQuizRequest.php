@@ -47,6 +47,10 @@ class ConfirmAiQuizRequest extends FormRequest
             'xp_reward' => ['nullable', 'integer', 'min:0', 'max:1000'],
             'status' => ['required', 'in:aktif,draft'],
             'soals' => ['nullable', 'array'],
+            'soals.*.tipe_soal' => ['nullable', 'in:pilgan,multiple_choice,reading,true_false'],
+            'soals.*.pernyataan_items' => ['nullable', 'array'],
+            'soals.*.pernyataan_items.*.teks' => ['nullable', 'string', 'max:1000'],
+            'soals.*.pernyataan_items.*.kunci' => ['nullable', 'string', 'in:true,false,TRUE,FALSE,1,0'],
         ];
     }
 

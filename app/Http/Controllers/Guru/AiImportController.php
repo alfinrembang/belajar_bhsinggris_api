@@ -170,24 +170,78 @@ class AiImportController extends Controller
             if (is_array($soalsInput)) {
                 $nomor = 1;
                 foreach ($soalsInput as $item) {
-                    if (empty($item['pertanyaan'])) {
+                    $rawTipe = strtolower(trim((string) ($item['tipe_soal'] ?? 'multiple_choice')));
+                    $isTrueFalse = $rawTipe === 'true_false';
+
+                    $pernyataanItems = [];
+                    if ($isTrueFalse) {
+                        $pernyataanItems = collect($item['pernyataan_items'] ?? [])
+                            ->filter(fn ($row): bool => ! empty(trim((string) ($row['teks'] ?? ''))))
+                            ->values()
+                            ->map(function ($row, int $rowIdx): array {
+                                $kunci = QuizSoal::normalizeTrueFalseValue($row['kunci'] ?? 'true') ?? 'true';
+
+                                return [
+                                    'no' => $rowIdx + 1,
+                                    'teks' => trim((string) ($row['teks'] ?? '')),
+                                    'kunci' => $kunci,
+                                ];
+                            })
+                            ->all();
+                    }
+
+                    $pertanyaan = trim((string) ($item['pertanyaan'] ?? ''));
+                    if ($pertanyaan === '' && empty($pernyataanItems)) {
                         continue;
                     }
 
-                    $tipeSoal = ($item['tipe_soal'] ?? 'multiple_choice') === 'reading' ? 'reading' : 'pilgan';
+                    $readingPassage = ! empty($item['reading_passage'])
+                        ? trim((string) $item['reading_passage'])
+                        : null;
+                    $pembahasan = isset($item['pembahasan']) && trim((string) $item['pembahasan']) !== ''
+                        ? trim((string) $item['pembahasan'])
+                        : null;
+
+                    if ($isTrueFalse) {
+                        $summaryKeys = collect($pernyataanItems)
+                            ->map(fn (array $row): string => strtoupper($row['kunci']))
+                            ->implode(', ');
+
+                        QuizSoal::create([
+                            'quiz_id' => $quiz->id,
+                            'nomor_soal' => $nomor++,
+                            'tipe_soal' => 'true_false',
+                            'reading_passage' => $readingPassage,
+                            'pertanyaan' => $pertanyaan !== ''
+                                ? $pertanyaan
+                                : 'Tentukan apakah setiap pernyataan berikut Benar (True) atau Salah (False):',
+                            'pernyataan_items' => $pernyataanItems,
+                            'pilihan_a' => null,
+                            'pilihan_b' => null,
+                            'pilihan_c' => null,
+                            'pilihan_d' => null,
+                            'kunci_jawaban' => $summaryKeys ?: 'TRUE',
+                            'pembahasan' => $pembahasan,
+                        ]);
+
+                        continue;
+                    }
+
+                    $tipeSoal = $rawTipe === 'reading' ? 'reading' : 'pilgan';
 
                     QuizSoal::create([
                         'quiz_id' => $quiz->id,
                         'nomor_soal' => $nomor++,
                         'tipe_soal' => $tipeSoal,
-                        'reading_passage' => ! empty($item['reading_passage']) ? trim((string) $item['reading_passage']) : null,
-                        'pertanyaan' => trim((string) $item['pertanyaan']),
+                        'reading_passage' => $readingPassage,
+                        'pertanyaan' => $pertanyaan,
+                        'pernyataan_items' => null,
                         'pilihan_a' => trim((string) ($item['pilihan_a'] ?? '-')),
                         'pilihan_b' => trim((string) ($item['pilihan_b'] ?? '-')),
                         'pilihan_c' => trim((string) ($item['pilihan_c'] ?? '-')),
                         'pilihan_d' => trim((string) ($item['pilihan_d'] ?? '-')),
                         'kunci_jawaban' => strtoupper(trim((string) ($item['kunci_jawaban'] ?? 'A'))),
-                        'pembahasan' => isset($item['pembahasan']) && trim((string) $item['pembahasan']) !== '' ? trim((string) $item['pembahasan']) : null,
+                        'pembahasan' => $pembahasan,
                     ]);
                 }
             }
