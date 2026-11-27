@@ -176,4 +176,52 @@ class GeminiAiServiceTest extends TestCase
         $service = new GeminiAiService('fake-api-key');
         $service->extractContent('Some document', 'materi');
     }
+
+    public function test_it_extracts_true_false_quiz_questions_with_statements(): void
+    {
+        $mockJson = json_encode([
+            'judul' => 'Kuis Reading & True False',
+            'kategori' => 'Reading',
+            'tingkat_kelas' => 'Kelas 11',
+            'deskripsi' => 'Tentukan benar atau salah.',
+            'durasi_menit' => 20,
+            'soals' => [
+                [
+                    'nomor_soal' => 1,
+                    'tipe_soal' => 'true_false',
+                    'reading_passage' => 'Maya ordered an iced oat latte.',
+                    'pertanyaan' => 'Determine whether each statement is True or False:',
+                    'pernyataan_items' => [
+                        ['no' => 1, 'teks' => 'Maya ordered an iced oat latte.', 'kunci' => 'true'],
+                        ['no' => 2, 'teks' => 'Maya ordered a hot dairy latte.', 'kunci' => 'false'],
+                    ],
+                    'pembahasan' => 'Maya ordered an iced oat latte.',
+                ],
+            ],
+        ]);
+
+        Http::fake([
+            'https://generativelanguage.googleapis.com/*' => Http::response([
+                'candidates' => [
+                    [
+                        'content' => [
+                            'parts' => [
+                                ['text' => $mockJson],
+                            ],
+                        ],
+                    ],
+                ],
+            ], 200),
+        ]);
+
+        $service = new GeminiAiService('fake-api-key');
+        $result = $service->extractContent('PPT soal true false', 'quiz');
+
+        $this->assertCount(1, $result['soals']);
+        $this->assertSame('true_false', $result['soals'][0]['tipe_soal']);
+        $this->assertCount(2, $result['soals'][0]['pernyataan_items']);
+        $this->assertSame('true', $result['soals'][0]['pernyataan_items'][0]['kunci']);
+        $this->assertSame('false', $result['soals'][0]['pernyataan_items'][1]['kunci']);
+        $this->assertSame('TRUE, FALSE', $result['soals'][0]['kunci_jawaban']);
+    }
 }

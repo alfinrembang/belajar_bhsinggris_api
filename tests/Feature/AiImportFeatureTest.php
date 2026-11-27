@@ -218,4 +218,68 @@ class AiImportFeatureTest extends TestCase
             'target_rombel' => '10 DKV 1',
         ]);
     }
+
+    public function test_guru_can_review_and_confirm_true_false_quiz_from_ai_result(): void
+    {
+        $aiImport = AiImport::factory()->completed()->forQuiz()->create([
+            'user_id' => $this->guru->id,
+            'tipe_target' => 'quiz',
+            'hasil_ekstraksi_json' => [
+                'judul' => 'Kuis True False AI',
+                'kategori' => 'Reading',
+                'tingkat_kelas' => 'Kelas 11',
+                'deskripsi' => 'Evaluasi pernyataan benar atau salah.',
+                'durasi_menit' => 15,
+                'soals' => [
+                    [
+                        'nomor_soal' => 1,
+                        'tipe_soal' => 'true_false',
+                        'reading_passage' => 'Almond croissants are left.',
+                        'pertanyaan' => 'Determine True or False:',
+                        'pernyataan_items' => [
+                            ['no' => 1, 'teks' => 'Almond croissants are available.', 'kunci' => 'true'],
+                            ['no' => 2, 'teks' => 'Blueberry muffins are available.', 'kunci' => 'false'],
+                        ],
+                        'kunci_jawaban' => 'TRUE, FALSE',
+                        'pembahasan' => 'Only almond croissants left.',
+                    ],
+                ],
+            ],
+        ]);
+
+        $reviewResponse = $this->actingAs($this->guru)->get(route('guru.ai-import.review', $aiImport->id));
+        $reviewResponse->assertStatus(200);
+        $reviewResponse->assertSee('Almond croissants are available.');
+
+        $payload = [
+            'judul' => 'Kuis True False AI',
+            'kategori' => 'Reading',
+            'tingkat_kelas' => 'Kelas 11',
+            'durasi_menit' => 15,
+            'deskripsi' => 'Evaluasi pernyataan benar atau salah.',
+            'xp_reward' => 60,
+            'status' => 'aktif',
+            'soals' => [
+                [
+                    'tipe_soal' => 'true_false',
+                    'reading_passage' => 'Almond croissants are left.',
+                    'pertanyaan' => 'Determine True or False:',
+                    'pernyataan_items' => [
+                        ['teks' => 'Almond croissants are available.', 'kunci' => 'true'],
+                        ['teks' => 'Blueberry muffins are available.', 'kunci' => 'false'],
+                    ],
+                    'pembahasan' => 'Only almond croissants left.',
+                ],
+            ],
+        ];
+
+        $confirmResponse = $this->actingAs($this->guru)->post(route('guru.ai-import.confirm-quiz', $aiImport->id), $payload);
+        $confirmResponse->assertRedirect(route('guru.quiz.index'));
+
+        $this->assertDatabaseHas('quiz_soals', [
+            'tipe_soal' => 'true_false',
+            'pertanyaan' => 'Determine True or False:',
+            'kunci_jawaban' => 'TRUE, FALSE',
+        ]);
+    }
 }
