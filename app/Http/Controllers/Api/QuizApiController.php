@@ -130,6 +130,13 @@ class QuizApiController extends Controller
         }
 
         $soals = $quiz->soals->map(function ($s) {
+            $pernyataanItems = $s->isTrueFalse()
+                ? collect($s->pernyataan_items ?? [])->map(fn ($item, int $idx): array => [
+                    'no' => (int) ($item['no'] ?? ($idx + 1)),
+                    'teks' => (string) ($item['teks'] ?? ''),
+                ])->values()->all()
+                : [];
+
             return [
                 'id' => $s->id,
                 'nomor_soal' => $s->nomor_soal,
@@ -139,6 +146,7 @@ class QuizApiController extends Controller
                 'audio_title' => $s->audio_title ?: 'Audio Soal Listening',
                 'audio_duration' => $s->audio_duration ?: '01:30',
                 'pertanyaan' => $s->pertanyaan,
+                'pernyataan_items' => $pernyataanItems,
                 'pilihan_a' => $s->pilihan_a,
                 'pilihan_b' => $s->pilihan_b,
                 'pilihan_c' => $s->pilihan_c,
@@ -193,7 +201,7 @@ class QuizApiController extends Controller
 
         foreach ($quiz->soals as $soal) {
             $userAns = $userAnswers[$soal->id] ?? $userAnswers[(string) $soal->id] ?? null;
-            if ($userAns !== null && trim((string) $userAns) !== '') {
+            if ($soal->hasCompleteAnswer($userAns)) {
                 $answeredCount++;
             }
         }
@@ -211,11 +219,10 @@ class QuizApiController extends Controller
         $reviewDetails = [];
 
         foreach ($quiz->soals as $soal) {
-            $userAns = strtoupper(trim((string) ($userAnswers[$soal->id] ?? $userAnswers[(string) $soal->id] ?? '')));
-            $kunci = strtoupper(trim((string) $soal->kunci_jawaban));
-            $isBenar = ($userAns !== '' && $userAns === $kunci);
+            $rawAns = $userAnswers[$soal->id] ?? $userAnswers[(string) $soal->id] ?? null;
+            $eval = $soal->evaluateAnswer($rawAns);
 
-            if ($isBenar) {
+            if ($eval['is_benar']) {
                 $jumlahBenar++;
             }
 
@@ -224,9 +231,10 @@ class QuizApiController extends Controller
                 'nomor_soal' => $soal->nomor_soal,
                 'tipe_soal' => $soal->tipe_soal,
                 'pertanyaan' => $soal->pertanyaan,
-                'jawaban_siswa' => $userAns,
-                'kunci_jawaban' => $kunci,
-                'is_benar' => $isBenar,
+                'jawaban_siswa' => $eval['jawaban_siswa'],
+                'kunci_jawaban' => $eval['kunci_jawaban'],
+                'is_benar' => $eval['is_benar'],
+                'pernyataan_review' => $eval['pernyataan_review'],
                 'pembahasan' => $soal->pembahasan,
             ];
         }
