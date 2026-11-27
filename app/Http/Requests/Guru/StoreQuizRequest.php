@@ -4,10 +4,14 @@ namespace App\Http\Requests\Guru;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 class StoreQuizRequest extends FormRequest
 {
-    use HandlesTargetRombel;
+    use HandlesTargetRombel {
+        after as protected targetRombelAfter;
+    }
+    use ValidatesQuizSoals;
 
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +28,7 @@ class StoreQuizRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        return array_merge([
             'judul' => ['required', 'string', 'max:255'],
             'kategori' => ['required', 'string', 'max:100'],
             'tingkat_kelas' => ['required', 'string', 'max:255'],
@@ -36,17 +40,19 @@ class StoreQuizRequest extends FormRequest
             'deskripsi' => ['nullable', 'string', 'max:1000'],
             'xp_reward' => ['nullable', 'integer', 'min:0', 'max:1000'],
             'status' => ['required', 'in:aktif,draft'],
-            'soals' => ['nullable', 'array'],
-            'soals.*.tipe_soal' => ['nullable', 'in:pilgan,reading,listening'],
-            'soals.*.reading_passage' => ['nullable', 'string'],
-            'soals.*.audio_file' => ['nullable', 'file', 'mimes:mp3,wav,ogg,m4a,aac', 'max:15360'],
-            'soals.*.pertanyaan' => ['nullable', 'string', 'max:1000'],
-            'soals.*.pilihan_a' => ['nullable', 'string', 'max:500'],
-            'soals.*.pilihan_b' => ['nullable', 'string', 'max:500'],
-            'soals.*.pilihan_c' => ['nullable', 'string', 'max:500'],
-            'soals.*.pilihan_d' => ['nullable', 'string', 'max:500'],
-            'soals.*.kunci_jawaban' => ['nullable', 'in:A,B,C,D,a,b,c,d'],
-            'soals.*.pembahasan' => ['nullable', 'string', 'max:2000'],
+        ], $this->quizSoalRules());
+    }
+
+    /**
+     * Gabungkan callback validasi rombel dan butir soal.
+     *
+     * @return array<int, callable(Validator): void>
+     */
+    public function after(): array
+    {
+        return [
+            ...$this->targetRombelAfter(),
+            $this->quizSoalAfterCallback(),
         ];
     }
 

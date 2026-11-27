@@ -325,7 +325,7 @@ class QuizController extends Controller
     }
 
     /**
-     * Helper untuk memproses butir soal kuis (Pilgan, Reading, Listening).
+     * Helper untuk memproses butir soal kuis (Pilgan, Reading, Listening, True/False).
      *
      * @param  array<int, string>  $newFiles
      * @param  array<int, string>  $filesToDelete
@@ -349,15 +349,18 @@ class QuizController extends Controller
         if (is_array($soalsInput)) {
             $nomor = 1;
             foreach ($soalsInput as $index => $item) {
+                $tipeSoal = $item['tipe_soal'] ?? 'pilgan';
                 $hasNewAudio = $request->hasFile("soals.{$index}.audio_file");
                 $hasExistingAudio = ! empty($item['existing_audio_file'])
                     && in_array($item['existing_audio_file'], $oldAudioPaths, true);
 
-                if (empty($item['pertanyaan']) && ! $hasNewAudio && ! $hasExistingAudio) {
+                $hasTrueFalseStatements = $tipeSoal === 'true_false' && collect($item['pernyataan_items'] ?? [])
+                    ->contains(fn ($row): bool => ! empty(trim((string) ($row['teks'] ?? ''))));
+
+                if (empty($item['pertanyaan']) && ! $hasNewAudio && ! $hasExistingAudio && ! $hasTrueFalseStatements) {
                     continue;
                 }
 
-                $tipeSoal = $item['tipe_soal'] ?? 'pilgan';
                 $audioFilePath = null;
 
                 if ($tipeSoal === 'listening') {
@@ -373,6 +376,48 @@ class QuizController extends Controller
                     }
                 }
 
+                if ($tipeSoal === 'true_false') {
+                    $pernyataanItems = collect($item['pernyataan_items'] ?? [])
+                        ->filter(fn ($row): bool => ! empty(trim((string) ($row['teks'] ?? ''))))
+                        ->values()
+                        ->map(function ($row, int $rowIdx): array {
+                            $kunci = QuizSoal::normalizeTrueFalseValue($row['kunci'] ?? 'true') ?? 'true';
+
+                            return [
+                                'no' => $rowIdx + 1,
+                                'teks' => trim((string) ($row['teks'] ?? '')),
+                                'kunci' => $kunci,
+                            ];
+                        })
+                        ->all();
+
+                    $summaryKeys = collect($pernyataanItems)
+                        ->map(fn (array $row): string => strtoupper($row['kunci']))
+                        ->implode(', ');
+
+                    QuizSoal::create([
+                        'quiz_id' => $quiz->id,
+                        'nomor_soal' => $nomor++,
+                        'tipe_soal' => 'true_false',
+                        'reading_passage' => null,
+                        'audio_file' => null,
+                        'audio_title' => null,
+                        'audio_duration' => null,
+                        'pertanyaan' => ! empty(trim((string) ($item['pertanyaan'] ?? '')))
+                            ? trim((string) $item['pertanyaan'])
+                            : 'Tentukan apakah setiap pernyataan berikut Benar (True) atau Salah (False):',
+                        'pernyataan_items' => $pernyataanItems,
+                        'pilihan_a' => null,
+                        'pilihan_b' => null,
+                        'pilihan_c' => null,
+                        'pilihan_d' => null,
+                        'kunci_jawaban' => $summaryKeys ?: 'TRUE',
+                        'pembahasan' => $item['pembahasan'] ?? null,
+                    ]);
+
+                    continue;
+                }
+
                 QuizSoal::create([
                     'quiz_id' => $quiz->id,
                     'nomor_soal' => $nomor++,
@@ -382,6 +427,7 @@ class QuizController extends Controller
                     'audio_title' => $item['audio_title'] ?? null,
                     'audio_duration' => $item['audio_duration'] ?? '01:30',
                     'pertanyaan' => $item['pertanyaan'] ?? 'Pertanyaan kuis',
+                    'pernyataan_items' => null,
                     'pilihan_a' => $item['pilihan_a'] ?? '-',
                     'pilihan_b' => $item['pilihan_b'] ?? '-',
                     'pilihan_c' => $item['pilihan_c'] ?? '-',
