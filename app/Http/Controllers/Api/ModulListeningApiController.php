@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Api\Concerns\HasUploadMetadata;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\SelesaikanListeningRequest;
 use App\Models\ModulListening;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 
 class ModulListeningApiController extends Controller
 {
+    use HasUploadMetadata;
+
     /**
      * Mengambil daftar track audio listening aktif untuk aplikasi Flutter siswa.
      */
@@ -56,6 +59,7 @@ class ModulListeningApiController extends Controller
                 'jumlah_soal' => $item->soals_count,
                 'is_completed' => $isCompleted,
                 'completed_at' => $isCompleted ? ($completedMap[$item->id] ? date('d M Y H:i', strtotime($completedMap[$item->id])) : null) : null,
+                ...$this->formatUploadMetadata($item->created_at, $isCompleted),
             ];
         });
 

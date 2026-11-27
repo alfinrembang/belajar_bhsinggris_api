@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Api\Concerns\HasUploadMetadata;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\SelesaikanMateriRequest;
 use App\Models\Materi;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 
 class MateriApiController extends Controller
 {
+    use HasUploadMetadata;
+
     /**
      * Mengambil daftar materi aktif untuk aplikasi Flutter siswa.
      */
@@ -55,7 +58,7 @@ class MateriApiController extends Controller
                 'jumlah_soal' => $materi->soals_count,
                 'is_completed' => $isCompleted,
                 'completed_at' => $isCompleted ? ($completedMap[$materi->id] ? date('d M Y H:i', strtotime($completedMap[$materi->id])) : null) : null,
-                'created_at' => $materi->created_at?->format('d M Y'),
+                ...$this->formatUploadMetadata($materi->created_at, $isCompleted),
             ];
         });
 

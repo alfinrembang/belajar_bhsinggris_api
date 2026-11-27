@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Api\Concerns\HasUploadMetadata;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\JoinRoomQuizRequest;
 use App\Http\Requests\Api\SubmitQuizRequest;
@@ -14,6 +15,8 @@ use Illuminate\Support\Facades\DB;
 
 class QuizApiController extends Controller
 {
+    use HasUploadMetadata;
+
     /**
      * Mengambil daftar paket kuis aktif untuk aplikasi Flutter siswa.
      */
@@ -64,6 +67,7 @@ class QuizApiController extends Controller
                 'is_completed' => $isCompleted,
                 'skor_terakhir' => $progres ? $progres['skor'] : null,
                 'completed_at' => $progres ? $progres['completed_at'] : null,
+                ...$this->formatUploadMetadata($item->created_at, $isCompleted),
             ];
         });
 
