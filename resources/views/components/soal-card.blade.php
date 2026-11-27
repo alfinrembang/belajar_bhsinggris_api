@@ -5,6 +5,7 @@
     'withReading' => false,
     'withAudio' => true,
     'withAudioTitle' => false,
+    'withTrueFalse' => false,
     'audioFieldName' => 'audio_file',
     'existingAudioFieldName' => 'existing_audio_file',
     'audioWrapperId' => null,
@@ -27,6 +28,16 @@
     $currentD = old("soals.{$index}.pilihan_d", $soal?->pilihan_d ?? '');
     $currentKunci = old("soals.{$index}.kunci_jawaban", $soal?->kunci_jawaban ?? 'A');
     $currentPembahasan = old("soals.{$index}.pembahasan", $soal?->pembahasan ?? '');
+
+    $oldTfItems = old("soals.{$index}.pernyataan_items");
+    $rawTfItems = is_array($oldTfItems) ? $oldTfItems : ($soal?->pernyataan_items ?? []);
+    if (empty($rawTfItems) || ! is_array($rawTfItems)) {
+        $rawTfItems = [
+            ['no' => 1, 'teks' => '', 'kunci' => 'true'],
+            ['no' => 2, 'teks' => '', 'kunci' => 'true'],
+            ['no' => 3, 'teks' => '', 'kunci' => 'true'],
+        ];
+    }
 
     $existingAudioFile = null;
     $existingAudioUrl = null;
@@ -57,7 +68,13 @@
                 'listening' => '🎧 Listening (Ada Audio)',
             ];
         }
+
+        if ($withTrueFalse) {
+            $tipeOptions['true_false'] = '✓✗ True / False (Tabel Pernyataan)';
+        }
     }
+
+    $isTrueFalse = $currentTipe === 'true_false';
 @endphp
 
 <div class="soal-card p-5 lg:p-6 rounded-2xl border border-slate-200/80 bg-slate-50/40 space-y-4" data-index="{{ $index }}">
@@ -149,20 +166,85 @@
         </div>
     @endif
 
-    <!-- Teks Pertanyaan -->
+    <!-- Teks Pertanyaan / Instruksi -->
     <div>
-        <label class="block text-[11px] font-semibold text-slate-700 mb-1">
-            Pertanyaan <span class="text-rose-500">*</span>
+        <label id="pertanyaan-label-{{ $index }}" class="block text-[11px] font-semibold text-slate-700 mb-1">
+            {{ $isTrueFalse ? 'Instruksi / Teks Pengantar Tabel (Opsional)' : 'Pertanyaan' }}
+            @unless($isTrueFalse) <span class="text-rose-500">*</span> @endunless
         </label>
         <input type="text" 
+               id="pertanyaan-input-{{ $index }}"
                name="soals[{{ $index }}][pertanyaan]" 
                value="{{ $currentPertanyaan }}"
-               placeholder="Ketikkan kalimat pertanyaan kuis di sini..." 
+               placeholder="{{ $isTrueFalse ? 'Contoh: Tentukan apakah pernyataan berikut Benar (True) atau Salah (False)...' : 'Ketikkan kalimat pertanyaan kuis di sini...' }}" 
                class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200/80 text-xs text-slate-800 focus:border-[#4EA87D] outline-none">
     </div>
 
-    <!-- 4 Pilihan Jawaban A, B, C, D -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <!-- Tabel Pernyataan True / False (Tampil Jika Tipe = True / False) -->
+    @if ($withTrueFalse)
+        <div id="true-false-wrapper-{{ $index }}" class="{{ $isTrueFalse ? '' : 'hidden' }} p-4 rounded-2xl bg-[#EAF5EF]/60 border border-[#D7EDE1] space-y-3">
+            <div class="flex items-center justify-between gap-2 flex-wrap">
+                <div>
+                    <p class="text-[11px] font-bold text-[#2E7352]">✓✗ Tabel Daftar Pernyataan (True / False)</p>
+                    <p class="text-[10px] text-slate-500">Isi pertanyaan/pernyataan di setiap baris tabel dan tentukan kunci jawabannya.</p>
+                </div>
+                <button type="button"
+                        onclick="window.tambahBarisTrueFalse && window.tambahBarisTrueFalse('{{ $index }}')"
+                        class="px-3 py-1.5 rounded-xl bg-white hover:bg-[#EAF5EF] text-[#2E7352] border border-[#C6E5D4] font-semibold text-[11px] transition-colors cursor-pointer">
+                    + Tambah Baris
+                </button>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200/80 bg-white">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50/90 border-b border-slate-200/70 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                            <th class="py-2.5 px-3 w-10 text-center">No</th>
+                            <th class="py-2.5 px-3">Pernyataan / Pertanyaan</th>
+                            <th class="py-2.5 px-3 w-44">Kunci Jawaban</th>
+                            <th class="py-2.5 px-2.5 w-12 text-center">Hapus</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tf-tbody-{{ $index }}" data-next-row="{{ count($rawTfItems) }}" class="divide-y divide-slate-100 text-xs">
+                        @foreach(array_values($rawTfItems) as $rIdx => $row)
+                            @php
+                                $rowKunci = \App\Models\QuizSoal::normalizeTrueFalseValue($row['kunci'] ?? 'true') ?? 'true';
+                            @endphp
+                            <tr class="tf-row hover:bg-slate-50/60">
+                                <td class="py-2 px-3 text-center font-bold text-slate-400 tf-row-number">{{ $rIdx + 1 }}</td>
+                                <td class="py-2 px-3">
+                                    <input type="text"
+                                           name="soals[{{ $index }}][pernyataan_items][{{ $rIdx }}][teks]"
+                                           value="{{ $row['teks'] ?? '' }}"
+                                           placeholder="Tuliskan pernyataan ke-{{ $rIdx + 1 }}..."
+                                           class="w-full px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none">
+                                </td>
+                                <td class="py-2 px-3">
+                                    <select name="soals[{{ $index }}][pernyataan_items][{{ $rIdx }}][kunci]"
+                                            class="w-full px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-bold {{ $rowKunci === 'true' ? 'text-emerald-700' : 'text-rose-600' }} outline-none cursor-pointer"
+                                            onchange="this.classList.toggle('text-emerald-700', this.value === 'true'); this.classList.toggle('text-rose-600', this.value === 'false');">
+                                        <option value="true" {{ $rowKunci === 'true' ? 'selected' : '' }}>✓ True (Benar)</option>
+                                        <option value="false" {{ $rowKunci === 'false' ? 'selected' : '' }}>✗ False (Salah)</option>
+                                    </select>
+                                </td>
+                                <td class="py-2 px-2.5 text-center">
+                                    <button type="button"
+                                            onclick="window.hapusBarisTrueFalse && window.hapusBarisTrueFalse(this)"
+                                            class="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                                            title="Hapus Baris">
+                                        ×
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    @endif
+
+    <!-- 4 Pilihan Jawaban A, B, C, D (Sembunyikan Saat Tipe = True / False) -->
+    <div id="abcd-options-wrapper-{{ $index }}" class="{{ $isTrueFalse ? 'hidden ' : '' }}grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-slate-200">
             <span class="font-bold text-xs text-slate-400 w-4">A.</span>
             <input type="text" name="soals[{{ $index }}][pilihan_a]" value="{{ $currentA }}" placeholder="Pilihan jawaban A" class="w-full text-xs text-slate-800 outline-none">
@@ -183,7 +265,7 @@
 
     <!-- Kunci Jawaban & Pembahasan -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-        <div>
+        <div id="abcd-kunci-wrapper-{{ $index }}" class="{{ $isTrueFalse ? 'hidden' : '' }}">
             <label class="block text-[11px] font-semibold text-slate-600 mb-1">Kunci Jawaban Benar:</label>
             <select name="soals[{{ $index }}][kunci_jawaban]" class="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-[#4EA87D] outline-none">
                 <option value="A" {{ $currentKunci === 'A' ? 'selected' : '' }}>Kunci Jawaban: A</option>
@@ -192,9 +274,73 @@
                 <option value="D" {{ $currentKunci === 'D' ? 'selected' : '' }}>Kunci Jawaban: D</option>
             </select>
         </div>
-        <div class="sm:col-span-2">
+        <div class="{{ $isTrueFalse ? 'sm:col-span-3' : 'sm:col-span-2' }}" id="pembahasan-wrapper-{{ $index }}">
             <label class="block text-[11px] font-semibold text-slate-600 mb-1">Pembahasan Singkat (Opsional):</label>
             <input type="text" name="soals[{{ $index }}][pembahasan]" value="{{ $currentPembahasan }}" placeholder="Penjelasan kenapa opsi ini tepat..." class="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs text-slate-700 outline-none">
         </div>
     </div>
 </div>
+
+@if ($withTrueFalse)
+@pushOnce('scripts')
+<script>
+    window.renumberTrueFalseRows = function (tbody) {
+        if (!tbody) return;
+        tbody.querySelectorAll('.tf-row-number').forEach((cell, i) => {
+            cell.textContent = i + 1;
+        });
+    };
+
+    window.tambahBarisTrueFalse = function (soalIndex) {
+        const tbody = document.getElementById(`tf-tbody-${soalIndex}`);
+        if (!tbody) return;
+
+        const nextIdx = parseInt(tbody.dataset.nextRow || tbody.querySelectorAll('.tf-row').length, 10);
+        tbody.dataset.nextRow = nextIdx + 1;
+        const rowNum = tbody.querySelectorAll('.tf-row').length + 1;
+
+        const rowHtml = `
+            <tr class="tf-row hover:bg-slate-50/60">
+                <td class="py-2 px-3 text-center font-bold text-slate-400 tf-row-number">${rowNum}</td>
+                <td class="py-2 px-3">
+                    <input type="text"
+                           name="soals[${soalIndex}][pernyataan_items][${nextIdx}][teks]"
+                           placeholder="Tuliskan pernyataan ke-${rowNum}..."
+                           class="w-full px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200/80 text-xs text-slate-800 focus:bg-white focus:border-[#4EA87D] outline-none">
+                </td>
+                <td class="py-2 px-3">
+                    <select name="soals[${soalIndex}][pernyataan_items][${nextIdx}][kunci]"
+                            class="w-full px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-bold text-emerald-700 outline-none cursor-pointer"
+                            onchange="this.classList.toggle('text-emerald-700', this.value === 'true'); this.classList.toggle('text-rose-600', this.value === 'false');">
+                        <option value="true" selected>✓ True (Benar)</option>
+                        <option value="false">✗ False (Salah)</option>
+                    </select>
+                </td>
+                <td class="py-2 px-2.5 text-center">
+                    <button type="button"
+                            onclick="window.hapusBarisTrueFalse && window.hapusBarisTrueFalse(this)"
+                            class="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                            title="Hapus Baris">
+                        ×
+                    </button>
+                </td>
+            </tr>
+        `;
+        tbody.insertAdjacentHTML('beforeend', rowHtml);
+        window.renumberTrueFalseRows(tbody);
+    };
+
+    window.hapusBarisTrueFalse = function (btnEl) {
+        const tbody = btnEl.closest('tbody');
+        const row = btnEl.closest('.tf-row');
+        if (!tbody || !row) return;
+        if (tbody.querySelectorAll('.tf-row').length <= 1) {
+            alert('Tabel True / False minimal harus memiliki 1 baris pernyataan.');
+            return;
+        }
+        row.remove();
+        window.renumberTrueFalseRows(tbody);
+    };
+</script>
+@endPushOnce
+@endif

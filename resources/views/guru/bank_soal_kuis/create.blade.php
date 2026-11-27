@@ -125,7 +125,7 @@
             <x-section-header 
                 number="02" 
                 title="Butir Pertanyaan Kuis" 
-                subtitle="Dukung pilihan ganda biasa, teks bacaan (reading passage), dan audio listening" 
+                subtitle="Dukung pilihan ganda biasa, teks bacaan (reading passage), audio listening, dan tabel True/False" 
                 color="purple"
             >
                 <!-- Tombol Tambah Soal -->
@@ -143,7 +143,7 @@
             <!-- Wadah Kartu Soal -->
             <div id="soal-container" class="space-y-5">
                 @for ($i = 0; $i < 5; $i++)
-                    <x-soal-card :index="$i" :with-reading="true" :with-audio="true" :with-audio-title="true" />
+                    <x-soal-card :index="$i" :with-reading="true" :with-audio="true" :with-audio-title="true" :with-true-false="true" />
                 @endfor
             </div>
         </div>
@@ -161,7 +161,7 @@
 
     <!-- Template Kartu Soal untuk Penambahan Dinamis -->
     <template id="soal-template">
-        <x-soal-card index="__INDEX__" number="__NUMBER__" :with-reading="true" :with-audio="true" :with-audio-title="true" />
+        <x-soal-card index="__INDEX__" number="__NUMBER__" :with-reading="true" :with-audio="true" :with-audio-title="true" :with-true-false="true" />
     </template>
 
     <!-- Script Interaktif JS -->
@@ -178,21 +178,38 @@
         function gantiTipeSoal(select, index) {
             const readingWrapper = document.getElementById(`reading-passage-wrapper-${index}`);
             const listeningWrapper = document.getElementById(`listening-audio-wrapper-${index}`);
+            const tfWrapper = document.getElementById(`true-false-wrapper-${index}`);
+            const abcdOptions = document.getElementById(`abcd-options-wrapper-${index}`);
+            const abcdKunci = document.getElementById(`abcd-kunci-wrapper-${index}`);
+            const pembahasanWrapper = document.getElementById(`pembahasan-wrapper-${index}`);
+            const pertanyaanLabel = document.getElementById(`pertanyaan-label-${index}`);
+            const pertanyaanInput = document.getElementById(`pertanyaan-input-${index}`);
 
-            if (readingWrapper) {
-                if (select.value === 'reading') {
-                    readingWrapper.classList.remove('hidden');
-                } else {
-                    readingWrapper.classList.add('hidden');
-                }
+            const isReading = select.value === 'reading';
+            const isListening = select.value === 'listening';
+            const isTrueFalse = select.value === 'true_false';
+
+            if (readingWrapper) readingWrapper.classList.toggle('hidden', !isReading);
+            if (listeningWrapper) listeningWrapper.classList.toggle('hidden', !isListening);
+            if (tfWrapper) tfWrapper.classList.toggle('hidden', !isTrueFalse);
+            if (abcdOptions) abcdOptions.classList.toggle('hidden', isTrueFalse);
+            if (abcdKunci) abcdKunci.classList.toggle('hidden', isTrueFalse);
+
+            if (pembahasanWrapper) {
+                pembahasanWrapper.classList.toggle('sm:col-span-3', isTrueFalse);
+                pembahasanWrapper.classList.toggle('sm:col-span-2', !isTrueFalse);
             }
 
-            if (listeningWrapper) {
-                if (select.value === 'listening') {
-                    listeningWrapper.classList.remove('hidden');
-                } else {
-                    listeningWrapper.classList.add('hidden');
-                }
+            if (pertanyaanLabel) {
+                pertanyaanLabel.innerHTML = isTrueFalse
+                    ? 'Instruksi / Teks Pengantar Tabel (Opsional)'
+                    : 'Pertanyaan <span class="text-rose-500">*</span>';
+            }
+
+            if (pertanyaanInput) {
+                pertanyaanInput.placeholder = isTrueFalse
+                    ? 'Contoh: Tentukan apakah pernyataan berikut Benar (True) atau Salah (False)...'
+                    : 'Ketikkan kalimat pertanyaan kuis di sini...';
             }
         }
 

@@ -94,13 +94,19 @@
                                     🎧 Listening Question
                                 @elseif($soal->tipe_soal === 'reading')
                                     📖 Reading Question
+                                @elseif($soal->tipe_soal === 'true_false')
+                                    ✓✗ True / False (Tabel Pernyataan)
                                 @else
                                     📝 Multiple Choice Question
                                 @endif
                             </span>
                         </div>
                         <span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-bold text-xs">
-                            Kunci Jawaban: {{ $soal->kunci_jawaban }}
+                            @if($soal->tipe_soal === 'true_false')
+                                {{ count($soal->pernyataan_items ?? []) }} Pernyataan (True / False)
+                            @else
+                                Kunci Jawaban: {{ $soal->kunci_jawaban }}
+                            @endif
                         </span>
                     </div>
 
@@ -127,25 +133,65 @@
                         {{ $soal->pertanyaan }}
                     </p>
 
-                    <!-- Pilihan Jawaban -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                        <div class="p-2.5 rounded-xl border {{ $soal->kunci_jawaban === 'A' ? 'bg-emerald-50 border-emerald-300 font-bold text-emerald-900' : 'bg-white border-slate-200 text-slate-700' }} flex items-center gap-2">
-                            <span class="w-5 text-slate-400">A.</span>
-                            <span>{{ $soal->pilihan_a }}</span>
+                    <!-- Pilihan Jawaban atau Tabel Pernyataan True / False -->
+                    @if($soal->tipe_soal === 'true_false')
+                        <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-slate-50 border-b border-slate-200 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                        <th class="py-2.5 px-3 w-12 text-center">No</th>
+                                        <th class="py-2.5 px-4">Pernyataan</th>
+                                        <th class="py-2.5 px-3 w-28 text-center">True (Benar)</th>
+                                        <th class="py-2.5 px-3 w-28 text-center">False (Salah)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    @foreach($soal->pernyataan_items ?? [] as $rowIdx => $row)
+                                        @php
+                                            $kunciRow = \App\Models\QuizSoal::normalizeTrueFalseValue($row['kunci'] ?? 'true') ?? 'true';
+                                        @endphp
+                                        <tr>
+                                            <td class="py-2.5 px-3 text-center font-bold text-slate-400">{{ $row['no'] ?? ($rowIdx + 1) }}</td>
+                                            <td class="py-2.5 px-4 font-medium text-slate-800">{{ $row['teks'] ?? '-' }}</td>
+                                            <td class="py-2.5 px-3 text-center">
+                                                @if($kunciRow === 'true')
+                                                    <span class="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold text-[11px]">✓ True</span>
+                                                @else
+                                                    <span class="text-slate-300">-</span>
+                                                @endif
+                                            </td>
+                                            <td class="py-2.5 px-3 text-center">
+                                                @if($kunciRow === 'false')
+                                                    <span class="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 font-bold text-[11px]">✓ False</span>
+                                                @else
+                                                    <span class="text-slate-300">-</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="p-2.5 rounded-xl border {{ $soal->kunci_jawaban === 'B' ? 'bg-emerald-50 border-emerald-300 font-bold text-emerald-900' : 'bg-white border-slate-200 text-slate-700' }} flex items-center gap-2">
-                            <span class="w-5 text-slate-400">B.</span>
-                            <span>{{ $soal->pilihan_b }}</span>
+                    @else
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                            <div class="p-2.5 rounded-xl border {{ $soal->kunci_jawaban === 'A' ? 'bg-emerald-50 border-emerald-300 font-bold text-emerald-900' : 'bg-white border-slate-200 text-slate-700' }} flex items-center gap-2">
+                                <span class="w-5 text-slate-400">A.</span>
+                                <span>{{ $soal->pilihan_a }}</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl border {{ $soal->kunci_jawaban === 'B' ? 'bg-emerald-50 border-emerald-300 font-bold text-emerald-900' : 'bg-white border-slate-200 text-slate-700' }} flex items-center gap-2">
+                                <span class="w-5 text-slate-400">B.</span>
+                                <span>{{ $soal->pilihan_b }}</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl border {{ $soal->kunci_jawaban === 'C' ? 'bg-emerald-50 border-emerald-300 font-bold text-emerald-900' : 'bg-white border-slate-200 text-slate-700' }} flex items-center gap-2">
+                                <span class="w-5 text-slate-400">C.</span>
+                                <span>{{ $soal->pilihan_c }}</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl border {{ $soal->kunci_jawaban === 'D' ? 'bg-emerald-50 border-emerald-300 font-bold text-emerald-900' : 'bg-white border-slate-200 text-slate-700' }} flex items-center gap-2">
+                                <span class="w-5 text-slate-400">D.</span>
+                                <span>{{ $soal->pilihan_d }}</span>
+                            </div>
                         </div>
-                        <div class="p-2.5 rounded-xl border {{ $soal->kunci_jawaban === 'C' ? 'bg-emerald-50 border-emerald-300 font-bold text-emerald-900' : 'bg-white border-slate-200 text-slate-700' }} flex items-center gap-2">
-                            <span class="w-5 text-slate-400">C.</span>
-                            <span>{{ $soal->pilihan_c }}</span>
-                        </div>
-                        <div class="p-2.5 rounded-xl border {{ $soal->kunci_jawaban === 'D' ? 'bg-emerald-50 border-emerald-300 font-bold text-emerald-900' : 'bg-white border-slate-200 text-slate-700' }} flex items-center gap-2">
-                            <span class="w-5 text-slate-400">D.</span>
-                            <span>{{ $soal->pilihan_d }}</span>
-                        </div>
-                    </div>
+                    @endif
 
                     @if($soal->pembahasan)
                         <div class="p-2.5 rounded-xl bg-[#EAF5EF]/60 border border-[#D7EDE1] text-[11px] text-blue-900">
