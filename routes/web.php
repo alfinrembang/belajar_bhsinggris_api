@@ -107,6 +107,11 @@ Route::middleware(['auth'])->group(function () {
     Route::match(['post', 'delete'], '/games/pronounce/word/{id}/delete', [GameController::class, 'destroyPronounceWord'])->name('guru.game.pronounce.destroy');
     Route::post('/games/pronounce/import', [GameController::class, 'importPronounceExcel'])->name('guru.game.pronounce.import');
     Route::get('/games/pronounce/template', [GameController::class, 'downloadPronounceTemplate'])->name('guru.game.pronounce.template');
+    Route::post('/games/sentence/soal', [GameController::class, 'storeSentenceSoal'])->name('guru.game.sentence.store');
+    Route::post('/games/sentence/soal/{id}/update', [GameController::class, 'updateSentenceSoal'])->name('guru.game.sentence.update');
+    Route::match(['post', 'delete'], '/games/sentence/soal/{id}/delete', [GameController::class, 'destroySentenceSoal'])->name('guru.game.sentence.destroy');
+    Route::post('/games/sentence/import', [GameController::class, 'importSentenceExcel'])->name('guru.game.sentence.import');
+    Route::get('/games/sentence/template', [GameController::class, 'downloadSentenceTemplate'])->name('guru.game.sentence.template');
 
     // MODUL 5: LAPORAN & ANALITIK GURU
     Route::get('/laporan', [LaporanAnalitikController::class, 'index'])->name('guru.laporan.index');

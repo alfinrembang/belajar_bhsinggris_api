@@ -414,6 +414,19 @@
         document.getElementById('editPronounceExample').value = item.example_sentence || '';
         openModal('modalEditPronounceWord');
     }
+
+    // Handler Pengisian Form Edit Soal Susun Kalimat
+    function editSentenceModal(item) {
+        if (!item) return;
+        document.getElementById('editSentenceForm').action = '/games/sentence/soal/' + item.id + '/update';
+        document.getElementById('editSentenceInput').value = item.sentence || '';
+        document.getElementById('editSentenceMeaning').value = item.meaning || '';
+        document.getElementById('editSentenceLevel').value = item.level || 1;
+        document.getElementById('editSentenceDiff').value = item.difficulty || 'mudah';
+        document.getElementById('editSentenceTenses').value = item.tenses_category || 'Simple Present Tense';
+        document.getElementById('editSentenceTips').value = item.grammar_tips || '';
+        openModal('modalEditSentence');
+    }
 </script>
 
 <!-- ============================================================== -->
@@ -724,5 +737,352 @@
                 </x-button>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- 7. MODAL: Tambah Soal Susun Kalimat (Sentence Builder - Solo)  -->
+<!-- ============================================================== -->
+<div id="modalTambahSentence" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-xl rounded-3xl p-6 lg:p-7 shadow-2xl max-h-[90vh] overflow-y-auto border border-slate-100">
+        <div class="flex items-center justify-between mb-5 pb-4 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-purple-50 text-purple-700 flex items-center justify-center shrink-0 border border-purple-200">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-slate-900 text-base tracking-tight">Tambah Soal Susun Kalimat (Solo)</h3>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Tulis kalimat utuh, sistem otomatis memotong kata menjadi balok acak.</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeModal('modalTambahSentence')" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-700 flex items-center justify-center text-sm font-bold transition-colors cursor-pointer">
+                &times;
+            </button>
+        </div>
+
+        <form method="POST" action="{{ route('guru.game.sentence.store') }}" class="space-y-4">
+            @csrf
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Kalimat Lengkap Bahasa Inggris <span class="text-rose-500">*</span></label>
+                <input type="text" 
+                       name="sentence" 
+                       id="addSentenceInput"
+                       required 
+                       placeholder="Contoh: She bought a new laptop yesterday." 
+                       class="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/15 outline-none transition-all">
+                <p class="text-[10px] text-slate-400 mt-1">Tulis kalimat dengan huruf besar/kecil dan tanda baca normal. Sistem akan memecah kata secara otomatis.</p>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Arti Kalimat (Bahasa Indonesia) <span class="text-rose-500">*</span></label>
+                <input type="text" 
+                       name="meaning" 
+                       required 
+                       placeholder="Contoh: Kemarin dia membeli laptop baru." 
+                       class="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/15 outline-none transition-all">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Level Permainan <span class="text-rose-500">*</span></label>
+                    <select name="level" required class="w-full px-3 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 outline-none focus:bg-white focus:border-purple-500">
+                        @for($i = 1; $i <= 9; $i++)
+                            <option value="{{ $i }}">⭐ Level {{ $i }}</option>
+                        @endfor
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Tingkat Kesulitan <span class="text-rose-500">*</span></label>
+                    <select name="difficulty" required class="w-full px-3 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 outline-none focus:bg-white focus:border-purple-500">
+                        <option value="mudah">🟢 Tingkat Mudah (3-4 Kata)</option>
+                        <option value="sedang">🟡 Tingkat Sedang (5-7 Kata)</option>
+                        <option value="sulit">🔴 Tingkat Sulit (8+ Kata)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Kategori Tenses / Grammar <span class="text-rose-500">*</span></label>
+                <input type="text" 
+                       name="tenses_category" 
+                       required 
+                       list="listTenses"
+                       placeholder="Contoh: Simple Past Tense" 
+                       class="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/15 outline-none transition-all">
+                <datalist id="listTenses">
+                    <option value="Simple Present Tense"></option>
+                    <option value="Simple Past Tense"></option>
+                    <option value="Present Continuous"></option>
+                    <option value="Simple Future Tense"></option>
+                    <option value="Passive Voice"></option>
+                    <option value="Conditional Sentence Type 1"></option>
+                    <option value="Modal Verbs"></option>
+                </datalist>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Tips Tata Bahasa (Grammar Tips) - Opsional</label>
+                <textarea name="grammar_tips" 
+                          rows="2" 
+                          placeholder="Contoh: Gunakan kata kerja bentuk kedua (bought) untuk aktivitas di waktu lampau."
+                          class="w-full px-3.5 py-2 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-purple-500 outline-none transition-all"></textarea>
+            </div>
+
+            <div class="pt-4 flex items-center justify-end gap-2.5 border-t border-slate-100">
+                <x-button variant="cancel" type="button" onclick="closeModal('modalTambahSentence')" class="!rounded-xl">
+                    Batal
+                </x-button>
+                <x-button variant="submit" type="submit" class="!bg-purple-600 hover:!bg-purple-700 !rounded-xl !shadow-xs">
+                    Simpan Soal Kalimat
+                </x-button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- 8. MODAL: Edit Soal Susun Kalimat (Sentence Builder - Solo)    -->
+<!-- ============================================================== -->
+<div id="modalEditSentence" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-xl rounded-3xl p-6 lg:p-7 shadow-2xl max-h-[90vh] overflow-y-auto border border-slate-100">
+        <div class="flex items-center justify-between mb-5 pb-4 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center shrink-0 border border-amber-200">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-slate-900 text-base tracking-tight">Edit Soal Susun Kalimat</h3>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Perbarui struktur kalimat atau terjemahan soal.</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeModal('modalEditSentence')" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-700 flex items-center justify-center text-sm font-bold transition-colors cursor-pointer">
+                &times;
+            </button>
+        </div>
+
+        <form method="POST" id="editSentenceForm" action="" class="space-y-4">
+            @csrf
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Kalimat Lengkap Bahasa Inggris <span class="text-rose-500">*</span></label>
+                <input type="text" 
+                       name="sentence" 
+                       id="editSentenceInput"
+                       required 
+                       class="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:bg-white focus:border-purple-500 outline-none transition-all">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Arti Kalimat (Bahasa Indonesia) <span class="text-rose-500">*</span></label>
+                <input type="text" 
+                       name="meaning" 
+                       id="editSentenceMeaning"
+                       required 
+                       class="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:bg-white focus:border-purple-500 outline-none transition-all">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Level Permainan <span class="text-rose-500">*</span></label>
+                    <select name="level" id="editSentenceLevel" required class="w-full px-3 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 outline-none focus:bg-white focus:border-purple-500">
+                        @for($i = 1; $i <= 9; $i++)
+                            <option value="{{ $i }}">⭐ Level {{ $i }}</option>
+                        @endfor
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Tingkat Kesulitan <span class="text-rose-500">*</span></label>
+                    <select name="difficulty" id="editSentenceDiff" required class="w-full px-3 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 outline-none focus:bg-white focus:border-purple-500">
+                        <option value="mudah">🟢 Tingkat Mudah</option>
+                        <option value="sedang">🟡 Tingkat Sedang</option>
+                        <option value="sulit">🔴 Tingkat Sulit</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Kategori Tenses / Grammar <span class="text-rose-500">*</span></label>
+                <input type="text" 
+                       name="tenses_category" 
+                       id="editSentenceTenses"
+                       required 
+                       class="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:bg-white focus:border-purple-500 outline-none transition-all">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Tips Tata Bahasa (Grammar Tips) - Opsional</label>
+                <textarea name="grammar_tips" 
+                          id="editSentenceTips"
+                          rows="2" 
+                          class="w-full px-3.5 py-2 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:bg-white focus:border-purple-500 outline-none transition-all"></textarea>
+            </div>
+
+            <div class="pt-4 flex items-center justify-end gap-2.5 border-t border-slate-100">
+                <x-button variant="cancel" type="button" onclick="closeModal('modalEditSentence')" class="!rounded-xl">
+                    Batal
+                </x-button>
+                <x-button variant="submit" type="submit" class="!bg-purple-600 hover:!bg-purple-700 !rounded-xl !shadow-xs">
+                    Perbarui Soal Kalimat
+                </x-button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- 9. MODAL: Import Soal Susun Kalimat (Sentence Builder) (.xlsx) -->
+<!-- ============================================================== -->
+<div id="modalImportSentence" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-3xl p-6 lg:p-7 shadow-2xl max-h-[90vh] overflow-y-auto border border-slate-100">
+        <div class="flex items-center justify-between mb-5 pb-4 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-purple-50 text-purple-700 flex items-center justify-center shrink-0 border border-purple-200">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-slate-900 text-base tracking-tight">Import Soal Susun Kalimat</h3>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Unggah banyak kalimat sekaligus menggunakan template Excel resmi (.xlsx).</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeModal('modalImportSentence')" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-700 flex items-center justify-center text-sm font-bold transition-colors cursor-pointer">
+                &times;
+            </button>
+        </div>
+
+        <!-- Banner Info Anti-Duplikat -->
+        <div class="p-3.5 mb-4 rounded-2xl bg-amber-50 border border-amber-200/80 text-amber-800 text-xs space-y-1">
+            <div class="flex items-center gap-2 font-bold text-amber-900">
+                <svg class="w-4 h-4 text-amber-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                <span>Perlindungan Anti-Duplikasi Otomatis</span>
+            </div>
+            <p class="text-[11px] text-amber-700 leading-relaxed pl-6">
+                Kalimat bahasa Inggris yang sudah terdaftar sebelumnya di database akan <b>otomatis dilewati</b>. Hanya kalimat baru yang dimasukkan ke sistem, sehingga data tidak ganda dan database tetap optimal.
+            </p>
+        </div>
+
+        <form method="POST" action="{{ route('guru.game.sentence.import') }}" enctype="multipart/form-data" class="space-y-4">
+            @csrf
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Pilih File Excel (.xlsx, .xls, .csv)</label>
+                <input type="file" 
+                       name="file_excel" 
+                       required 
+                       accept=".xlsx,.xls,.csv,.txt"
+                       class="w-full text-xs text-slate-600 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 file:cursor-pointer p-2 rounded-2xl border border-slate-200 bg-slate-50">
+            </div>
+
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-slate-800">Format Kolom Excel:</span>
+                    <a href="{{ route('guru.game.sentence.template') }}" class="text-purple-700 font-bold underline hover:text-purple-900 flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        <span>Unduh Template Excel (.xlsx)</span>
+                    </a>
+                </div>
+                <p class="text-[11px] text-slate-500">
+                    Kolom: <b>Level</b> (1-9), <b>Tingkat Kesulitan</b> (mudah/sedang/sulit), <b>Kalimat Bahasa Inggris</b>, <b>Arti Bahasa Indonesia</b>, <b>Kategori Tenses</b>, <b>Tips Grammar (Opsional)</b>.
+                </p>
+            </div>
+
+            <div class="pt-4 flex items-center justify-end gap-2.5 border-t border-slate-100">
+                <x-button variant="cancel" type="button" onclick="closeModal('modalImportSentence')" class="!rounded-xl">
+                    Batal
+                </x-button>
+                <x-button variant="submit" type="submit" class="!bg-purple-600 hover:!bg-purple-700 !rounded-xl !shadow-xs">
+                    Upload & Proses Import
+                </x-button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- 10. MODAL: Aturan & Cara Bermain Susun Kalimat (Icon ?)        -->
+<!-- ============================================================== -->
+<div id="modalRulesSentence" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-2xl rounded-3xl p-6 lg:p-7 shadow-2xl max-h-[90vh] overflow-y-auto border border-slate-100">
+        <!-- Header Modal Rules dengan Icon ? Menonjol -->
+        <div class="flex items-center justify-between mb-5 pb-4 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-md text-xl font-extrabold font-serif">
+                    ?
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-slate-900 text-base tracking-tight">Aturan & Cara Bermain: Susun Kalimat</h3>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Panduan gameplay mode Solo, mekanisme balok kata, dan sistem reward bintang.</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeModal('modalRulesSentence')" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-700 flex items-center justify-center text-sm font-bold transition-colors cursor-pointer">
+                &times;
+            </button>
+        </div>
+
+        <!-- Konten 4 Langkah Aturan Bermain -->
+        <div class="space-y-3.5">
+            <!-- Langkah 1 -->
+            <div class="p-4 rounded-2xl bg-purple-50/60 border border-purple-200/80 flex items-start gap-3.5">
+                <div class="w-8 h-8 rounded-xl bg-purple-600 text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-xs">
+                    1
+                </div>
+                <div class="space-y-1">
+                    <h4 class="font-bold text-slate-900 text-xs">Pahami Arti Kalimat & Petunjuk Tenses</h4>
+                    <p class="text-[11px] text-slate-600 leading-relaxed">
+                        Di setiap ronde, siswa membaca kalimat dalam bahasa Indonesia (contoh: <i>"Kemarin dia membeli laptop baru"</i>) serta petunjuk tenses (contoh: <i>Simple Past Tense</i>) sebagai panduan urutan kata dan keterangan waktu.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Langkah 2 -->
+            <div class="p-4 rounded-2xl bg-indigo-50/60 border border-indigo-200/80 flex items-start gap-3.5">
+                <div class="w-8 h-8 rounded-xl bg-indigo-600 text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-xs">
+                    2
+                </div>
+                <div class="space-y-1">
+                    <h4 class="font-bold text-slate-900 text-xs">Tap Balok Kata Berurutan Masuk ke Slot Rel</h4>
+                    <p class="text-[11px] text-slate-600 leading-relaxed">
+                        Siswa men-tap kata-kata acak di baki bawah satu per satu. Kata yang di-tap akan melompat naik ke slot kalimat di atas (sesuai urutan SPOK). Jika salah klik kata, siswa cukup men-tap kata di atas untuk mengembalikannya ke bawah atau klik tombol <b>"Reset"</b>.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Langkah 3 -->
+            <div class="p-4 rounded-2xl bg-sky-50/60 border border-sky-200/80 flex items-start gap-3.5">
+                <div class="w-8 h-8 rounded-xl bg-sky-600 text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-xs">
+                    3
+                </div>
+                <div class="space-y-1">
+                    <h4 class="font-bold text-slate-900 text-xs">Bantuan Audio Pengucapan Bule (Hint TTS)</h4>
+                    <p class="text-[11px] text-slate-600 leading-relaxed">
+                        Jika siswa merasa bingung atau ragu, siswa dapat menekan ikon speaker 🔊 untuk mendengarkan pelafalan kalimat asli secara utuh untuk melatih kepekaan telinga terhadap struktur kalimat bahasa Inggris.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Langkah 4 -->
+            <div class="p-4 rounded-2xl bg-amber-50/60 border border-amber-200/80 flex items-start gap-3.5">
+                <div class="w-8 h-8 rounded-xl bg-amber-600 text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-xs">
+                    4
+                </div>
+                <div class="space-y-1">
+                    <h4 class="font-bold text-slate-900 text-xs">Sistem Penilaian Bintang (⭐⭐⭐) & Hadiah Koin</h4>
+                    <ul class="text-[11px] text-slate-600 space-y-1 list-disc list-inside">
+                        <li><b>3 Bintang (⭐⭐⭐)</b>: Berhasil menyusun benar dengan cepat (&lt; 15 detik) ➡️ <b>+50 XP & +25 Koin</b>.</li>
+                        <li><b>2 Bintang (⭐⭐)</b>: Berhasil menyusun benar (15 - 25 detik) ➡️ <b>+35 XP & +15 Koin</b>.</li>
+                        <li><b>1 Bintang (⭐)</b>: Berhasil menyusun benar (&gt; 25 detik) ➡️ <b>+20 XP & +10 Koin</b>.</li>
+                        <li>Menyelesaikan level saat ini akan <b>otomatis membuka level berikutnya</b> pada petualangan solo siswa!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-5 mt-5 flex items-center justify-end border-t border-slate-100">
+            <x-button variant="create" type="button" onclick="closeModal('modalRulesSentence')" class="!bg-purple-600 hover:!bg-purple-700 !rounded-xl !shadow-xs">
+                Saya Mengerti, Tutup Panduan
+            </x-button>
+        </div>
     </div>
 </div>

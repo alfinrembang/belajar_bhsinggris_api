@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\FishingSoal;
 use App\Models\PronounceWord;
+use App\Models\SentenceSoal;
 use App\Models\WerewolfSoal;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -668,6 +669,82 @@ class GameExcelService
         );
     }
 
+    /**
+     * Menghasilkan Template Excel (.xlsx) untuk Game Susun Kalimat (Sentence Builder) - Mode Solo.
+     */
+    public static function generateSentenceTemplate(): Spreadsheet
+    {
+        $headers = [
+            'NO',
+            'LEVEL (1-9)',
+            'TINGKAT KESULITAN (mudah/sedang/sulit)',
+            'KALIMAT BAHASA INGGRIS',
+            'ARTI BAHASA INDONESIA',
+            'KATEGORI TENSES',
+            'TIPS GRAMMAR (OPSIONAL)',
+        ];
+
+        $sampleData = [
+            [
+                '1',
+                '1',
+                'mudah',
+                'I drink fresh milk every morning.',
+                'Saya minum susu segar setiap pagi.',
+                'Simple Present Tense',
+                'Gunakan Verb 1 (drink) untuk kebiasaan sehari-hari.',
+            ],
+            [
+                '2',
+                '2',
+                'sedang',
+                'She bought a new laptop yesterday.',
+                'Dia membeli laptop baru kemarin.',
+                'Simple Past Tense',
+                'Gunakan Verb 2 (bought) untuk kejadian masa lampau.',
+            ],
+            [
+                '3',
+                '2',
+                'sedang',
+                'They are studying English in the classroom.',
+                'Mereka sedang belajar bahasa Inggris di dalam kelas.',
+                'Present Continuous',
+                'Pola to be (are) + Verb-ing untuk aktivitas yang sedang berlangsung saat ini.',
+            ],
+            [
+                '4',
+                '3',
+                'sulit',
+                'The delicious chocolate cake was baked by my mother.',
+                'Kue cokelat yang lezat itu dipanggang oleh ibuku.',
+                'Passive Voice',
+                'Pola pasif lampau menggunakan was/were + Verb 3 (baked).',
+            ],
+            [
+                '5',
+                '3',
+                'sulit',
+                'If you study diligently, you will pass the exam successfully.',
+                'Jika kamu belajar dengan tekun, kamu akan lulus ujian dengan sukses.',
+                'Conditional Sentence Type 1',
+                'Klausa if menggunakan Simple Present, dan klausa hasil menggunakan will + Verb 1.',
+            ],
+        ];
+
+        $spreadsheet = new Spreadsheet;
+
+        return self::applyTemplateStyling(
+            $spreadsheet,
+            'Susun Kalimat',
+            'TEMPLATE IMPORT SOAL SUSUN KALIMAT (SENTENCE BUILDER - SOLO)',
+            'Panduan Guru: Cukup tuliskan kalimat bahasa Inggris utuh. Sistem otomatis memecah kata dan mengacak urutannya saat dimainkan siswa. Kalimat duplikat otomatis dilewati.',
+            $headers,
+            $sampleData,
+            ['A', 'B', 'C', 'F']
+        );
+    }
+
     // ==============================================================
     // 2. IMPORT SOAL & KOSAKATA DENGAN PERLINDUNGAN ANTI-DUPLIKAT KETAT
     // ==============================================================
@@ -987,6 +1064,108 @@ class GameExcelService
                 'difficulty' => $difficulty,
                 'tips' => $tips ?: null,
                 'example_sentence' => $example ?: null,
+            ]);
+
+            $imported++;
+        }
+
+        return [
+            'imported' => $imported,
+            'skipped' => $skipped,
+            'total' => $imported + $skipped,
+            'errors' => $errors,
+        ];
+    }
+
+    /**
+     * Import Soal Susun Kalimat (Sentence Builder) dengan Logika Anti-Duplikat.
+     */
+    public static function importSentence(string $filePath, string $extension): array
+    {
+        $rawRows = self::parseRows($filePath, $extension);
+        if (empty($rawRows)) {
+            return ['imported' => 0, 'skipped' => 0, 'total' => 0, 'errors' => ['File kosong atau format tidak dapat dibaca.']];
+        }
+
+        // Cari baris header secara fleksibel
+        $headerRowIdx = self::findHeaderRowIndex($rawRows, ['sentence', 'kalimat', 'tenses', 'grammar', 'arti']);
+        if ($headerRowIdx === null || ! isset($rawRows[$headerRowIdx])) {
+            return ['imported' => 0, 'skipped' => 0, 'total' => 0, 'errors' => ['Baris judul kolom (header) tidak ditemukan dalam file.']];
+        }
+
+        $header = $rawRows[$headerRowIdx];
+        $headerMap = self::buildHeaderMap($header);
+
+        $dataRows = array_slice($rawRows, $headerRowIdx + 1);
+        if (empty($dataRows)) {
+            return ['imported' => 0, 'skipped' => 0, 'total' => 0, 'errors' => ['File hanya berisi baris header tanpa kalimat.']];
+        }
+
+        $imported = 0;
+        $skipped = 0;
+        $errors = [];
+        $seenSentencesInFile = [];
+
+        foreach ($dataRows as $lineIdx => $row) {
+            $rowNum = $headerRowIdx + 2 + $lineIdx;
+
+            if (count(array_filter($row)) === 0) {
+                continue;
+            }
+
+            $levelVal = self::getVal($row, $headerMap, ['level', 'tingkat'], 1, '1');
+            $level = (int) preg_replace('/[^0-9]/', '', $levelVal);
+            if ($level < 1 || $level > 9) {
+                $level = 1;
+            }
+
+            $difficulty = strtolower(trim(self::getVal($row, $headerMap, ['tingkatkesulitan', 'kesulitan', 'difficulty'], 2, 'mudah')));
+            $sentence = trim(self::getVal($row, $headerMap, ['kalimatbahasainggris', 'kalimat', 'sentence', 'fullsentence'], 3, ''));
+            $meaning = trim(self::getVal($row, $headerMap, ['artibahasaindonesia', 'arti', 'meaning', 'terjemahan'], 4, ''));
+            $tenses = trim(self::getVal($row, $headerMap, ['kategoritenses', 'tenses', 'kategori', 'category'], 5, 'General Grammar'));
+            $tips = trim(self::getVal($row, $headerMap, ['tipsgrammaropsional', 'tipsgrammar', 'tips', 'petunjuk'], 6, ''));
+
+            if (empty($sentence) || empty($meaning)) {
+                $errors[] = "Baris #{$rowNum}: Kalimat bahasa Inggris dan Arti tidak boleh kosong.";
+
+                continue;
+            }
+
+            if (! in_array($difficulty, ['mudah', 'sedang', 'sulit'])) {
+                $difficulty = 'mudah';
+            }
+
+            // PERLINDUNGAN ANTI-DUPLIKAT (Cek file lokal & cek database)
+            $upperSentence = strtoupper(trim(rtrim($sentence, '.!?')));
+            if (isset($seenSentencesInFile[$upperSentence])) {
+                $skipped++;
+
+                continue;
+            }
+            $seenSentencesInFile[$upperSentence] = true;
+
+            $existsInDb = SentenceSoal::whereRaw('UPPER(TRIM(sentence)) = ?', [$sentence])->exists();
+            if ($existsInDb) {
+                $skipped++;
+
+                continue;
+            }
+
+            // Hitung poin berdasarkan level/kesulitan
+            $points = match ($difficulty) {
+                'sulit' => 180,
+                'sedang' => 140,
+                default => 100,
+            };
+
+            SentenceSoal::create([
+                'level' => $level,
+                'difficulty' => $difficulty,
+                'sentence' => $sentence,
+                'meaning' => $meaning,
+                'tenses_category' => $tenses ?: 'General Grammar',
+                'grammar_tips' => $tips ?: null,
+                'points' => $points,
             ]);
 
             $imported++;

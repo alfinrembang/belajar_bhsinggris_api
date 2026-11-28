@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\ModulListeningApiController;
 use App\Http\Controllers\Api\PencapaianApiController;
 use App\Http\Controllers\Api\PronounceApiController;
 use App\Http\Controllers\Api\QuizApiController;
+use App\Http\Controllers\Api\SentenceApiController;
 use App\Models\WerewolfSoal;
 use Illuminate\Support\Facades\Route;
 
@@ -103,6 +104,15 @@ Route::post('/pronounce/room/{code}/start', [PronounceApiController::class, 'sta
 Route::post('/pronounce/room/{code}/record', [PronounceApiController::class, 'recordSubmission']);
 Route::post('/pronounce/room/{code}/vote', [PronounceApiController::class, 'submitVote']);
 Route::post('/pronounce/room/{code}/next-turn', [PronounceApiController::class, 'nextTurn']);
+
+// 2J. MODUL GAME SUSUN KALIMAT (SENTENCE BUILDER) - SESI CASUAL 5 SOAL & LEVEL
+Route::get('/sentence/session-soals', [SentenceApiController::class, 'getSessionSoals']);
+Route::post('/sentence/submit-session', [SentenceApiController::class, 'submitSession']);
+Route::get('/sentence/stats', [SentenceApiController::class, 'getStats']);
+Route::post('/sentence/reset-history', [SentenceApiController::class, 'resetHistory']);
+Route::get('/sentence/soals', [SentenceApiController::class, 'getSoals']);
+Route::get('/sentence/progres', [SentenceApiController::class, 'getProgres']);
+Route::post('/sentence/submit', [SentenceApiController::class, 'submitLevel']);
 
 // 3. RUTE TERPROTEKSI SISWA (Wajib Token Siswa)
 Route::middleware('auth.siswa')->group(function () {

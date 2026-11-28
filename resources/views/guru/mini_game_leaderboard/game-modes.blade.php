@@ -751,10 +751,11 @@
         <!-- ========================================== -->
         <!-- GAME 4: Susun Kalimat (Sentence Builder)   -->
         <!-- ========================================== -->
-        <div class="rounded-2xl border-2 border-dashed border-indigo-200/90 bg-gradient-to-br from-indigo-50/40 via-white to-purple-50/30 p-5 lg:p-6 transition-all shadow-xs">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+        <div class="rounded-2xl border border-purple-200/90 bg-white overflow-hidden transition-all shadow-xs hover:border-purple-300">
+            <!-- Header Kartu Game 4 -->
+            <div class="p-5 lg:p-6 bg-gradient-to-br from-purple-50/50 via-white to-indigo-50/30 flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-b border-purple-100/80">
                 <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center shadow-xs shrink-0">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-600 text-white flex items-center justify-center shadow-xs shrink-0">
                         <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="3" width="7" height="7"></rect>
                             <rect x="14" y="3" width="7" height="7"></rect>
@@ -765,38 +766,191 @@
                     <div class="space-y-1.5 min-w-0">
                         <div class="flex flex-wrap items-center gap-2">
                             <h4 class="font-extrabold text-slate-900 text-base tracking-tight">Susun Kalimat (Sentence Builder)</h4>
-                            <span class="px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-[11px] font-bold border border-indigo-200">Grammar & Syntax</span>
-                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 text-[10px] font-bold border border-purple-200">
-                                <span class="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse"></span> Game ke-4 (Segera Hadir)
+                            <span class="px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 text-[11px] font-bold border border-purple-200">Grammar & Syntax</span>
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Live di Mobile (Solo)
                             </span>
                         </div>
                         <p class="text-xs text-slate-600 leading-relaxed">
-                            Permainan balap merangkai kata acak menjadi struktur kalimat bahasa Inggris yang gramatikal. Melatih pemahaman tenses, subjek, predikat, dan objek secara kompetitif & adiktif.
+                            Latihan merangkai balok kata acak menjadi struktur kalimat bahasa Inggris yang utuh dan gramatikal. Mode santai 5 soal per sesi dengan timer 100 detik, reward koin & poin, audio bule, dan sistem 1 soal keluar sekali per akun.
                         </p>
                         
                         <!-- Chips Metadata Game 4 -->
                         <div class="flex flex-wrap items-center gap-2 pt-1 text-[11px]">
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white text-indigo-700 font-semibold border border-indigo-200/80 shadow-2xs">
-                                <svg class="w-3.5 h-3.5 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                                Balap Waktu 45 Detik
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 text-slate-700 font-semibold border border-slate-200/80">
+                                <svg class="w-3.5 h-3.5 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                Sesi 5 Soal (100 Detik)
                             </span>
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white text-purple-700 font-semibold border border-purple-200/80 shadow-2xs">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 text-slate-700 font-semibold border border-slate-200/80">
                                 <svg class="w-3.5 h-3.5 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                                4 Tenses Utama
+                                {{ $totalSoalSentence ?? 0 }} Kalimat Terdaftar
                             </span>
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white text-emerald-700 font-bold border border-emerald-200 shadow-2xs">
-                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                Target Rilis Berikutnya
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-purple-50 text-purple-800 font-bold border border-purple-200">
+                                🧩 Anti-Duplikat per Akun
                             </span>
                         </div>
                     </div>
                 </div>
 
-                <div class="flex items-center self-start sm:self-center shrink-0">
-                    <span class="px-4 py-2 rounded-xl bg-indigo-100/80 text-indigo-800 text-xs font-extrabold flex items-center gap-1.5 border border-indigo-200">
-                        <span>Siap Rilis 🚀</span>
-                    </span>
+                <!-- Tombol Aksi Kontrol Game Susun Kalimat -->
+                <div class="flex flex-wrap sm:flex-col gap-2 shrink-0">
+                    <x-button variant="create" size="sm" type="button" onclick="openModal('modalTambahSentence')" class="!shadow-xs !rounded-xl !bg-purple-600 hover:!bg-purple-700 !border-purple-600">
+                        Tambah Kalimat
+                    </x-button>
+
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" 
+                                onclick="openModal('modalImportSentence')"
+                                title="Import dari Excel (.xlsx / .csv)"
+                                class="px-2.5 py-1.5 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <span>Import</span>
+                        </button>
+                        <a href="{{ route('guru.game.sentence.template') }}" 
+                           title="Unduh Template Excel (.xlsx)"
+                           class="px-2 py-1.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs font-bold transition-all flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        </a>
+                    </div>
+                    
+                    <!-- Tombol Accordion Buka/Tutup Bank Soal Kalimat -->
+                    <button type="button"
+                            id="btnToggleBankSentence"
+                            onclick="toggleBankSentence()"
+                            class="px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-xs font-bold transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer shadow-xs">
+                        <span id="textToggleBankSentence">
+                            {{ (request()->has('sentence_level') || request()->has('sentence_diff') || request()->has('sentence_page') || request()->get('tab') === 'sentence') ? 'Tutup Bank Soal' : 'Kelola Bank Soal' }}
+                        </span>
+                        <svg id="iconToggleBankSentence" class="w-3.5 h-3.5 text-slate-500 transition-transform duration-200 {{ (request()->has('sentence_level') || request()->has('sentence_diff') || request()->has('sentence_page') || request()->get('tab') === 'sentence') ? 'rotate-180' : '' }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
                 </div>
+            </div>
+
+            <!-- PANEL ACCORDION: Bank Soal Susun Kalimat -->
+            <div id="panelBankSentence" class="{{ (request()->has('sentence_level') || request()->has('sentence_diff') || request()->has('sentence_page') || request()->get('tab') === 'sentence') ? '' : 'hidden' }} p-5 lg:p-6 bg-slate-50/50 border-t border-slate-100 space-y-4">
+                
+                <!-- Filter & Informasi Ringkas -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                        <h4 class="font-extrabold text-slate-900 text-sm">Daftar Kalimat Bahasa Inggris (Mode Solo)</h4>
+                        <p class="text-[11px] text-slate-400 mt-0.5">Guru cukup menulis kalimat utuh, sistem otomatis memecah dan mengacak kata saat dimainkan siswa.</p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2">
+                        <!-- Filter Level & Tingkat Kesulitan -->
+                        <form method="GET" action="{{ route('guru.game.index') }}" class="flex items-center gap-2">
+                            <input type="hidden" name="tab" value="sentence">
+                            @if(!empty($search))
+                                <input type="hidden" name="q" value="{{ $search }}">
+                            @endif
+                            <select name="sentence_level" onchange="this.form.submit()" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-purple-500">
+                                <option value="">📁 Semua Level</option>
+                                @for($i = 1; $i <= 9; $i++)
+                                    <option value="{{ $i }}" {{ ($sentenceLevelFilter ?? '') == $i ? 'selected' : '' }}>⭐ Level {{ $i }}</option>
+                                @endfor
+                            </select>
+                            <select name="sentence_diff" onchange="this.form.submit()" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 outline-none cursor-pointer focus:border-purple-500">
+                                <option value="">Semua Tingkat</option>
+                                <option value="mudah" {{ ($sentenceDiffFilter ?? '') === 'mudah' ? 'selected' : '' }}>🟢 Mudah</option>
+                                <option value="sedang" {{ ($sentenceDiffFilter ?? '') === 'sedang' ? 'selected' : '' }}>🟡 Sedang</option>
+                                <option value="sulit" {{ ($sentenceDiffFilter ?? '') === 'sulit' ? 'selected' : '' }}>🔴 Sulit</option>
+                            </select>
+                        </form>
+
+                        <a href="{{ route('guru.game.sentence.template') }}" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            <span>Unduh Template (.xlsx)</span>
+                        </a>
+
+                        <button type="button" onclick="openModal('modalImportSentence')" class="px-3 py-1.5 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <span>Import Excel</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabel Data Soal Susun Kalimat -->
+                <div class="overflow-x-auto rounded-2xl border border-slate-200/80 bg-white shadow-xs">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-50/80 border-b border-slate-100 text-slate-600 font-bold">
+                                <th class="py-3 px-3.5 text-center w-12">No</th>
+                                <th class="py-3 px-3.5 text-center w-24">Level</th>
+                                <th class="py-3 px-4">Kalimat Bahasa Inggris & Tenses</th>
+                                <th class="py-3 px-4">Arti (Bahasa Indonesia)</th>
+                                <th class="py-3 px-4">Tips Tata Bahasa</th>
+                                <th class="py-3 px-3.5 text-center w-24">Poin</th>
+                                <th class="py-3 px-3.5 text-center w-28">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            @forelse($daftarSoalSentence as $idx => $item)
+                                <tr class="hover:bg-slate-50/70 transition-colors">
+                                    <td class="py-3 px-3.5 text-center font-mono text-slate-400">
+                                        {{ $daftarSoalSentence->firstItem() + $idx }}
+                                    </td>
+                                    <td class="py-3 px-3.5 text-center">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold {{ $item->difficulty === 'mudah' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : ($item->difficulty === 'sedang' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-rose-50 text-rose-700 border border-rose-200') }}">
+                                            Lvl {{ $item->level }} • {{ ucfirst($item->difficulty) }}
+                                        </span>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <div class="font-bold text-slate-900 text-xs">
+                                            {{ $item->sentence }}
+                                        </div>
+                                        <span class="inline-block mt-0.5 px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200/60 font-semibold text-[10px]">
+                                            🏷️ {{ $item->tenses_category }}
+                                        </span>
+                                    </td>
+                                    <td class="py-3 px-4 text-slate-700 font-medium">
+                                        {{ $item->meaning }}
+                                    </td>
+                                    <td class="py-3 px-4 text-slate-500 text-[11px]">
+                                        {{ $item->grammar_tips ?: '-' }}
+                                    </td>
+                                    <td class="py-3 px-3.5 text-center font-bold text-purple-700 font-mono">
+                                        +{{ $item->points }}
+                                    </td>
+                                    <td class="py-3 px-3.5 text-center">
+                                        <div class="flex items-center justify-center gap-1.5">
+                                            <button type="button" 
+                                                    onclick="editSentenceModal({{ json_encode($item) }})"
+                                                    class="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors cursor-pointer"
+                                                    title="Edit Soal">
+                                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                                            </button>
+                                            <form method="POST" action="{{ route('guru.game.sentence.destroy', $item->id) }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kalimat ini dari bank soal?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" 
+                                                        class="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors cursor-pointer"
+                                                        title="Hapus Soal">
+                                                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="py-8 text-center text-slate-400">
+                                        Belum ada soal susun kalimat yang terdaftar. Silakan tambahkan kalimat baru atau import file Excel.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination Tabel Soal Susun Kalimat -->
+                @if($daftarSoalSentence->hasPages())
+                    <div class="pt-2">
+                        {{ $daftarSoalSentence->links() }}
+                    </div>
+                @endif
+
             </div>
         </div>
 
@@ -805,16 +959,15 @@
     <!-- KONTROL PAGINATION MODE GAME (MAKSIMAL 2 GAME KE BAWAH PER TAMPILAN) -->
     <div class="pt-5 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3.5 select-none">
         
-        <!-- Info Halaman & Total Game -->
-        <div class="text-xs text-slate-500 font-medium flex items-center gap-1.5 order-2 sm:order-1">
+        <!-- Info Halaman Ringkas Sesuai Permintaan -->
+        <div class="text-xs text-slate-600 font-semibold flex items-center gap-1.5 order-2 sm:order-1">
             <span class="inline-block w-2 h-2 rounded-full bg-[#4EA87D] shrink-0"></span>
-            <span>Menampilkan</span>
-            <span id="gamePageItemRange" class="px-2.5 py-0.5 rounded-lg bg-slate-100 font-bold text-slate-800 tracking-tight text-[11px] border border-slate-200/50">
-                {{ $initialGamePage == 2 ? 'Halaman 2 (Game 3 & 4)' : 'Halaman 1 (Game 1 & 2)' }}
+            <span>Halaman</span>
+            <span id="gamePageItemRange" class="px-2 py-0.5 rounded-md bg-slate-100 font-bold text-slate-800 border border-slate-200/60">
+                {{ $initialGamePage }}
             </span>
             <span>dari</span>
-            <span class="font-bold text-slate-800">4 Mode Permainan</span>
-            <span class="text-[11px] text-slate-400 font-normal">(2 game ke bawah per halaman)</span>
+            <span class="font-bold text-slate-800">2</span>
         </div>
 
         <!-- Tombol Navigasi Halaman -->
@@ -886,7 +1039,7 @@
 
         const rangeEl = document.getElementById('gamePageItemRange');
         if (rangeEl) {
-            rangeEl.innerText = (page === 1) ? 'Halaman 1 (Game 1 & 2)' : 'Halaman 2 (Game 3 & 4)';
+            rangeEl.innerText = page;
         }
 
         const btnPrev = document.getElementById('btnPrevGamePage');
@@ -980,6 +1133,24 @@
             panel.classList.add('hidden');
             text.innerText = 'Kelola Bank Kata';
             icon.classList.remove('rotate-180');
+        }
+    }
+
+    function toggleBankSentence() {
+        const panel = document.getElementById('panelBankSentence');
+        const text = document.getElementById('textToggleBankSentence');
+        const icon = document.getElementById('iconToggleBankSentence');
+
+        if (!panel) return;
+
+        if (panel.classList.contains('hidden')) {
+            panel.classList.remove('hidden');
+            if (text) text.innerText = 'Tutup Bank Soal';
+            if (icon) icon.classList.add('rotate-180');
+        } else {
+            panel.classList.add('hidden');
+            if (text) text.innerText = 'Kelola Bank Soal';
+            if (icon) icon.classList.remove('rotate-180');
         }
     }
 </script>

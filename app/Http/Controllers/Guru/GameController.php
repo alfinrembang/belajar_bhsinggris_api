@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Guru;
 use App\Http\Controllers\Controller;
 use App\Models\FishingSoal;
 use App\Models\PronounceWord;
+use App\Models\SentenceSoal;
 use App\Models\Siswa;
 use App\Models\SiswaFishingProgres;
 use App\Models\WerewolfSoal;
@@ -222,6 +223,26 @@ class GameController extends Controller
         }
         $daftarSoalPronounce = $pronounceQuery->paginate(10, ['*'], 'pronounce_page')->withQueryString();
 
+        // 7. Query Bank Soal Susun Kalimat (Sentence Builder - Mode Solo)
+        $totalSoalSentence = SentenceSoal::count();
+        $sentenceQuery = SentenceSoal::query()->latest();
+        if (! empty($search)) {
+            $sentenceQuery->where(function ($q) use ($search) {
+                $q->where('sentence', 'like', "%{$search}%")
+                    ->orWhere('meaning', 'like', "%{$search}%")
+                    ->orWhere('tenses_category', 'like', "%{$search}%");
+            });
+        }
+        $sentenceLevelFilter = $request->query('sentence_level', '');
+        if (! empty($sentenceLevelFilter)) {
+            $sentenceQuery->where('level', (int) $sentenceLevelFilter);
+        }
+        $sentenceDiffFilter = $request->query('sentence_diff', '');
+        if (! empty($sentenceDiffFilter)) {
+            $sentenceQuery->where('difficulty', $sentenceDiffFilter);
+        }
+        $daftarSoalSentence = $sentenceQuery->paginate(10, ['*'], 'sentence_page')->withQueryString();
+
         return view('guru.mini_game_leaderboard.index', compact(
             'rankedLeaderboard',
             'topPlayer',
@@ -229,12 +250,16 @@ class GameController extends Controller
             'totalSoalIkan',
             'totalSoalWerewolf',
             'totalSoalPronounce',
+            'totalSoalSentence',
             'daftarSoalIkan',
             'daftarSoalWerewolf',
             'daftarSoalPronounce',
+            'daftarSoalSentence',
             'werewolfThemes',
             'werewolfThemeFilter',
             'pronounceDiffFilter',
+            'sentenceLevelFilter',
+            'sentenceDiffFilter',
             'search',
             'levelFilter',
             'diffFilter',
@@ -635,6 +660,157 @@ class GameController extends Controller
     {
         $spreadsheet = GameExcelService::generatePronounceTemplate();
         $fileName = 'Template_Kosakata_Pelafalan_Adu_Lafal.xlsx';
+
+        return response()->streamDownload(function () use ($spreadsheet): void {
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+        }, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Cache-Control' => 'max-age=0',
+        ]);
+    }
+
+    // ==========================================
+    // 4. KONTROL BANK SOAL SUSUN KALIMAT (SENTENCE BUILDER - SOLO)
+    // ==========================================
+
+    public function storeSentenceSoal(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'sentence' => ['required', 'string', 'max:255'],
+            'meaning' => ['required', 'string', 'max:255'],
+            'level' => ['required', 'integer', 'min:1', 'max:9'],
+            'difficulty' => ['required', 'in:mudah,sedang,sulit'],
+            'tenses_category' => ['required', 'string', 'max:100'],
+            'grammar_tips' => ['nullable', 'string'],
+        ], [
+            'sentence.required' => 'Kalimat bahasa Inggris wajib diisi.',
+            'meaning.required' => 'Arti kalimat dalam bahasa Indonesia wajib diisi.',
+            'level.required' => 'Level permainan wajib dipilih.',
+            'difficulty.required' => 'Tingkat kesulitan wajib dipilih.',
+            'tenses_category.required' => 'Kategori tenses / tata bahasa wajib diisi.',
+        ]);
+
+        $sentence = trim($validated['sentence']);
+
+        // Anti-Duplikat Check
+        if (SentenceSoal::whereRaw('UPPER(TRIM(sentence)) = ?', [strtoupper($sentence)])->exists()) {
+            return redirect()->route('guru.game.index', ['tab' => 'sentence'])
+                ->withErrors(['sentence' => "Kalimat '{$sentence}' sudah ada di database. Silakan gunakan kalimat lain untuk mencegah duplikasi!"]);
+        }
+
+        $points = match ($validated['difficulty']) {
+            'sulit' => 180,
+            'sedang' => 140,
+            default => 100,
+        };
+
+        SentenceSoal::create([
+            'level' => (int) $validated['level'],
+            'difficulty' => $validated['difficulty'],
+            'sentence' => $sentence,
+            'meaning' => trim($validated['meaning']),
+            'tenses_category' => trim($validated['tenses_category']),
+            'grammar_tips' => $validated['grammar_tips'] ? trim($validated['grammar_tips']) : null,
+            'points' => $points,
+        ]);
+
+        return redirect()->route('guru.game.index', ['tab' => 'sentence'])
+            ->with('success', "Soal susun kalimat baru berhasil ditambahkan!");
+    }
+
+    public function updateSentenceSoal(Request $request, int $id): RedirectResponse
+    {
+        $soal = SentenceSoal::findOrFail($id);
+
+        $validated = $request->validate([
+            'sentence' => ['required', 'string', 'max:255'],
+            'meaning' => ['required', 'string', 'max:255'],
+            'level' => ['required', 'integer', 'min:1', 'max:9'],
+            'difficulty' => ['required', 'in:mudah,sedang,sulit'],
+            'tenses_category' => ['required', 'string', 'max:100'],
+            'grammar_tips' => ['nullable', 'string'],
+        ]);
+
+        $sentence = trim($validated['sentence']);
+
+        // Cek duplikat jika kalimat diubah
+        $duplicate = SentenceSoal::whereRaw('UPPER(TRIM(sentence)) = ?', [strtoupper($sentence)])
+            ->where('id', '!=', $id)
+            ->exists();
+
+        if ($duplicate) {
+            return redirect()->route('guru.game.index', ['tab' => 'sentence'])
+                ->withErrors(['sentence' => "Kalimat '{$sentence}' sudah digunakan pada butir soal lain."]);
+        }
+
+        $points = match ($validated['difficulty']) {
+            'sulit' => 180,
+            'sedang' => 140,
+            default => 100,
+        };
+
+        $soal->update([
+            'level' => (int) $validated['level'],
+            'difficulty' => $validated['difficulty'],
+            'sentence' => $sentence,
+            'meaning' => trim($validated['meaning']),
+            'tenses_category' => trim($validated['tenses_category']),
+            'grammar_tips' => $validated['grammar_tips'] ? trim($validated['grammar_tips']) : null,
+            'points' => $points,
+        ]);
+
+        return redirect()->route('guru.game.index', ['tab' => 'sentence'])
+            ->with('success', "Soal susun kalimat berhasil diperbarui!");
+    }
+
+    public function destroySentenceSoal(int $id): RedirectResponse
+    {
+        $soal = SentenceSoal::findOrFail($id);
+        $soal->delete();
+
+        return redirect()->route('guru.game.index', ['tab' => 'sentence'])
+            ->with('success', "Soal susun kalimat berhasil dihapus dari bank soal!");
+    }
+
+    public function importSentenceExcel(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'file_excel' => ['required', 'file', 'max:5120'],
+        ], [
+            'file_excel.required' => 'Silakan pilih file Excel (.xlsx atau .csv) untuk diunggah.',
+        ]);
+
+        $file = $request->file('file_excel');
+        $ext = strtolower($file->getClientOriginalExtension());
+
+        if (! in_array($ext, ['xlsx', 'xls', 'csv', 'txt'])) {
+            return redirect()->route('guru.game.index', ['tab' => 'sentence'])
+                ->withErrors(['file_excel' => 'Format file tidak didukung. Harap gunakan file dengan ekstensi .xlsx, .xls, atau .csv']);
+        }
+
+        $result = GameExcelService::importSentence($file->getRealPath(), $ext);
+
+        if (! empty($result['errors']) && $result['imported'] === 0) {
+            return redirect()->route('guru.game.index', ['tab' => 'sentence'])
+                ->withErrors(['file_excel' => implode(' | ', array_slice($result['errors'], 0, 3))]);
+        }
+
+        if ($result['imported'] > 0 && $result['skipped'] > 0) {
+            $msg = "Import Berhasil! {$result['imported']} soal susun kalimat baru ditambahkan. {$result['skipped']} kalimat dilewati karena sudah ada di database (bebas duplikat).";
+        } elseif ($result['imported'] > 0) {
+            $msg = "Import Berhasil! Seluruh {$result['imported']} soal susun kalimat baru berhasil ditambahkan ke bank soal.";
+        } else {
+            $msg = "Tidak ada soal baru yang ditambahkan. Seluruh {$result['skipped']} kalimat dalam file sudah terdaftar di database (anti-duplikat aktif).";
+        }
+
+        return redirect()->route('guru.game.index', ['tab' => 'sentence'])->with('success', $msg);
+    }
+
+    public function downloadSentenceTemplate(): StreamedResponse
+    {
+        $spreadsheet = GameExcelService::generateSentenceTemplate();
+        $fileName = 'Template_Soal_Susun_Kalimat.xlsx';
 
         return response()->streamDownload(function () use ($spreadsheet): void {
             $writer = new Xlsx($spreadsheet);
