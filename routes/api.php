@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\LoginSiswaController;
 use App\Http\Controllers\Api\MateriApiController;
 use App\Http\Controllers\Api\ModulListeningApiController;
 use App\Http\Controllers\Api\PencapaianApiController;
+use App\Http\Controllers\Api\PronounceApiController;
 use App\Http\Controllers\Api\QuizApiController;
 use App\Models\WerewolfSoal;
 use Illuminate\Support\Facades\Route;
@@ -90,6 +91,18 @@ Route::get('/pencapaian', [PencapaianApiController::class, 'index']);
 // 2H. RIWAYAT AKTIVITAS TERBARU SISWA DINAMIS (MATERI, LISTENING, KUIS, GAME)
 Route::get('/siswa/aktivitas-terbaru', [AktivitasApiController::class, 'index']);
 Route::get('/aktivitas-terbaru', [AktivitasApiController::class, 'index']);
+
+// 2I. MODUL GAME ADU LAFAL (PRONOUNCE HERO) - SINGLE PLAYER & MABAR MAKS 5 ORANG
+Route::get('/pronounce/words', [PronounceApiController::class, 'getWords']);
+Route::post('/pronounce/single/submit', [PronounceApiController::class, 'submitSingle']);
+Route::post('/pronounce/room/create', [PronounceApiController::class, 'createRoom']);
+Route::post('/pronounce/room/join', [PronounceApiController::class, 'joinRoom']);
+Route::get('/pronounce/room/{code}', [PronounceApiController::class, 'getRoom']);
+Route::post('/pronounce/room/{code}/ready', [PronounceApiController::class, 'toggleReady']);
+Route::post('/pronounce/room/{code}/start', [PronounceApiController::class, 'startGame']);
+Route::post('/pronounce/room/{code}/record', [PronounceApiController::class, 'recordSubmission']);
+Route::post('/pronounce/room/{code}/vote', [PronounceApiController::class, 'submitVote']);
+Route::post('/pronounce/room/{code}/next-turn', [PronounceApiController::class, 'nextTurn']);
 
 // 3. RUTE TERPROTEKSI SISWA (Wajib Token Siswa)
 Route::middleware('auth.siswa')->group(function () {

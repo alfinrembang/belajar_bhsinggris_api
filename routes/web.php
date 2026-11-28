@@ -101,6 +101,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/games/werewolf/import', [GameController::class, 'importWerewolfExcel'])->name('guru.game.werewolf.import');
     Route::get('/games/werewolf/template', [GameController::class, 'downloadWerewolfTemplate'])->name('guru.game.werewolf.template');
 
+    // Game 3: Adu Lafal (Pronounce Hero)
+    Route::post('/games/pronounce/word', [GameController::class, 'storePronounceWord'])->name('guru.game.pronounce.store');
+    Route::post('/games/pronounce/word/{id}/update', [GameController::class, 'updatePronounceWord'])->name('guru.game.pronounce.update');
+    Route::match(['post', 'delete'], '/games/pronounce/word/{id}/delete', [GameController::class, 'destroyPronounceWord'])->name('guru.game.pronounce.destroy');
+    Route::post('/games/pronounce/import', [GameController::class, 'importPronounceExcel'])->name('guru.game.pronounce.import');
+    Route::get('/games/pronounce/template', [GameController::class, 'downloadPronounceTemplate'])->name('guru.game.pronounce.template');
+
     // MODUL 5: LAPORAN & ANALITIK GURU
     Route::get('/laporan', [LaporanAnalitikController::class, 'index'])->name('guru.laporan.index');
     Route::get('/laporan/materi', [LaporanAnalitikController::class, 'materi'])->name('guru.laporan.materi');

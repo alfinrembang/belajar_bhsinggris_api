@@ -63,6 +63,12 @@
     <!-- Aksi Cepat Guru: Tambah Soal / Import -->
     <div class="flex flex-wrap items-center gap-2 shrink-0">
         <button type="button" 
+                onclick="openModal('modalTambahPronounceWord')"
+                class="px-3 py-2 rounded-xl bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+            <span>+ Kosakata Lafal 🎙️</span>
+        </button>
+        <button type="button" 
                 onclick="openModal('modalImportFishing')"
                 class="px-3.5 py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs">
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
@@ -81,15 +87,19 @@
     <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex items-start justify-between gap-4">
         <div class="space-y-1.5 min-w-0">
             <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Modul Game Mobile</p>
-            <h3 class="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight">2 Engine</h3>
+            <h3 class="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight">3 Engine</h3>
             <div class="flex flex-wrap items-center gap-1.5 pt-1 text-[11px]">
                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#EAF5EF] text-[#2E7352] font-semibold border border-[#D7EDE1]">
                     <span class="w-1.5 h-1.5 rounded-full bg-[#4EA87D]"></span>
-                    Word Fishing ({{ $totalSoalIkan }})
+                    Fishing ({{ $totalSoalIkan }})
                 </span>
                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#EAF5EF] text-[#2E7352] font-semibold border border-[#D7EDE1]">
                     <span class="w-1.5 h-1.5 rounded-full bg-[#3E946B]"></span>
-                    Wolf vs Sheep ({{ $totalSoalWerewolf ?? 0 }})
+                    Werewolf ({{ $totalSoalWerewolf ?? 0 }})
+                </span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 font-semibold border border-sky-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+                    Pronounce ({{ $totalSoalPronounce ?? 0 }})
                 </span>
             </div>
         </div>
@@ -135,7 +145,7 @@
         <div class="space-y-1.5 min-w-0">
             <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total Bank Kosakata</p>
             <h3 class="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight">
-                {{ $totalSoalIkan + ($totalSoalWerewolf ?? 0) }} <span class="text-sm font-semibold text-slate-500">Butir</span>
+                {{ $totalSoalIkan + ($totalSoalWerewolf ?? 0) + ($totalSoalPronounce ?? 0) }} <span class="text-sm font-semibold text-slate-500">Butir</span>
             </h3>
             <div class="flex items-center gap-1.5 pt-1 text-[11px] text-slate-500 font-medium">
                 <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 font-semibold">

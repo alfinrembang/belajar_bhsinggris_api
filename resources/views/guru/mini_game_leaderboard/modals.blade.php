@@ -155,11 +155,11 @@
             @csrf
 
             <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1.5">Pilih File Excel / CSV (.xlsx, .csv)</label>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Pilih File Excel (.xlsx, .xls, .csv)</label>
                 <input type="file" 
                        name="file_excel" 
                        required 
-                       accept=".xlsx,.csv,.txt"
+                       accept=".xlsx,.xls,.csv,.txt"
                        class="w-full text-xs text-slate-600 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#EAF5EF] file:text-[#2E7352] hover:file:bg-[#d7ede1] file:cursor-pointer p-2 rounded-2xl border border-slate-200 bg-slate-50">
             </div>
 
@@ -168,7 +168,7 @@
                     <span class="font-bold text-slate-800">Format Kolom Excel:</span>
                     <a href="{{ route('guru.game.fishing.template') }}" class="text-[#2E7352] font-bold underline hover:text-[#1d4c36] flex items-center gap-1">
                         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                        <span>Unduh Template Contoh</span>
+                        <span>Unduh Template Excel (.xlsx)</span>
                     </a>
                 </div>
                 <p class="text-[11px] text-slate-500">
@@ -340,11 +340,11 @@
             @csrf
 
             <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1.5">Pilih File Excel / CSV (.xlsx, .csv)</label>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Pilih File Excel (.xlsx, .xls, .csv)</label>
                 <input type="file" 
                        name="file_excel" 
                        required 
-                       accept=".xlsx,.csv,.txt"
+                       accept=".xlsx,.xls,.csv,.txt"
                        class="w-full text-xs text-slate-600 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 file:cursor-pointer p-2 rounded-2xl border border-slate-200 bg-slate-50">
             </div>
 
@@ -353,7 +353,7 @@
                     <span class="font-bold text-slate-800">Format Kolom Excel:</span>
                     <a href="{{ route('guru.game.werewolf.template') }}" class="text-indigo-600 font-bold underline hover:text-indigo-800 flex items-center gap-1">
                         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                        <span>Unduh Template Contoh</span>
+                        <span>Unduh Template Excel (.xlsx)</span>
                     </a>
                 </div>
                 <p class="text-[11px] text-slate-500">
@@ -373,7 +373,7 @@
     </div>
 </div>
 
-<!-- Script Modal Open / Close -->
+<!-- Script Modal Open / Close & Audio Player -->
 <script>
     function openModal(id) {
         const el = document.getElementById(id);
@@ -383,4 +383,346 @@
         const el = document.getElementById(id);
         if (el) el.classList.add('hidden');
     }
+
+    // Audio Player Native untuk Guru (Web Speech Synthesis Instan & Bebas File Server)
+    function playTeacherWordAudio(text) {
+        if (!text || text.trim() === '') {
+            alert('Silakan ketik atau isi kosakata terlebih dahulu!');
+            return;
+        }
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = 'en-US';
+            utter.rate = 0.88;
+            window.speechSynthesis.speak(utter);
+        } else {
+            alert('Browser Anda tidak mendukung Speech Synthesis.');
+        }
+    }
+
+    // Handler Pengisian Form Edit Kosakata Pelafalan
+    function editPronounceWord(item) {
+        if (!item) return;
+        document.getElementById('editPronounceForm').action = '/games/pronounce/word/' + item.id + '/update';
+        document.getElementById('editPronounceWordInput').value = item.word || '';
+        document.getElementById('editPronouncePhonetic').value = item.phonetic || '';
+        document.getElementById('editPronouncePos').value = item.part_of_speech || 'Noun (Kata Benda)';
+        document.getElementById('editPronounceMeaning').value = item.meaning || '';
+        document.getElementById('editPronounceDiff').value = item.difficulty || 'mudah';
+        document.getElementById('editPronounceTips').value = item.tips || '';
+        document.getElementById('editPronounceExample').value = item.example_sentence || '';
+        openModal('modalEditPronounceWord');
+    }
 </script>
+
+<!-- ============================================================== -->
+<!-- 5. MODAL: Tambah Kosakata Pelafalan (Pronounce Hero)           -->
+<!-- ============================================================== -->
+<div id="modalTambahPronounceWord" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-3xl p-6 lg:p-7 shadow-2xl max-h-[90vh] overflow-y-auto border border-slate-100">
+        
+        <div class="flex items-center justify-between mb-5 pb-4 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-sky-50 text-sky-700 flex items-center justify-center shrink-0 border border-sky-200/70">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="22"></line>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-slate-900 text-base tracking-tight">Tambah Kosakata Pelafalan</h3>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Otomatis dilafalkan native speaker di mobile & dapat dites suaranya.</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeModal('modalTambahPronounceWord')" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-700 flex items-center justify-center text-sm font-bold transition-colors cursor-pointer">
+                &times;
+            </button>
+        </div>
+
+        <form method="POST" action="{{ route('guru.game.pronounce.store') }}" class="space-y-4">
+            @csrf
+
+            <!-- Kosakata (Word) & Tombol Live Audio Preview -->
+            <div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <label class="block text-xs font-bold text-slate-700">Kosakata Bahasa Inggris (English Word)</label>
+                    <button type="button" 
+                            onclick="playTeacherWordAudio(document.getElementById('inputWordTambahPronounce').value)" 
+                            class="px-2.5 py-1 rounded-xl bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200 text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-all">
+                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                        <span>🔊 Tes Suara Bule</span>
+                    </button>
+                </div>
+                <input type="text" 
+                       id="inputWordTambahPronounce"
+                       name="word" 
+                       required 
+                       placeholder="Contoh: Wednesday / Comfortable" 
+                       class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15 outline-none transition-all">
+            </div>
+
+            <!-- Fonetik & Tingkat Kesulitan -->
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Fonetik IPA (Opsional)</label>
+                    <input type="text" 
+                           name="phonetic" 
+                           placeholder="Contoh: /ˈwɛnzdeɪ/" 
+                           class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono text-slate-800 focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15 outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Tingkat Kesulitan</label>
+                    <select name="difficulty" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15 outline-none transition-all">
+                        <option value="mudah">🟢 Mudah (Easy)</option>
+                        <option value="sedang">🟡 Sedang (Medium)</option>
+                        <option value="sulit">🔴 Sulit (Hard)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Jenis Kata & Arti Bahasa Indonesia -->
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Jenis Kata (Part of Speech)</label>
+                    <select name="part_of_speech" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15 outline-none transition-all">
+                        <option value="Noun (Kata Benda)">📦 Noun (Kata Benda)</option>
+                        <option value="Verb (Kata Kerja)">⚡ Verb (Kata Kerja)</option>
+                        <option value="Adjective (Kata Sifat)">🏷️ Adjective (Kata Sifat)</option>
+                        <option value="Adverb (Kata Keterangan)">✨ Adverb (Kata Keterangan)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Arti Kata (Bahasa Indonesia)</label>
+                    <input type="text" 
+                           name="meaning" 
+                           required 
+                           placeholder="Contoh: Hari Rabu" 
+                           class="w-full px-3.5 py-2.5 rounded-xl bg-emerald-50/60 border border-emerald-300 text-xs font-bold text-emerald-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 outline-none transition-all">
+                </div>
+            </div>
+
+            <!-- Tips Pelafalan untuk Siswa -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Tips Pelafalan / Catatan Khusus (Opsional)</label>
+                <textarea name="tips" 
+                          rows="2" 
+                          placeholder="Contoh: Huruf 'd' pertama dan 'e' kedua bersifat silent (tidak dibaca). Lafalkan: WENZ-day."
+                          class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15 outline-none transition-all resize-none"></textarea>
+            </div>
+
+            <!-- Contoh Kalimat Bahasa Inggris -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Contoh Kalimat Sederhana (Opsional)</label>
+                <input type="text" 
+                       name="example_sentence" 
+                       placeholder="Contoh: We have an English quiz every Wednesday." 
+                       class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15 outline-none transition-all">
+            </div>
+
+            <!-- Info Keunggulan Auto Voice -->
+            <div class="p-3 rounded-2xl bg-sky-50/80 border border-sky-200/80 text-[11px] text-sky-800 flex items-start gap-2">
+                <span class="text-sky-600 text-sm">💡</span>
+                <p>
+                    <b>Bebas Repot Rekam:</b> Sistem otomatis melafalkan kata ini dengan suara Native Speaker jernih di HP siswa tanpa perlu upload file audio apa pun.
+                </p>
+            </div>
+
+            <!-- Tombol Aksi Simpan -->
+            <div class="pt-3 flex items-center justify-end gap-2.5 border-t border-slate-100">
+                <x-button variant="cancel" type="button" onclick="closeModal('modalTambahPronounceWord')" class="!rounded-xl">
+                    Batal
+                </x-button>
+                <x-button variant="submit" type="submit" class="!bg-sky-600 hover:!bg-sky-700 !rounded-xl !shadow-xs">
+                    Simpan Kosakata Pelafalan
+                </x-button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- 6. MODAL: Edit Kosakata Pelafalan                              -->
+<!-- ============================================================== -->
+<div id="modalEditPronounceWord" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-3xl p-6 lg:p-7 shadow-2xl max-h-[90vh] overflow-y-auto border border-slate-100">
+        
+        <div class="flex items-center justify-between mb-5 pb-4 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-sky-50 text-sky-700 flex items-center justify-center shrink-0 border border-sky-200/70">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 20h9"></path>
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-slate-900 text-base tracking-tight">Edit Kosakata Pelafalan</h3>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Perbarui teks kosakata, arti, dan tips pelafalan.</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeModal('modalEditPronounceWord')" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-700 flex items-center justify-center text-sm font-bold transition-colors cursor-pointer">
+                &times;
+            </button>
+        </div>
+
+        <form id="editPronounceForm" method="POST" action="" class="space-y-4">
+            @csrf
+
+            <!-- Kosakata (Word) & Live Audio Preview -->
+            <div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <label class="block text-xs font-bold text-slate-700">Kosakata Bahasa Inggris (English Word)</label>
+                    <button type="button" 
+                            onclick="playTeacherWordAudio(document.getElementById('editPronounceWordInput').value)" 
+                            class="px-2.5 py-1 rounded-xl bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200 text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-all">
+                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                        <span>🔊 Tes Suara</span>
+                    </button>
+                </div>
+                <input type="text" 
+                       id="editPronounceWordInput"
+                       name="word" 
+                       required 
+                       class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15 outline-none transition-all">
+            </div>
+
+            <!-- Fonetik & Tingkat Kesulitan -->
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Fonetik IPA (Opsional)</label>
+                    <input type="text" 
+                           id="editPronouncePhonetic"
+                           name="phonetic" 
+                           class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono text-slate-800 focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15 outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Tingkat Kesulitan</label>
+                    <select id="editPronounceDiff" name="difficulty" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15 outline-none transition-all">
+                        <option value="mudah">🟢 Mudah (Easy)</option>
+                        <option value="sedang">🟡 Sedang (Medium)</option>
+                        <option value="sulit">🔴 Sulit (Hard)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Jenis Kata & Arti Bahasa Indonesia -->
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Jenis Kata (Part of Speech)</label>
+                    <select id="editPronouncePos" name="part_of_speech" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15 outline-none transition-all">
+                        <option value="Noun (Kata Benda)">📦 Noun (Kata Benda)</option>
+                        <option value="Verb (Kata Kerja)">⚡ Verb (Kata Kerja)</option>
+                        <option value="Adjective (Kata Sifat)">🏷️ Adjective (Kata Sifat)</option>
+                        <option value="Adverb (Kata Keterangan)">✨ Adverb (Kata Keterangan)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Arti Kata (Bahasa Indonesia)</label>
+                    <input type="text" 
+                           id="editPronounceMeaning"
+                           name="meaning" 
+                           required 
+                           class="w-full px-3.5 py-2.5 rounded-xl bg-emerald-50/60 border border-emerald-300 text-xs font-bold text-emerald-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 outline-none transition-all">
+                </div>
+            </div>
+
+            <!-- Tips Pelafalan -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Tips Pelafalan (Opsional)</label>
+                <textarea id="editPronounceTips"
+                          name="tips" 
+                          rows="2" 
+                          class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15 outline-none transition-all resize-none"></textarea>
+            </div>
+
+            <!-- Contoh Kalimat -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Contoh Kalimat (Opsional)</label>
+                <input type="text" 
+                       id="editPronounceExample"
+                       name="example_sentence" 
+                       class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15 outline-none transition-all">
+            </div>
+
+            <!-- Tombol Aksi Simpan Perubahan -->
+            <div class="pt-3 flex items-center justify-end gap-2.5 border-t border-slate-100">
+                <x-button variant="cancel" type="button" onclick="closeModal('modalEditPronounceWord')" class="!rounded-xl">
+                    Batal
+                </x-button>
+                <x-button variant="submit" type="submit" class="!bg-sky-600 hover:!bg-sky-700 !rounded-xl !shadow-xs">
+                    Simpan Perubahan
+                </x-button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- 7. MODAL: Import Excel Kosakata Pelafalan (Anti-Duplikat)      -->
+<!-- ============================================================== -->
+<div id="modalImportPronounce" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-3xl p-6 lg:p-7 shadow-2xl max-h-[90vh] overflow-y-auto border border-slate-100">
+        
+        <div class="flex items-center justify-between mb-5 pb-4 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-sky-50 text-sky-700 flex items-center justify-center shrink-0 border border-sky-200/70">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-slate-900 text-base tracking-tight">Import Excel Kosakata Pelafalan</h3>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Mendukung format .xlsx dan .csv dengan sistem cerdas Anti-Duplikat.</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeModal('modalImportPronounce')" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-700 flex items-center justify-center text-sm font-bold transition-colors cursor-pointer">
+                &times;
+            </button>
+        </div>
+
+        <!-- Banner Info Anti-Duplikat -->
+        <div class="p-3.5 mb-4 rounded-2xl bg-amber-50 border border-amber-200/80 text-amber-800 text-xs space-y-1">
+            <div class="flex items-center gap-2 font-bold text-amber-900">
+                <svg class="w-4 h-4 text-amber-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                <span>Perlindungan Anti-Duplikasi Otomatis</span>
+            </div>
+            <p class="text-[11px] text-amber-700 leading-relaxed pl-6">
+                Kosakata yang sudah ada sebelumnya di database akan <b>otomatis dilewati</b>. Hanya kosakata baru yang ditambahkan, sehingga data tidak dobel.
+            </p>
+        </div>
+
+        <form method="POST" action="{{ route('guru.game.pronounce.import') }}" enctype="multipart/form-data" class="space-y-4">
+            @csrf
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Pilih File Excel (.xlsx, .xls, .csv)</label>
+                <input type="file" 
+                       name="file_excel" 
+                       required 
+                       accept=".xlsx,.xls,.csv,.txt"
+                       class="w-full text-xs text-slate-600 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100 file:cursor-pointer p-2 rounded-2xl border border-slate-200 bg-slate-50">
+            </div>
+
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-slate-800">Format Kolom Excel:</span>
+                    <a href="{{ route('guru.game.pronounce.template') }}" class="text-sky-600 font-bold underline hover:text-sky-800 flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        <span>Unduh Template Excel (.xlsx)</span>
+                    </a>
+                </div>
+                <p class="text-[11px] text-slate-500">
+                    Kolom: <b>Kosakata</b>, <b>Fonetik IPA</b>, <b>Jenis Kata</b>, <b>Arti</b>, <b>Tingkat Kesulitan</b> (mudah/sedang/sulit), <b>Tips Pelafalan</b>, <b>Contoh Kalimat</b>.
+                </p>
+            </div>
+
+            <div class="pt-4 flex items-center justify-end gap-2.5 border-t border-slate-100">
+                <x-button variant="cancel" type="button" onclick="closeModal('modalImportPronounce')" class="!rounded-xl">
+                    Batal
+                </x-button>
+                <x-button variant="submit" type="submit" class="!bg-sky-600 hover:!bg-sky-700 !rounded-xl !shadow-xs">
+                    Upload & Proses Import
+                </x-button>
+            </div>
+        </form>
+    </div>
+</div>

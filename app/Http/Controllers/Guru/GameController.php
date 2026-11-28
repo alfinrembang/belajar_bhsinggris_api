@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
 use App\Models\FishingSoal;
+use App\Models\PronounceWord;
 use App\Models\Siswa;
 use App\Models\SiswaFishingProgres;
 use App\Models\WerewolfSoal;
@@ -11,6 +12,7 @@ use App\Services\GameExcelService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class GameController extends Controller
@@ -203,16 +205,36 @@ class GameController extends Controller
         $daftarSoalWerewolf = $werewolfQuery->paginate(10, ['*'], 'werewolf_page')->withQueryString();
         $werewolfThemes = WerewolfSoal::distinct()->pluck('theme')->filter()->values();
 
+        // 6. Query Bank Kosakata Adu Lafal (Pronounce Hero)
+        $totalSoalPronounce = PronounceWord::count();
+        $pronounceQuery = PronounceWord::query()->latest();
+        if (! empty($search)) {
+            $pronounceQuery->where(function ($q) use ($search) {
+                $q->where('word', 'like', "%{$search}%")
+                    ->orWhere('meaning', 'like', "%{$search}%")
+                    ->orWhere('part_of_speech', 'like', "%{$search}%")
+                    ->orWhere('phonetic', 'like', "%{$search}%");
+            });
+        }
+        $pronounceDiffFilter = $request->query('pronounce_diff', '');
+        if (! empty($pronounceDiffFilter)) {
+            $pronounceQuery->where('difficulty', $pronounceDiffFilter);
+        }
+        $daftarSoalPronounce = $pronounceQuery->paginate(10, ['*'], 'pronounce_page')->withQueryString();
+
         return view('guru.mini_game_leaderboard.index', compact(
             'rankedLeaderboard',
             'topPlayer',
             'totalPesertaAktif',
             'totalSoalIkan',
             'totalSoalWerewolf',
+            'totalSoalPronounce',
             'daftarSoalIkan',
             'daftarSoalWerewolf',
+            'daftarSoalPronounce',
             'werewolfThemes',
             'werewolfThemeFilter',
+            'pronounceDiffFilter',
             'search',
             'levelFilter',
             'diffFilter',
@@ -305,82 +327,44 @@ class GameController extends Controller
         $file = $request->file('file_excel');
         $ext = strtolower($file->getClientOriginalExtension());
 
-        if (! in_array($ext, ['xlsx', 'csv', 'txt'])) {
+        if (! in_array($ext, ['xlsx', 'xls', 'csv', 'txt'])) {
             return redirect()->route('guru.game.index')
-                ->withErrors(['file_excel' => 'Format file tidak didukung. Harap gunakan file dengan ekstensi .xlsx atau .csv']);
+                ->withErrors(['file_excel' => 'Format file tidak didukung. Harap gunakan file dengan ekstensi .xlsx, .xls, atau .csv']);
         }
 
         $result = GameExcelService::importFishing($file->getRealPath(), $ext);
 
-        $msg = "Import Berhasil! {$result['imported']} soal baru ditambahkan.";
-        if ($result['skipped'] > 0) {
-            $msg .= " Sebanyak {$result['skipped']} data dilewati karena sudah ada di database (mencegah duplikat).";
+        if (! empty($result['errors']) && $result['imported'] === 0) {
+            return redirect()->route('guru.game.index')
+                ->withErrors(['file_excel' => implode(' | ', array_slice($result['errors'], 0, 3))]);
+        }
+
+        if ($result['imported'] > 0 && $result['skipped'] > 0) {
+            $msg = "Import Berhasil! {$result['imported']} butir soal baru ditambahkan. {$result['skipped']} data dilewati karena sudah terdaftar di database (bebas duplikat).";
+        } elseif ($result['imported'] > 0) {
+            $msg = "Import Berhasil! Seluruh {$result['imported']} butir soal baru berhasil ditambahkan ke Tangkap Ikan.";
+        } else {
+            $msg = "Tidak ada soal baru yang ditambahkan. Seluruh {$result['skipped']} butir soal dalam file sudah ada di database (anti-duplikat aktif).";
         }
 
         return redirect()->route('guru.game.index')->with('success', $msg);
     }
 
     /**
-     * Mengunduh Template File Excel/CSV untuk Game Tangkap Ikan.
+     * Mengunduh Template File Excel (.xlsx) untuk Game Tangkap Ikan dengan Styling Rapi.
      */
     public function downloadFishingTemplate(): StreamedResponse
     {
-        $fileName = 'Template_Soal_Tangkap_Ikan.csv';
-        $headers = [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
-            'Pragma' => 'no-cache',
-            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
-            'Expires' => '0',
-        ];
+        $spreadsheet = GameExcelService::generateFishingTemplate();
+        $fileName = 'Template_Soal_Tangkap_Ikan.xlsx';
 
-        return response()->stream(function () {
-            $handle = fopen('php://output', 'w');
-            // Tulis BOM UTF-8 agar Excel membuka karakter dengan rapi
-            fwrite($handle, "\xEF\xBB\xBF");
-
-            // Header kolom
-            fputcsv($handle, [
-                'Level',
-                'Difficulty',
-                'Word',
-                'Part of Speech',
-                'Arti / Jawaban Benar',
-                'Pilihan Pengecoh 1',
-                'Pilihan Pengecoh 2',
-                'Pilihan Pengecoh 3',
-                'Penjelasan Edukasi',
-                'Contoh Kalimat',
-            ]);
-
-            // Baris Contoh
-            fputcsv($handle, [
-                '1',
-                'mudah',
-                'DOLPHIN',
-                'Noun (Kata Benda)',
-                'Lumba-Lumba',
-                'Hiu Putih',
-                'Ikan Paus',
-                'Penyu Laut',
-                'Dolphin adalah mamalia laut yang cerdas dan bersahabat.',
-                'The dolphin jumped gracefully through the blue ocean waves.',
-            ]);
-            fputcsv($handle, [
-                '2',
-                'sedang',
-                'GENEROUS',
-                'Adjective (Kata Sifat)',
-                'Dermawan / Suka Berbagi',
-                'Pelit',
-                'Keras Kepala',
-                'Pemarah',
-                'Generous adalah sifat seseorang yang suka memberi dan berbagi.',
-                'He was generous enough to share his lunch with his hungry friend.',
-            ]);
-
-            fclose($handle);
-        }, 200, $headers);
+        return response()->streamDownload(function () use ($spreadsheet): void {
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+        }, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Cache-Control' => 'max-age=0',
+        ]);
     }
 
     // ==========================================
@@ -480,76 +464,184 @@ class GameController extends Controller
         $file = $request->file('file_excel');
         $ext = strtolower($file->getClientOriginalExtension());
 
-        if (! in_array($ext, ['xlsx', 'csv', 'txt'])) {
+        if (! in_array($ext, ['xlsx', 'xls', 'csv', 'txt'])) {
             return redirect()->route('guru.game.index')
-                ->withErrors(['file_excel' => 'Format file tidak didukung. Harap gunakan file dengan ekstensi .xlsx atau .csv']);
+                ->withErrors(['file_excel' => 'Format file tidak didukung. Harap gunakan file dengan ekstensi .xlsx, .xls, atau .csv']);
         }
 
         $result = GameExcelService::importWerewolf($file->getRealPath(), $ext);
 
-        $msg = "Import Berhasil! {$result['imported']} pasangan kata baru ditambahkan ke Tebak Serigala.";
-        if ($result['skipped'] > 0) {
-            $msg .= " Sebanyak {$result['skipped']} pasangan kata dilewati karena sudah ada di database (bebas duplikat).";
+        if (! empty($result['errors']) && $result['imported'] === 0) {
+            return redirect()->route('guru.game.index')
+                ->withErrors(['file_excel' => implode(' | ', array_slice($result['errors'], 0, 3))]);
+        }
+
+        if ($result['imported'] > 0 && $result['skipped'] > 0) {
+            $msg = "Import Berhasil! {$result['imported']} pasangan kata baru ditambahkan. {$result['skipped']} pasangan kata dilewati karena sudah ada di database (bebas duplikat).";
+        } elseif ($result['imported'] > 0) {
+            $msg = "Import Berhasil! Seluruh {$result['imported']} pasangan kata baru berhasil ditambahkan ke Tebak Serigala.";
+        } else {
+            $msg = "Tidak ada pasangan kata baru yang ditambahkan. Seluruh {$result['skipped']} pasangan kata dalam file sudah terdaftar di database (anti-duplikat aktif).";
         }
 
         return redirect()->route('guru.game.index')->with('success', $msg);
     }
 
     /**
-     * Mengunduh Template File Excel/CSV untuk Game Tebak Serigala (Wolf vs Sheep).
+     * Mengunduh Template File Excel (.xlsx) untuk Game Tebak Serigala (Wolf vs Sheep) dengan Styling Rapi.
      */
     public function downloadWerewolfTemplate(): StreamedResponse
     {
-        $fileName = 'Template_Kata_Tebak_Serigala.csv';
-        $headers = [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
-            'Pragma' => 'no-cache',
-            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
-            'Expires' => '0',
-        ];
+        $spreadsheet = GameExcelService::generateWerewolfTemplate();
+        $fileName = 'Template_Kata_Tebak_Serigala.xlsx';
 
-        return response()->stream(function () {
-            $handle = fopen('php://output', 'w');
-            fwrite($handle, "\xEF\xBB\xBF");
+        return response()->streamDownload(function () use ($spreadsheet): void {
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+        }, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Cache-Control' => 'max-age=0',
+        ]);
+    }
 
-            // Header kolom
-            fputcsv($handle, [
-                'Kategori / Tema',
-                'Kata Domba (Kata A)',
-                'Arti Kata Domba',
-                'Petunjuk Domba (Pisahkan dengan titik koma ;)',
-                'Kata Serigala (Kata B)',
-                'Arti Kata Serigala',
-                'Petunjuk Serigala (Pisahkan dengan titik koma ;)',
-                'Penjelasan Perbedaan Bahasa Inggris',
-            ]);
+    // ==========================================
+    // 3. KONTROL BANK KOSAKATA ADU LAFAL (PRONOUNCE HERO)
+    // ==========================================
 
-            // Baris Contoh 1
-            fputcsv($handle, [
-                'Nature & Landscape',
-                'FOREST',
-                'Hutan Beriklim Sedang',
-                'Has tall trees and shaded canopy; Home to bears and deer; Cooler weather than jungle; Covered with pine and oak trees',
-                'JUNGLE',
-                'Rimba Hutan Tropis',
-                'Dense tangled tropical vegetation; High humidity and frequent rainfall; Inhabited by monkeys and leopards; Vines and wild undergrowth everywhere',
-                'Forest refers to temperate woodlands with open floors, while Jungle is a dense, impenetrable tropical rainforest.',
-            ]);
+    public function storePronounceWord(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'word' => ['required', 'string', 'max:100'],
+            'phonetic' => ['nullable', 'string', 'max:100'],
+            'part_of_speech' => ['required', 'string', 'max:50'],
+            'meaning' => ['required', 'string', 'max:255'],
+            'difficulty' => ['required', 'in:mudah,sedang,sulit'],
+            'tips' => ['nullable', 'string'],
+            'example_sentence' => ['nullable', 'string', 'max:255'],
+        ], [
+            'word.required' => 'Kosakata bahasa Inggris wajib diisi.',
+            'part_of_speech.required' => 'Jenis kata (Part of Speech) wajib dipilih.',
+            'meaning.required' => 'Arti kata dalam bahasa Indonesia wajib diisi.',
+            'difficulty.required' => 'Tingkat kesulitan wajib dipilih.',
+        ]);
 
-            // Baris Contoh 2
-            fputcsv($handle, [
-                'Animals',
-                'WOLF',
-                'Serigala',
-                'Wild canine that hunts in organized packs; Howls at the moon at night; Has thick grey fur and piercing eyes; Fierce predator of the wilderness',
-                'DOG',
-                'Anjing Peliharaan',
-                'Known as man best faithful friend; Barks cheerfully and wags its tail; Lives indoors with human family; Loves playing fetch with a ball',
-                'Wolf is a wild pack-hunting carnivore, whereas Dog is a domesticated canine companion living with humans.',
-            ]);
+        $word = trim($validated['word']);
 
-            fclose($handle);
-        }, 200, $headers);
+        // Anti-Duplikat
+        if (PronounceWord::whereRaw('UPPER(TRIM(word)) = ?', [strtoupper($word)])->exists()) {
+            return redirect()->route('guru.game.index', ['tab' => 'pronounce'])
+                ->withErrors(['word' => "Kosakata '{$word}' sudah ada di database. Silakan gunakan kosakata lain untuk menghindari duplikasi!"]);
+        }
+
+        PronounceWord::create([
+            'word' => $word,
+            'phonetic' => $validated['phonetic'] ?? null,
+            'part_of_speech' => $validated['part_of_speech'],
+            'meaning' => $validated['meaning'],
+            'difficulty' => $validated['difficulty'],
+            'tips' => $validated['tips'] ?? null,
+            'example_sentence' => $validated['example_sentence'] ?? null,
+        ]);
+
+        return redirect()->route('guru.game.index', ['tab' => 'pronounce'])
+            ->with('success', "Kosakata pelafalan '{$word}' berhasil ditambahkan ke bank soal!");
+    }
+
+    public function updatePronounceWord(Request $request, int $id): RedirectResponse
+    {
+        $wordItem = PronounceWord::findOrFail($id);
+
+        $validated = $request->validate([
+            'word' => ['required', 'string', 'max:100'],
+            'phonetic' => ['nullable', 'string', 'max:100'],
+            'part_of_speech' => ['required', 'string', 'max:50'],
+            'meaning' => ['required', 'string', 'max:255'],
+            'difficulty' => ['required', 'in:mudah,sedang,sulit'],
+            'tips' => ['nullable', 'string'],
+            'example_sentence' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $word = trim($validated['word']);
+
+        // Cek duplikat jika kata diubah
+        $duplicate = PronounceWord::whereRaw('UPPER(TRIM(word)) = ?', [strtoupper($word)])
+            ->where('id', '!=', $id)
+            ->exists();
+
+        if ($duplicate) {
+            return redirect()->route('guru.game.index', ['tab' => 'pronounce'])
+                ->withErrors(['word' => "Kosakata '{$word}' sudah digunakan oleh data lain."]);
+        }
+
+        $wordItem->update([
+            'word' => $word,
+            'phonetic' => $validated['phonetic'] ?? null,
+            'part_of_speech' => $validated['part_of_speech'],
+            'meaning' => $validated['meaning'],
+            'difficulty' => $validated['difficulty'],
+            'tips' => $validated['tips'] ?? null,
+            'example_sentence' => $validated['example_sentence'] ?? null,
+        ]);
+
+        return redirect()->route('guru.game.index', ['tab' => 'pronounce'])
+            ->with('success', "Kosakata pelafalan '{$word}' berhasil diperbarui!");
+    }
+
+    public function destroyPronounceWord(int $id): RedirectResponse
+    {
+        $wordItem = PronounceWord::findOrFail($id);
+        $name = $wordItem->word;
+        $wordItem->delete();
+
+        return redirect()->route('guru.game.index', ['tab' => 'pronounce'])
+            ->with('success', "Kosakata '{$name}' berhasil dihapus dari bank soal!");
+    }
+
+    public function importPronounceExcel(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'file_excel' => ['required', 'file', 'max:5120'],
+        ], [
+            'file_excel.required' => 'Silakan pilih file Excel (.xlsx atau .csv) untuk diunggah.',
+        ]);
+
+        $file = $request->file('file_excel');
+        $ext = strtolower($file->getClientOriginalExtension());
+
+        if (! in_array($ext, ['xlsx', 'xls', 'csv', 'txt'])) {
+            return redirect()->route('guru.game.index', ['tab' => 'pronounce'])
+                ->withErrors(['file_excel' => 'Format file tidak didukung. Harap gunakan file dengan ekstensi .xlsx, .xls, atau .csv']);
+        }
+
+        $result = GameExcelService::importPronounce($file->getRealPath(), $ext);
+
+        if (! empty($result['errors']) && $result['imported'] === 0) {
+            return redirect()->route('guru.game.index', ['tab' => 'pronounce'])
+                ->withErrors(['file_excel' => implode(' | ', array_slice($result['errors'], 0, 3))]);
+        }
+
+        if ($result['imported'] > 0 && $result['skipped'] > 0) {
+            $msg = "Import Berhasil! {$result['imported']} kosakata pelafalan baru ditambahkan. {$result['skipped']} data dilewati karena sudah ada di database (bebas duplikat).";
+        } elseif ($result['imported'] > 0) {
+            $msg = "Import Berhasil! Seluruh {$result['imported']} kosakata pelafalan baru berhasil ditambahkan ke bank soal.";
+        } else {
+            $msg = "Tidak ada kosakata baru yang ditambahkan. Seluruh {$result['skipped']} kosakata dalam file sudah terdaftar di database (anti-duplikat aktif).";
+        }
+
+        return redirect()->route('guru.game.index', ['tab' => 'pronounce'])->with('success', $msg);
+    }
+
+    public function downloadPronounceTemplate(): StreamedResponse
+    {
+        $spreadsheet = GameExcelService::generatePronounceTemplate();
+        $fileName = 'Template_Kosakata_Pelafalan_Adu_Lafal.xlsx';
+
+        return response()->streamDownload(function () use ($spreadsheet): void {
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+        }, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Cache-Control' => 'max-age=0',
+        ]);
     }
 }
